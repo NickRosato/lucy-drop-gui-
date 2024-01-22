@@ -4,7 +4,7 @@ from tkinter import ttk
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 
-selectionbar_color = 'blue'
+selectionbar_color = 'black'
 sidebar_color = 'white'
 header_color = '#E61231'
 visualisation_frame_color = "#ffffff"
@@ -26,8 +26,11 @@ class TkinterApp(tk.Tk):
 
         # ------------- BASIC APP LAYOUT -----------------
 
-        self.geometry("1280x720")
-        self.resizable(0, 0)
+        self.geometry("1440x800")
+        self.attributes('-fullscreen', True)
+        self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
+
         self.title('Lucy Drop Tower')
         self.config(background=selectionbar_color)
         icon = tk.PhotoImage(file='info.png')
@@ -43,44 +46,27 @@ class TkinterApp(tk.Tk):
         self.sidebar = tk.Frame(self, bg=sidebar_color)
         self.sidebar.place(relx=0, rely=0, relwidth=0.3, relheight=1)
 
-        # UNIVERSITY LOGO AND NAME
+        # LOGO AND NAME
         self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color)
         self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.15)
         self.uni_logo = icon.subsample(5)
         logo = tk.Label(self.brand_frame, image=self.uni_logo, bg=sidebar_color)
         logo.place(x=5, y=20)
 
-        uni_name = tk.Label(self.brand_frame,
-                            text='Lucy Drop',
-                            bg=sidebar_color,
-                            font=("", 15, "bold")
-                            )
-        uni_name.place(x=60, y=27, anchor="w")
-
-        uni_name = tk.Label(self.brand_frame,
-                            text='Tower', 
-                            bg=sidebar_color,
-                            font=("", 15, "bold")
-                            )
-        uni_name.place(x=60, y=60, anchor="w")
+        name = tk.Label(self.brand_frame,text='Lucy Drop',bg=sidebar_color,font=("", 15, "bold"))
+        name.place(x=60, y=27, anchor="w")
+        name = tk.Label(self.brand_frame,text='Tower', bg=sidebar_color,font=("", 15, "bold"))
+        name.place(x=60, y=60, anchor="w")
 
         # SUBMENUS IN SIDE BAR
 
         # # SUBMENU 1
         self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color)
         self.submenu_frame.place(relx=0, rely=0.2, relwidth=1, relheight=0.85)
-        submenu1 = SidebarSubMenu(self.submenu_frame,
-                                     sub_menu_heading='SUBMENU 1',
-                                     sub_menu_options=["Display Frame1",
-                                                       "Display Frame2",
-                                                       ]
-                                     )
-        submenu1.options["Display Frame1"].config(
-            command=lambda: self.show_frame(Frame1)
-        )
-        submenu1.options["Display Frame2"].config(
-            command=lambda: self.show_frame(Frame2)
-        )
+        submenu1 = SidebarSubMenu(self.submenu_frame,sub_menu_heading='SUBMENU 1',sub_menu_options=["Display Frame1","Display Frame2",])
+        
+        submenu1.options["Display Frame1"].config(command=lambda: self.show_frame(Frame1))
+        submenu1.options["Display Frame2"].config(command=lambda: self.show_frame(Frame2))
 
         submenu1.place(relx=0, rely=0.025, relwidth=1, relheight=0.3)
 
@@ -92,10 +78,7 @@ class TkinterApp(tk.Tk):
 
         self.frames = {}
 
-        for F in (Frame1,
-                  Frame2,
-                  ):
-            
+        for F in (Frame1,Frame2):
             frame = F(container, self)
             self.frames[F] = frame
             frame.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -153,12 +136,7 @@ class SidebarSubMenu(tk.Frame):
         """
         tk.Frame.__init__(self, parent)
         self.config(bg=sidebar_color)
-        self.sub_menu_heading_label = tk.Label(self,
-                                               text=sub_menu_heading,
-                                               bg=sidebar_color,
-                                               fg="#333333",
-                                               font=("Arial", 10)
-                                               )
+        self.sub_menu_heading_label = tk.Label(self,text=sub_menu_heading,bg=sidebar_color,fg="#333333",font=("Arial", 10))
         self.sub_menu_heading_label.place(x=30, y=10, anchor="w")
 
         sub_menu_sep = ttk.Separator(self, orient='horizontal')
@@ -166,14 +144,7 @@ class SidebarSubMenu(tk.Frame):
 
         self.options = {}
         for n, x in enumerate(sub_menu_options):
-            self.options[x] = tk.Button(self,
-                                        text=x,
-                                        bg=sidebar_color,
-                                        font=("Arial", 9, "bold"),
-                                        bd=0,
-                                        cursor='hand2',
-                                        activebackground='#ffffff',
-                                        )
+            self.options[x] = tk.Button(self,text=x,bg=sidebar_color,font=("Arial", 9, "bold"),bd=0,cursor='hand2',activebackground='#ffffff',)
             self.options[x].place(x=30, y=45 * (n + 1), anchor="w")
 
 
