@@ -46,11 +46,12 @@ class TkinterApp(tk.Tk):
 
         # ------------- BASIC APP LAYOUT -----------------
 
-        self.geometry("1440x800")
+        self.geometry("1600x1000")
         self.attributes('-fullscreen', True)
-        self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
-        self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
-        
+        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        self.bind("<Escape>", lambda event: self.quit())
+        #self.attributes("-fullscreen", False)
+
         self.title('Lucy Drop Tower')
         #self.config(background=selectionbar_color)
         icon = tk.PhotoImage(file='info.png')
@@ -68,17 +69,12 @@ class TkinterApp(tk.Tk):
 
         # LOGO AND NAME
         self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color, highlightthickness=1)
-        self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.1)
+        self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=p_y)
         self.uni_logo = icon.subsample(5)
         logo = tk.Label(self.brand_frame, image=self.uni_logo, bg=sidebar_color)
-        logo.place(relx=0, rely=0)
-
-
-        
-        #name = tk.Label(self.brand_frame,text='Lucy Drop',bg=sidebar_color,font=("", 15, "bold"))
-        #name.place(x=60, y=27, anchor="w")
-        #name = tk.Label(self.brand_frame,text='Tower', bg=sidebar_color,font=("", 15, "bold"))
-        #name.place(x=60, y=60, anchor="w")
+        logo.place(relx=0, rely=0)     
+        name = tk.Label(self.brand_frame,text='Lucy Drop Tower',bg=sidebar_color,font=("", 15, "bold"))
+        name.place(relx=.25, rely=.5, anchor="w")
 
         # SUBMENUS IN SIDE BAR
 
