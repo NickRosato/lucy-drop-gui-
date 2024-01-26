@@ -15,7 +15,7 @@ frame_color = "#808080"
 #Shape Builder
 p_x = 0.15
 p_y = 0.05  
-
+filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
 
 class TkinterApp(tk.Tk):
@@ -33,7 +33,7 @@ class TkinterApp(tk.Tk):
 
         self.title('Lucy Drop Tower')
         #self.config(background=selectionbar_color)
-        icon = tk.PhotoImage(file='/home/LucyDropTower/Documents/lucy-drop-gui-/info.png')
+        icon = tk.PhotoImage(file= filepath +'info.png')
         self.iconphoto(True, icon)
 
         # ---------------- HEADER ------------------------
