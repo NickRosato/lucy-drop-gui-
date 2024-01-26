@@ -25,12 +25,20 @@ class TkinterApp(tk.Tk):
         #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         self.bind("<Escape>", lambda event: self.quit())
         #self.attributes("-fullscreen", False)
-
+        #.pack(side = tk.LEFT)
+        #.place(relx = .22, rely=.5, anchor ='w')
+        
         #HEADER FRAME CREATE
         self.header = tk.Frame(self, bg=header_color)
         self.header.place(relx=p_x, rely=0, relwidth=1-p_x, relheight=p_y)
-        tk.Button(self.header,text='X',bg=sidebar_color,font=("Arial", 15, "bold"),command = self.destroy).place(relx=.97, rely=.5, anchor="w")
+        tk.Label(self.header,text="Number of Groups:",bg=header_color,font=("Arial", 15,'bold')).pack(padx=5,side = tk.LEFT)
+        tk.Entry(self.header,bd=5).pack(padx=5,side = tk.LEFT)
+        tk.Button(self.header,text='Submit',bg=sidebar_color,font=("Arial", 15, "bold")).pack(padx=5,side = tk.LEFT)
+        
+        tk.Button(self.header,text='X',bg=sidebar_color,font=("Arial", 15, "bold"),command = self.destroy).pack(padx=10,side = tk.RIGHT)
+        
 
+        
         #SIDEBAR FRAME CREATE
         self.sidebar = tk.Frame(self, bg=sidebar_color)
         self.sidebar.place(relx=0, rely=0, relwidth=p_x, relheight=1)
