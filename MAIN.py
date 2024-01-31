@@ -4,58 +4,83 @@ import tkinter as tk
 from tkinter import ttk
 
 
-selectionbar_color = 'white'
-sidebar_color = 'white'
+main_color = 'white'
 header_color = '#E61231'
 visualisation_frame_color = "#ffffff"
-frame_color = "#808080"
-
+sidebar_color = "white"
+outline_color = '#808080'
+frame_color = 'grey'
 #Shape Builder RELXY
 p_x = 0.15
 p_y = 0.05  
-filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
+#filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
+GROUPS=['Darkred','Red','Coral','Coral','Chocolate','Orange','Gold','Chartreuse','Green','Lime','Turquoise','Teal','Cyan','Blue','Navy']
 
-class TkinterApp(tk.Tk):
-    def __init__(self):
-        tk.Tk.__init__(self)
-        self.title("Lucy Drop Tower")
-        #self.geometry("1600x1000")
+class App(tk.Tk):
+    def __init__(self,title,size):
+        
+        #main setup
+        super().__init__()
+        self.title(title)
+        self.geometry(f'{size[0]}x{size[1]}')
+        self.minsize(size[0],size[1])
         self.attributes('-fullscreen', True)
-        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         self.bind("<Escape>", lambda event: self.quit())
-        #self.attributes("-fullscreen", False)
-        #.pack(side = tk.LEFT)
-        #.place(relx = .22, rely=.5, anchor ='w')
-        
-        #HEADER FRAME CREATE
-        self.header = tk.Frame(self, bg=header_color)
-        self.header.place(relx=p_x, rely=0, relwidth=1-p_x, relheight=p_y)
-        tk.Label(self.header,text="Number of Groups:",bg=header_color,font=("Arial", 15,'bold')).pack(padx=5,side = tk.LEFT)
-        tk.Entry(self.header,bd=5).pack(padx=5,side = tk.LEFT)
-        tk.Button(self.header,text='Submit',bg=sidebar_color,font=("Arial", 15, "bold")).pack(padx=5,side = tk.LEFT)
-        
-        tk.Button(self.header,text='X',bg=sidebar_color,font=("Arial", 15, "bold"),command = self.destroy).pack(padx=10,side = tk.RIGHT)
-        
+        self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
 
+
+        #widgets
+        self.sidebar = Sidebar(self)
+        self.header = Header(self)
+        self.main = Main(self)
+
+ 
+        #run app
+        self.mainloop()
+
+class Sidebar(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.config(highlightbackground=outline_color,highlightthickness=1)
+        self.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
+    
         
-        #SIDEBAR FRAME CREATE
-        self.sidebar = tk.Frame(self, bg=sidebar_color)
-        self.sidebar.place(relx=0, rely=0, relwidth=p_x, relheight=1)
+        for x in range(14):
+            Segment(self,'Group: '+f'{x+1}',GROUPS[x],x)
 
-        #SIDEBAR - LOGO
-        icon = tk.PhotoImage(file= filepath +'info.png')
-        self.iconphoto(True, icon)
-        self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color, highlightthickness=1)
-        self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=p_y)
-        self.logo = icon.subsample(5)
-        tk.Label(self.brand_frame, image=self.logo, bg=sidebar_color).place(relx=0, rely=0)     
-        tk.Label(self.brand_frame,text='Lucy Drop Tower',bg=sidebar_color,font=("Arial", 15, "bold")).place(relx=.25, rely=.5, anchor="w")
+class Segment(tk.Frame):
+    def __init__(self, parent,label_text,color,order):
+        super().__init__(parent)
+        self.config(background = color)
 
-        #MAIN FRAME CREATE
-        main = tk.Frame(self)
-        main.config(highlightbackground=frame_color, highlightthickness=1)
-        main.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+        #grid layout
+        self.rowconfigure(0,weight = 0)
+        self.columnconfigure((0,1,2),weight = 1,uniform='a')
+        
+        tk.Label(self,bg='white',font=("Arial", 12, "bold"),text = label_text).grid(row = 0, column =0)
+        tk.Button(self,text = "Run",fg='black').grid(row = 0, column=1)
+        tk.Checkbutton(self,bg = 'white',fg='black').grid(row = 0, column = 2)
+        
+        self.pack(expand = False, fill ='both',pady=5)
 
-app = TkinterApp()
-app.mainloop()
+class Header(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.config(background=header_color,highlightbackground=outline_color,highlightthickness=1)
+        self.place(relx=0, rely=0, relwidth=1, relheight=p_y)
+        
+        title=tk.Label(self,text='Lucy Drop Tower',bg=header_color,font=("Arial", 15, "bold"))
+        title.pack(side=tk.LEFT, padx = 20)      
+        close = tk.Button(self,text='X',background=sidebar_color,font=("Arial", 15, "bold"),command = self.quit)
+        close.pack(side=tk.RIGHT, padx = 20)      
+
+class Main(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
+        self.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+
+
+
+App('Lucy Drop Tower',(1600,1000))
