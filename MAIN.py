@@ -13,7 +13,7 @@ frame_color = 'grey'
 #Shape Builder RELXY
 p_x = 0.15
 p_y = 0.05  
-#filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
+filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
 GROUPS=['Darkred','Red','Coral','Coral','Chocolate','Orange','Gold','Chartreuse','Green','Lime','Turquoise','Teal','Cyan','Blue','Navy']
 
@@ -24,7 +24,6 @@ class App(tk.Tk):
         super().__init__()
         self.title(title)
         self.geometry(f'{size[0]}x{size[1]}')
-        self.minsize(size[0],size[1])
         self.attributes('-fullscreen', True)
         self.bind("<Escape>", lambda event: self.quit())
         self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
