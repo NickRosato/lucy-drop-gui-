@@ -2,6 +2,9 @@
 
 import tkinter as tk
 from tkinter import ttk
+import sys
+import serial
+import io
 
 
 main_color = 'white'
@@ -22,9 +25,10 @@ class App(tk.Tk):
         
         #main setup
         super().__init__()
+        #self.attributes('-zoomed', True)
         self.title(title)
         self.geometry(f'{size[0]}x{size[1]}')
-        self.attributes('-fullscreen', True)
+        self.attributes('-fullscreen',True)
         self.bind("<Escape>", lambda event: self.quit())
         self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
 
