@@ -3,8 +3,8 @@
 import tkinter as tk
 from tkinter import ttk
 import sys
-import serial
-import io
+#import serial
+#import io
 
 
 main_color = 'white'
@@ -16,9 +16,10 @@ frame_color = 'grey'
 #Shape Builder RELXY
 p_x = 0.15
 p_y = 0.05  
-filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
+#filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
-GROUPS=['Darkred','Red','Coral','Coral','Chocolate','Orange','Gold','Chartreuse','Green','Lime','Turquoise','Teal','Cyan','Blue','Navy']
+GROUPS=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black']
+
 
 class App(tk.Tk):
     def __init__(self,title,size):
@@ -49,13 +50,16 @@ class Sidebar(tk.Frame):
         self.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
     
         
-        for x in range(14):
+        for x in range(len(GROUPS)):
             Segment(self,'Group: '+f'{x+1}',GROUPS[x],x)
 
+        RankingButton = tk.Button(self,text = "Ranking",fg='black').pack(expand = False, fill ='both')
+
+        FinalyButton = tk.Button(self,text = "Finaly Showcase",fg='black').pack(expand = False, fill ='both')
 class Segment(tk.Frame):
     def __init__(self, parent,label_text,color,order):
         super().__init__(parent)
-        self.config(background = color)
+        self.config(background = color,pady=7.5)
 
         #grid layout
         self.rowconfigure(0,weight = 0)
@@ -65,18 +69,18 @@ class Segment(tk.Frame):
         tk.Button(self,text = "Run",fg='black').grid(row = 0, column=1)
         tk.Checkbutton(self,bg = 'white',fg='black').grid(row = 0, column = 2)
         
-        self.pack(expand = False, fill ='both',pady=5)
+        self.pack(expand = False, fill ='both')
 
 class Header(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.config(background=header_color,highlightbackground=outline_color,highlightthickness=1)
+        self.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
         self.place(relx=0, rely=0, relwidth=1, relheight=p_y)
         
         title=tk.Label(self,text='Lucy Drop Tower',bg=header_color,font=("Arial", 15, "bold"))
-        title.pack(side=tk.LEFT, padx = 20)      
+        title.pack(side=tk.LEFT)      
         close = tk.Button(self,text='X',background=sidebar_color,font=("Arial", 15, "bold"),command = self.quit)
-        close.pack(side=tk.RIGHT, padx = 20)      
+        close.pack(side=tk.RIGHT)      
 
 class Main(tk.Frame):
     def __init__(self, parent):
