@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
+
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 #import serial
 #import io
-
 
 main_color = 'white'
 header_color = '#E61231'
@@ -79,7 +82,7 @@ class Header(tk.Frame):
         
         title=tk.Label(self,text='Lucy Drop Tower',bg=header_color,font=("Arial", 15, "bold"))
         title.pack(side=tk.LEFT)      
-        close = tk.Button(self,text='X',background=sidebar_color,font=("Arial", 15, "bold"),command = self.quit)
+        close = tk.Button(self,text=' X ',background=sidebar_color,font=("Arial", 15, "bold"),command = self.quit)
         close.pack(side=tk.RIGHT)      
 
 class Main(tk.Frame):
@@ -88,6 +91,6 @@ class Main(tk.Frame):
         self.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
         self.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
-
+    
 
 App('Lucy Drop Tower',(1600,1000))
