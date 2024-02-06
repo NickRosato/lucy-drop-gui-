@@ -5,10 +5,9 @@ import tkinter.ttk as ttk
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
-
-
 #import serial
 #import io
+
 
 main_color = 'white'
 header_color = '#E61231'
@@ -23,6 +22,17 @@ p_y = 0.05
 
 GROUPS=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black']
 
+
+#https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS or _MEIPASS2
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class App(tk.Tk):
     def __init__(self,title,size):
@@ -59,6 +69,7 @@ class Sidebar(tk.Frame):
         RankingButton = tk.Button(self,text = "Ranking",fg='black').pack(expand = False, fill ='both')
 
         FinalyButton = tk.Button(self,text = "Finaly Showcase",fg='black').pack(expand = False, fill ='both')
+
 class Segment(tk.Frame):
     def __init__(self, parent,label_text,color,order):
         super().__init__(parent)
@@ -73,6 +84,8 @@ class Segment(tk.Frame):
         tk.Checkbutton(self,bg = 'white',fg='black').grid(row = 0, column = 2)
         
         self.pack(expand = False, fill ='both')
+
+
 
 class Header(tk.Frame):
     def __init__(self, parent):
