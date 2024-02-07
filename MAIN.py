@@ -118,7 +118,7 @@ class groupSeg(tk.Frame):
         self.columnconfigure((0,1,2),weight = 1,uniform='a')
         
         tk.Label(self,bg='white',font=fontGroups,text = labelText).grid(row = 0, column =0)
-        tk.Button(self,text = "Run",font=fontButtons,command= lambda:ButtonRUN(index),fg='black').grid(row = 0, column=1)
+        tk.Button(self,text = "Run",font=fontButtons,command= lambda:ButtonRUN(color,index),fg='black').grid(row = 0, column=1)
         tk.Checkbutton(self,bg = 'white',fg='black').grid(row = 0, column = 2)
     
 #command= lambda:groupButtonRun(index)
@@ -143,7 +143,7 @@ def groupButtonRun(x):
     window.mainloop()
 
 class ButtonRUN(tk.Tk):
-    def __init__(self,x):
+    def __init__(self,color,index):
         super().__init__()
 
         window_width = 600
@@ -160,14 +160,14 @@ class ButtonRUN(tk.Tk):
         #icon = tk.PhotoImage(file = './assets/icon.png') 
         #self.iconphoto(False, icon) 
         
-      
+        self.configure(bg=color)
         self.title('Lucy Drop Tower')
 
 
-        groupNumber=x+1
+        groupNumber=index+1
 
         text=("Button " + str(groupNumber) + " Pressed" )
-        tk.Label(self,text=text).pack()
+        tk.Label(self,text=text,font=fontHeader).pack()
         self.mainloop()
 
 App()
