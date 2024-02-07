@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 import tkinter as tk
 import tkinter.ttk as ttk
-
 import sys
+from sys import platform
 import matplotlib.pyplot as plt
 import numpy as np
 #import serial
 #import io
 
-
+#style setup
 main_color = 'white'
 header_color = '#E61231'
 visualisation_frame_color = "#ffffff"
@@ -18,18 +18,18 @@ frame_color = 'grey'
 fontHeader=("Arial", 15, "bold")
 fontGroups=("Arial", 12, "bold")
 fontButtons=("Arial", 10, "bold")
-#Shape Builder RELXY
-p_x = 0.15
-p_y = 0.025  
+p_x = 0.15 # for 1920 : x = 288
+p_y = 0.025  # for 1080 : y = 27
+
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
 groupColor=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black']
 
-
+"""
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
 def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+    # Get absolute path to resource, works for dev and for PyInstaller 
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS or _MEIPASS2
         base_path = sys._MEIPASS
@@ -37,6 +37,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+"""
 
 class App(tk.Tk):
     def __init__(self):
@@ -56,25 +57,29 @@ class App(tk.Tk):
         icon = tk.PhotoImage(file = './assets/icon.png') 
         self.iconphoto(False, icon) 
         self.resizable(0,0)
-        #self.overrideredirect(1)
-        self.attributes('-alpha', True)
         self.title('Lucy Drop Tower')
-        #self.attributes('-fullscreen',True)
         self.bind("<Escape>", lambda event: exit())
-        self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
-        #self.maxsize(window_width, window_height)
+        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        self.maxsize(window_width, window_height)
         
-        
+        """
+        if platform == "linux" or platform == "linux2":
+            # linux
+            self.attributes("-zoomed", True)
+        elif platform == "darwin":
+            # OS X
+            self.state("zoomed")
+        elif platform == "win32":
+            # Windows...
+            self.state("zoomed")
+        """
 
         #widgets
         self.sidebar = Sidebar(self)
         self.header = Header(self)
         self.main = Main(self)
 
- 
-        #run app
         self.mainloop()
-
 
 
 
@@ -99,11 +104,11 @@ class Sidebar(tk.Frame):
         self.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
         self.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
     
-        self.rowconfigure((0,1,2),weight = 1)
-        self.columnconfigure(0,weight = 0)
-
-        rowSize=len(groupColor)+6
-
+        
+        #lowerSize=4
+        #rowSize=np.arange(0, len(groupColor)+lowerSize)
+        #self.rowconfigure((0:len(groupColor)),weight = 1)
+        #self.columnconfigure(0,weight = 0)
         for x in range(len(groupColor)):
             groupSeg(self,'Group: '+f'{x+1}',groupColor[x],x).pack(expand = False, fill ='both')
 
@@ -117,37 +122,17 @@ class groupSeg(tk.Frame):
         self.rowconfigure(0,weight = 0)
         self.columnconfigure((0,1,2),weight = 1,uniform='a')
         
-        tk.Label(self,bg='white',font=fontGroups,text = labelText).grid(row = 0, column =0)
-        tk.Button(self,text = "Run",font=fontButtons,command= lambda:ButtonRUN(color,index),fg='black').grid(row = 0, column=1)
-        tk.Checkbutton(self,bg = 'white',fg='black').grid(row = 0, column = 2)
+        tk.Label(self,bg='white',font=fontGroups,text = labelText,highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+        tk.Button(self,text = "Run",font=fontButtons,command= lambda:ButtonRUN(color,index),bg='white',fg='black').grid(row = 0, column=1)
+        tk.Checkbutton(self,bg = color,fg='black').grid(row = 0, column = 2)
     
-#command= lambda:groupButtonRun(index)
-def groupButtonRun(x):
-    groupNumber=x+1
-    window=tk.Tk()
-    window_width=600
-    window_height=600
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-    center_x = int(screen_width/2 - window_width / 2)
-    center_y = int(screen_height/2 - window_height / 2)
-    window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-    window.attributes('-topmost',True)
-    window.maxsize(window_width, window_height)
-    window.resizable(0,0)
-    
-    text=("Button " + str(groupNumber) + " Pressed" )
-    tk.Label(window,text=text).pack()
-
-
-    window.mainloop()
 
 class ButtonRUN(tk.Tk):
     def __init__(self,color,index):
         super().__init__()
 
-        window_width = 600
-        window_height = 600
+        window_width = 480
+        window_height = 480
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         center_x = int(screen_width/2 - window_width / 2)
