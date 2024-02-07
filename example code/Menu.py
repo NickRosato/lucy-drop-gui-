@@ -33,8 +33,8 @@ class TkinterApp(tk.Tk):
 
         self.title('Lucy Drop Tower')
         self.config(background=selectionbar_color)
-        icon = tk.PhotoImage(file='info.png')
-        self.iconphoto(True, icon)
+        #icon = tk.PhotoImage(file='info.png')
+        #self.iconphoto(True, icon)
 
         # ---------------- HEADER ------------------------
 
@@ -49,9 +49,9 @@ class TkinterApp(tk.Tk):
         # LOGO AND NAME
         self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color)
         self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.15)
-        self.uni_logo = icon.subsample(5)
-        logo = tk.Label(self.brand_frame, image=self.uni_logo, bg=sidebar_color)
-        logo.place(x=5, y=20)
+        #self.uni_logo = icon.subsample(5)
+        #logo = tk.Label(self.brand_frame, image=self.uni_logo, bg=sidebar_color)
+        #logo.place(x=5, y=20)
 
         name = tk.Label(self.brand_frame,text='Lucy Drop',bg=sidebar_color,font=("", 15, "bold"))
         name.place(x=60, y=27, anchor="w")

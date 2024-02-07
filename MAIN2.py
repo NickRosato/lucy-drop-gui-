@@ -89,6 +89,7 @@ class Main(tk.Frame):
         self.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
 
+
 class Header(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -122,20 +123,23 @@ class groupSeg(tk.Frame):
         self.columnconfigure((0,1,2),weight = 1,uniform='a')
         
         tk.Label(self,bg='white',font=fontGroups,text = labelText,highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-        tk.Button(self,text = "Run",font=fontButtons,command= lambda:ButtonRUN(color,index),bg='white',fg='black').grid(row = 0, column=1)
+        tk.Button(self,text = "Run",font=fontButtons,command= lambda:popUP(color,index),bg='white',fg='black').grid(row = 0, column=1)
         tk.Checkbutton(self,bg = color,fg='black').grid(row = 0, column = 2)
-    
 
 
 
 
+class labUpdate:
+    def __init__(self,color,index,m_update_text):
+        #self.index = index
+        self.m_update_text = m_update_text
+    def get_response(self):
+        self.m_update_text("TEST")
 
 
 
 
-
-
-class ButtonRUN(tk.Tk):
+class popUP(tk.Tk):
     def __init__(self,color,index):
         super().__init__()
         window_width = 480
