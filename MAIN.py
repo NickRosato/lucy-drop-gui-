@@ -11,7 +11,6 @@ import numpy as np
 #style setup
 main_color = 'white'
 header_color = '#E61231'
-visualisation_frame_color = "#ffffff"
 sidebar_color = "white"
 outline_color = '#808080'
 frame_color = 'grey'
