@@ -39,11 +39,9 @@ def resource_path(relative_path):
 """
 
 class App(tk.Tk):
-    def __init__(self):
-        
-        #main setup
+    def __init__(self):  
         super().__init__()
-
+    #Window Builder
         window_width = 1920
         window_height = 1080
         screen_width = self.winfo_screenwidth()
@@ -52,15 +50,11 @@ class App(tk.Tk):
         center_y = int(screen_height/2 - window_height / 2)
         self.wm_geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self.wm_minsize(window_width, window_height)
-
         icon = tk.PhotoImage(file = './assets/icon.png') 
         self.iconphoto(False, icon) 
         self.wm_resizable(0,0)
         self.title('Lucy Drop Tower')
-        self.bind("<Escape>", lambda event: exit())
-        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         self.wm_maxsize(window_width, window_height)
-        
         """
         if platform == "linux" or platform == "linux2":
             # linux
@@ -72,50 +66,55 @@ class App(tk.Tk):
             # Windows...
             self.state("zoomed")
         """
+    
+    
+    #Macros
+        self.bind("<Escape>", lambda event: exit())
+        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        
 
-        #widgets
-        self.sidebar = Sidebar(self)
-        self.header = Header(self)
-        self.main = Main(self)
 
+    #Frame Builder
+        self.sidebar = tk.Frame(self)
+        self.sidebar.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
+        self.sidebar.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
+        
+        self.header = tk.Frame(self)
+        self.header.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
+        self.header.place(relx=0, rely=0, relwidth=1, relheight=p_y)
+        
+        self.main = tk.Frame(self)
+        self.main.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
+        self.main.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+        
+
+    #SideBar Setup
+        for index in range(len(groupColor)):
+            groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
+
+    #Main Window Setup
+        head = tk.Label(self.main, text="Text = int orange").pack()
+        box = tk.Label(self.main,bg="orange").place(rely=.5, relwidth=1, relheight=.5)
+
+    
+
+
+
+
+
+    #mainloop init
         self.mainloop()
 
-
-
-class Main(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
-        self.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-
-
-
-class Header(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
-        self.place(relx=0, rely=0, relwidth=1, relheight=p_y)
-           
-
-
-class Sidebar(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
-        self.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
-    
-        
-        #lowerSize=4
-        #rowSize=np.arange(0, len(groupColor)+lowerSize)
-        #self.rowconfigure((0:len(groupColor)),weight = 1)
-        #self.columnconfigure(0,weight = 0)
-        for x in range(len(groupColor)):
-            groupSeg(self,'Group: '+f'{x+1}',groupColor[x],x).pack(expand = False, fill ='both')
-
+class mainUpdate():
+    def __init__(self,index,box):
+        color = groupColor[index]
+        box.set(bg=color)
 
 class groupSeg(tk.Frame):
-    def __init__(self, parent,labelText,color,index):
+    def __init__(self, parent,index):
         super().__init__(parent)
+        color = groupColor[index]
+        labelText = 'Group: '+f'{index+1}'
         self.config(background = color,pady=10,padx=5)
 
         #grid layout
@@ -123,25 +122,18 @@ class groupSeg(tk.Frame):
         self.columnconfigure((0,1,2),weight = 1,uniform='a')
         
         tk.Label(self,bg='white',font=fontGroups,text = labelText,highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-        tk.Button(self,text = "Run",font=fontButtons,command= lambda:popUP(color,index),bg='white',fg='black').grid(row = 0, column=1)
-        tk.Checkbutton(self,bg = color,fg='black').grid(row = 0, column = 2)
+        tk.Button(self,text = "Open",font=fontButtons,command= lambda:popUP(index),bg='white',fg='black').grid(row = 0, column=1)
+        tk.Button(self,text = "Display",font=fontButtons,command= lambda:mainUpdate(index),bg='white',fg='black').grid(row = 0, column=2)
 
-
-
-
-class labUpdate:
-    def __init__(self,color,index,m_update_text):
-        #self.index = index
-        self.m_update_text = m_update_text
-    def get_response(self):
-        self.m_update_text("TEST")
-
+        #tk.Checkbutton(self,bg = color,fg='black').grid(row = 0, column = 2)
 
 
 
 class popUP(tk.Tk):
-    def __init__(self,color,index):
+    def __init__(self,index):
         super().__init__()
+        color = groupColor[index]
+        labelText = 'Group: '+f'{index+1}'
         window_width = 480
         window_height = 480
         screen_width = self.winfo_screenwidth()
@@ -162,4 +154,8 @@ class popUP(tk.Tk):
         tk.Label(self,text=text,font=fontHeader).pack()
         self.mainloop()
 
-App()
+
+
+
+if __name__ == "__main__":
+    App()
