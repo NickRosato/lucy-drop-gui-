@@ -69,7 +69,7 @@ class App(tk.Tk):
         
         submenu.options[btnName[0]].config(command=lambda: self.show_frame(Frame1))
         submenu.options[btnName[1]].config(command=lambda: self.show_frame(Frame2))
-        submenu.options[btnName[2]].config(command=lambda: self.show_frame(Frame1))
+        submenu.options[btnName[2]].config(command=lambda: self.show_frame(Frame3))
         submenu.options[btnName[3]].config(command=lambda: self.show_frame(Frame2))
         submenu.options[btnName[4]].config(command=lambda: self.show_frame(Frame2))
 
@@ -83,7 +83,7 @@ class App(tk.Tk):
 
         self.frames = {}
 
-        for F in (Frame1,Frame2):
+        for F in (Frame1,Frame2,Frame3):
             frame = F(self.main, self)
             self.frames[F] = frame
             frame.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -92,15 +92,20 @@ class App(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        
 
+class Frame(tk.Frame):
+    def __init__(self, parent, controller,index):
+        super().__init__(parent)
+        self.configure(background=groupColor[0])
 
+        label = tk.Label(self, text='Group: '+f'{index+1}', font=("Arial", 15))
+        label.pack()
 
 
 class Frame1(tk.Frame):
     def __init__(self, parent, controller):
-
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
+        self.configure(background=groupColor[0])
 
         label = tk.Label(self, text='Frame 1', font=("Arial", 15))
         label.pack()
@@ -108,18 +113,24 @@ class Frame1(tk.Frame):
 
 class Frame2(tk.Frame):
     def __init__(self, parent, controller):
-
-        tk.Frame.__init__(self, parent)
-        self.configure(background=groupColor[2])
+        super().__init__(parent)
+        self.configure(background=groupColor[1])
 
         label = tk.Label(self, text='Frame 2', font=("Arial", 15))
         label.pack()
 
+class Frame3(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.configure(background=groupColor[2])
+
+        label = tk.Label(self, text='Frame 3', font=("Arial", 15))
+        label.pack()
 
 
 class SidebarSubMenu(tk.Frame):
     def __init__(self, parent, sub_menu_heading, sub_menu_options,color_option):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
         self.config(bg=sidebar_color)
         #self.sub_menu_heading_label = tk.Label(self,text=sub_menu_heading,bg=sidebar_color,fg="#333333",font=("Arial", 10))
         #self.sub_menu_heading_label.place(x=30, y=10, anchor="w")

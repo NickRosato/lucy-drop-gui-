@@ -38,6 +38,15 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 """
 
+class Frame(): 
+    ## no reason to inherit from Frame here
+    def __init__(self, parent, num):
+        self.parent=parent
+        self.fr=tk.Frame(parent)
+        self.fr.configure(bg="lightblue")
+        #self.fr.place(relx=0,relwidth=1,rely=0,relheight=1)
+        tk.Label(self.fr, text="Label #%s" % (num+1)).grid()
+
 class App(tk.Tk):
     def __init__(self):  
         super().__init__()
@@ -87,28 +96,42 @@ class App(tk.Tk):
         self.main.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
         self.main.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
-
+        self.frame_instances=[Frame(self.main, num) for num in range(len(groupColor))]
+        self.selection = tk.IntVar()
+        
     #SideBar Setup
-        for index in range(len(groupColor)):
-            groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
+        for i in range(len(groupColor)):
+            #groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
+            self.group=tk.Frame(self.sidebar)
+            color = groupColor[i]
+            labelText = 'Group: '+f'{i+1}'
+            self.group.config(background = color,pady=10,padx=5)
 
-    #Main Window Setup
-        head = tk.Label(self.main, text="Text = int orange").pack()
-        box = tk.Label(self.main,bg="orange").place(rely=.5, relwidth=1, relheight=.5)
+            #grid layout
+            self.group.rowconfigure(0,weight = 0)
+            self.group.columnconfigure((0,1,2),weight = 1,uniform='a')
+            
+            tk.Label(self.group,bg='white',font=fontGroups,text = labelText,highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+            tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selected_frame, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
+            #tk.Button(self.group,text = "Display",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
+
+            self.group.pack(expand = False, fill ='both')
+    
+        self.show_selected_frame()
 
     
-
-
-
-
-
     #mainloop init
         self.mainloop()
 
-class mainUpdate():
-    def __init__(self,index,box):
-        color = groupColor[index]
-        box.set(bg=color)
+    def show_selected_frame(self):
+        # Reset frames
+        for frame in self.frame_instances:
+            frame.fr.grid_forget()
+        
+        selected_option = self.selection.get()
+        print("selected", selected_option+1)
+        self.frame_instances[selected_option].fr.grid(row=1, column=0)
+
 
 class groupSeg(tk.Frame):
     def __init__(self, parent,index):
