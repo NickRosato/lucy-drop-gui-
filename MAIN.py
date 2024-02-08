@@ -25,10 +25,10 @@ p_y = 0.025  # for 1080 : y = 27
 
 groupColor=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black']
 groups=[]
-btnName=[]
+btnLAB=[]
 for index in range(len(groupColor)):
-    groups.append('Group: '+f'{index+1}')
-    btnName.append('Display Group: '+f'{index+1}')
+    groups.append('Showing Group: '+f'{index+1}')
+    btnLAB.append('Group: '+f'{index+1}')
 """
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
 def resource_path(relative_path):
@@ -76,6 +76,8 @@ class App(tk.Tk):
         self.bind("<Escape>", lambda event: exit())
         #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         
+
+
     #Frame Builder
         self.sidebar = tk.Frame(self)
         self.sidebar.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
@@ -104,14 +106,13 @@ class App(tk.Tk):
             #groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
             self.group=tk.Frame(self.sidebar)
             color = groupColor[i]
-            labelText = groups[i]
             self.group.config(background = color,pady=10,padx=5)
 
             #grid layout
             self.group.rowconfigure(0,weight = 0)
             self.group.columnconfigure((0,1,2),weight = 1,uniform='a')
             
-            tk.Label(self.group,bg='white',font=fontGroups,text = labelText,highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+            tk.Label(self.group,bg='white',font=fontGroups,text = btnLAB[i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
             tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selection, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             #tk.Button(self.group,text = "Display",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
 
@@ -124,10 +125,9 @@ class App(tk.Tk):
         self.mainloop()
             
     def show_selection(self):
-        selected_option = self.selection.get()
-        #print("selected", selected_option+1)
-        lab= 'Group: '+f'{selected_option+1}'
-        mainLab["text"]=lab
+        index = self.selection.get()
+        mainLab["text"]=groups[index]
+        self.header.configure(bg=groupColor[index])
 
 
 if __name__ == "__main__":
