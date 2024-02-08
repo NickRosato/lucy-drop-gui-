@@ -4,6 +4,7 @@ import tkinter.ttk as ttk
 import sys
 from sys import platform
 import matplotlib.pyplot as plt
+from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
 #import serial
 #import io
@@ -29,6 +30,12 @@ btnLAB=[]
 for index in range(len(groupColor)):
     groups.append('Showing Group: '+f'{index+1}')
     btnLAB.append('Group: '+f'{index+1}')
+
+data={}
+data[0]=np.arange(0, 3, .01)
+data[1]= 2 * np.sin(2 * np.pi * data[0])
+
+
 """
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
 def resource_path(relative_path):
@@ -97,6 +104,17 @@ class App(tk.Tk):
         global mainLab
         mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
+    
+    #PLOT
+        t = data[0]
+        f0 = tk.Frame(self.main)
+        f0.pack(fill=tk.BOTH, expand=1)
+        fig = plt.figure(figsize=(8, 8))
+        fig.add_subplot(111).plot(t, data[1])
+        canvas = FigureCanvasTkAgg(fig, f0)
+        toolbar = NavigationToolbar2Tk(canvas, f0)
+        toolbar.update()
+        canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
 
 
 
@@ -119,8 +137,13 @@ class App(tk.Tk):
             self.group.pack(expand = False, fill ='both')
     
         self.show_selection()
-
     
+
+
+
+
+
+
     #mainloop init
         self.mainloop()
             

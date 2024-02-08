@@ -18,6 +18,8 @@ class GUI(tk.Tk):
             print(type(item),item)
 
     
+    
+
     def createWidgets(self):
 
         t = np.arange(0, 3, .01)
