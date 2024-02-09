@@ -31,23 +31,17 @@ for index in range(len(groupColor)):
     groups.append('Showing Group: '+f'{index+1}')
     btnLAB.append('Group: '+f'{index+1}')
 
-data={}
-data[0]=np.arange(0, 3, .01)
-data[1]= 2 * np.sin(2 * np.pi * data[0])
+t = []
+s = []
 
 
-"""
+#data={}
+#data[0]=np.arange(0, 3, .01)
+#data[1]= 2 * np.sin(2 * np.pi * data[0])
+
+
+
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
-def resource_path(relative_path):
-    # Get absolute path to resource, works for dev and for PyInstaller 
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS or _MEIPASS2
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-"""
 
 class App(tk.Tk):
     def __init__(self):  
@@ -104,20 +98,10 @@ class App(tk.Tk):
         global mainLab
         mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
+
+        tk.Button(self.header,text="Update",command=self.changeNUM).pack()
     
-    #PLOT
-        t = data[0]
-        f0 = tk.Frame(self.main)
-        f0.pack(fill=tk.BOTH, expand=1)
-        fig = plt.figure(figsize=(8, 8))
-        fig.add_subplot(111).plot(t, data[1])
-        canvas = FigureCanvasTkAgg(fig, f0)
-        toolbar = NavigationToolbar2Tk(canvas, f0)
-        toolbar.update()
-        canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
-
-
-
+       
 
     #SideBar Setup
         for i in range(len(groupColor)):
@@ -133,21 +117,39 @@ class App(tk.Tk):
             tk.Label(self.group,bg='white',font=fontGroups,text = btnLAB[i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
             tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selection, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             #tk.Button(self.group,text = "Display",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
-
+            
             self.group.pack(expand = False, fill ='both')
     
         self.show_selection()
-    
-
-
-
-
-
+    #PLOT
+        f0 = tk.Frame(self.main)
+        f0.pack()
+        fig = plt.figure(figsize=(16, 12))
+        plt.ion()
+        
+        canvas = FigureCanvasTkAgg(fig, f0)
+        plot_widget = canvas.get_tk_widget()
+        
+        plot_widget.pack(fill=tk.BOTH, expand=1)
+        plt.cla()
 
     #mainloop init
         self.mainloop()
-            
+    def changeNUM(self):
+        #plt.cla()
+        t = np.arange(0.0,3.0,0.01)
+        s = np.sin(np.pi*t)
+        plt.plot(t,s)
+        plt.draw()  
+
+    def update(self):
+        index = self.selection.get()
+        plt.cla()
+        plt.plot(t,s)
+        plt.draw()  
+
     def show_selection(self):
+        self.update()
         index = self.selection.get()
         mainLab["text"]=groups[index]
         self.header.configure(bg=groupColor[index])
