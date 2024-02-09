@@ -23,23 +23,20 @@ p_y = 0.025  # for 1080 : y = 27
 
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-master=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Gray10'],[],[]]
+masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Gray10'],[],[]]
 t = []
 s = []
 
 mu, sigma = 30, 0.6 
 
 
-for x in range(len(master[0])):
-    master[1].append('Group: '+f'{x+1}')
-    master[2].append('Showing Group: '+f'{x+1}')
+for x in range(len(masterName[0])):
+    masterName[1].append('Group: '+f'{x+1}')
+    masterName[2].append('Showing Group: '+f'{x+1}')
     t.append([])
     s.append([])
 
   
-
-#https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
-
 class App(tk.Tk):
     def __init__(self):  
         super().__init__()
@@ -50,27 +47,13 @@ class App(tk.Tk):
         screen_height = self.winfo_screenheight()
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
-        self.wm_geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        self.wm_minsize(window_width, window_height)
-        #self.wm_attributes('-type', 'splash')
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        #self.attributes('-type', 'splash')
         icon = tk.PhotoImage(file = './assets/icon.png') 
         self.iconphoto(False, icon) 
-        self.wm_resizable(0,0)
+        self.resizable(0,0)
         self.title('Lucy Drop Tower')
-        self.wm_maxsize(window_width, window_height)
-        
-        """
-        if platform == "linux" or platform == "linux2":
-            # linux
-            self.attributes("-zoomed", True)
-        elif platform == "darwin":
-            # OS X
-            self.state("zoomed")
-        elif platform == "win32":
-            # Windows...
-            self.state("zoomed")
-        """
-    
+          
     
     #Macros
         self.bind("<Escape>", lambda event: exit())
@@ -79,50 +62,49 @@ class App(tk.Tk):
 
 
     #Frame Builder
-        self.sidebar = tk.Frame(self)
-        self.sidebar.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
-        self.sidebar.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
+        self.sidebarFrame = tk.Frame(self)
+        self.sidebarFrame.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
+        self.sidebarFrame.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
         
-        self.header = tk.Frame(self)
-        self.header.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
-        self.header.place(relx=0, rely=0, relwidth=1, relheight=p_y)
+        self.headerFrame = tk.Frame(self)
+        self.headerFrame.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
+        self.headerFrame.place(relx=0, rely=0, relwidth=1, relheight=p_y)
         
-        self.main = tk.Frame(self)
-        self.main.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1,pady=5)
-        self.main.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+        self.mainFrame = tk.Frame(self)
+        self.mainFrame.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1,pady=5)
+        self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
         self.selection = tk.IntVar()
 
     #Main Window Setup
         global mainLab
-        mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
+        mainLab = tk.Label(self.mainFrame,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
 
-        rnBTN=tk.Button(self.main,font=fontHeader,text="RUN DROPPER FUNCTION",command=self.dropper)
+        rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
         rnBTN.pack()
     
        
 
     #SideBar Setup
-        for i in range(len(master[0])):
-            #groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
-            self.group=tk.Frame(self.sidebar)
-            color = master[0][i]
+        for i in range(len(masterName[0])):
+            self.group=tk.Frame(self.sidebarFrame)
+            color = masterName[0][i]
             self.group.config(background = color,pady=10,padx=5)
 
             #grid layout
             self.group.rowconfigure(0,weight = 0)
             self.group.columnconfigure((0,1),weight = 1,uniform='a')
             
-            tk.Label(self.group,bg='white',font=fontGroups,text = master[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selection, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
-            #tk.Button(self.group,text = "RUN",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
+            tk.Label(self.group,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+            tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             
             self.group.pack(expand = False, fill ='both')
     
-        self.show_selection()
+        
+
     #PLOT
-        f0 = tk.Frame(self.main)
+        f0 = tk.Frame(self.mainFrame)
         f0.pack()
         fig = plt.figure(figsize=(16, 8))
         plt.ion()
@@ -131,41 +113,41 @@ class App(tk.Tk):
         plot_widget = canvas.get_tk_widget()
         
         plot_widget.pack(fill=tk.BOTH, expand=1)
-        plt.cla()
-        plt.plot(t[0],s[0],color=master[0][0])
-        plt.draw() 
-
+        
+        self.fShow()
     
     #mainloop init
         self.mainloop()
 
 
-    def dropper(self):
-        index = self.selection.get()
-        self.update()
 
-        plt.cla()
-        plt.plot(t[index],s[index],color=master[0][index])
-        plt.draw()  
 
-    def show_selection(self):
+    def fShow(self):
         index = self.selection.get()
-        mainLab["text"]=master[2][index]
-        self.header.configure(bg=master[0][index])
+        mainLab["text"]=masterName[2][index]
+        self.headerFrame.configure(bg=masterName[0][index])
         plt.cla()
-        plt.plot(t[index],s[index],color=master[0][index])
+        plt.plot(t[index],s[index],color=masterName[0][index])
         plt.draw()  
     
-    def update(self):
+    def fDropper(self):
+        index = self.selection.get()
+        self.fUpdate()
+        plt.cla()
+        plt.plot(t[index],s[index],color=masterName[0][index])
+        plt.draw()  
+
+    def fUpdate(self):
         index = self.selection.get()
         t[index]=(np.arange(0, 5, .02))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
     
+
 class popUP(tk.Tk):
     def __init__(self,index):
         super().__init__()
-        color = master[0][index]
-        labelText = master[1][index]
+        color = masterName[0][index]
+        labelText = masterName[1][index]
         window_width = 480
         window_height = 480
         screen_width = self.winfo_screenwidth()
@@ -181,8 +163,9 @@ class popUP(tk.Tk):
         
         self.configure(bg=color)
         self.title('Lucy Drop Tower')
-        self.mainloop()
-        
+        self.mainFrameloop()
+
+      
 
 if __name__ == "__main__":
     App()
