@@ -60,6 +60,7 @@ class App(tk.Tk):
         center_y = int(screen_height/2 - window_height / 2)
         self.wm_geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self.wm_minsize(window_width, window_height)
+        #self.wm_attributes('-type', 'splash')
         icon = tk.PhotoImage(file = './assets/icon.png') 
         self.iconphoto(False, icon) 
         self.wm_resizable(0,0)
@@ -138,7 +139,7 @@ class App(tk.Tk):
         
         plot_widget.pack(fill=tk.BOTH, expand=1)
         plt.cla()
-        plt.plot(t[0],s[0])
+        plt.plot(t[0],s[0],color=master[0][0])
         plt.draw() 
 
     #mainloop init
@@ -158,7 +159,7 @@ class App(tk.Tk):
         mainLab["text"]=master[2][index]
         self.header.configure(bg=master[0][index])
         plt.cla()
-        plt.plot(t[index],s[index])
+        plt.plot(t[index],s[index],color=master[0][index])
         plt.draw()  
 
 
