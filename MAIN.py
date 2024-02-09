@@ -18,8 +18,8 @@ frame_color = 'grey'
 fontHeader=("Arial", 18, "bold")
 fontGroups=("Arial", 12, "bold")
 fontButtons=("Arial", 10, "bold")
-p_x = 0.15 # for 1920 : x = 288
-p_y = 0.025  # for 1080 : y = 27
+p_x = 0.15 
+p_y = 0.05  
 
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
@@ -48,15 +48,15 @@ class App(tk.Tk):
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        #self.attributes('-type', 'splash')
-        icon = tk.PhotoImage(file = './assets/icon.png') 
-        self.iconphoto(False, icon) 
-        self.resizable(0,0)
+        self.attributes('-type', 'splash')
+        #icon = tk.PhotoImage(file = './assets/icon.png') 
+        #self.iconphoto(False, icon) 
+        #self.resizable(0,0)
         self.title('Lucy Drop Tower')
           
     
     #Macros
-        self.bind("<Escape>", lambda event: exit())
+        #self.bind("<Escape>", lambda command: exit())
         #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         
 
@@ -75,10 +75,13 @@ class App(tk.Tk):
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
         self.selection = tk.IntVar()
+    #Header Setup
+        xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
+        xBTN.pack(side=tk.RIGHT)
 
     #Main Window Setup
         global mainLab
-        mainLab = tk.Label(self.mainFrame,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
+        mainLab = tk.Label(self.mainFrame,bg=main_color,font=fontHeader,text='')
         mainLab.pack()
 
         rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
@@ -88,37 +91,38 @@ class App(tk.Tk):
 
     #SideBar Setup
         for i in range(len(masterName[0])):
-            self.group=tk.Frame(self.sidebarFrame)
+            self.groupFrame=tk.Frame(self.sidebarFrame)
             color = masterName[0][i]
-            self.group.config(background = color,pady=10,padx=5)
+            self.groupFrame.config(background = color,pady=10,padx=5)
 
             #grid layout
-            self.group.rowconfigure(0,weight = 0)
-            self.group.columnconfigure((0,1),weight = 1,uniform='a')
+            self.groupFrame.rowconfigure(0,weight = 0)
+            self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
             
-            tk.Label(self.group,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
+            tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+            tk.Radiobutton(self.groupFrame,variable=self.selection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             
-            self.group.pack(expand = False, fill ='both')
+            self.groupFrame.pack(expand = False, fill ='both')
     
         
 
     #PLOT
-        f0 = tk.Frame(self.mainFrame)
-        f0.pack()
+        self.plotFrame = tk.Frame(self.mainFrame)
         fig = plt.figure(figsize=(16, 8))
         plt.ion()
         
-        canvas = FigureCanvasTkAgg(fig, f0)
-        plot_widget = canvas.get_tk_widget()
+        canvas = FigureCanvasTkAgg(fig, self.plotFrame)
+        toolbar = NavigationToolbar2Tk(canvas, self.plotFrame)
+        toolbar.update()
+        canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
+        self.plotFrame.pack(fill=tk.BOTH, expand=1)
         
-        plot_widget.pack(fill=tk.BOTH, expand=1)
         
         self.fShow()
     
-    #mainloop init
-        self.mainloop()
 
+    def fQuit(self):
+        exit()
 
 
 
@@ -142,7 +146,7 @@ class App(tk.Tk):
         t[index]=(np.arange(0, 5, .02))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
     
-
+"""
 class popUP(tk.Tk):
     def __init__(self,index):
         super().__init__()
@@ -164,9 +168,10 @@ class popUP(tk.Tk):
         self.configure(bg=color)
         self.title('Lucy Drop Tower')
         self.mainFrameloop()
-
+"""
       
 
 if __name__ == "__main__":
-    App()
+    app=App()
+    app.mainloop()
     
