@@ -98,7 +98,7 @@ class App(tk.Tk):
         mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
 
-        rnBTN=tk.Button(self.main,font=fontHeader,text="RUN DROP FUNCTION",command=self.dropper)
+        rnBTN=tk.Button(self.main,font=fontHeader,text="RUN DROPPER FUNCTION",command=self.dropper)
         rnBTN.pack()
     
        
@@ -135,15 +135,14 @@ class App(tk.Tk):
         plt.plot(t[0],s[0],color=master[0][0])
         plt.draw() 
 
+    
     #mainloop init
         self.mainloop()
-
 
 
     def dropper(self):
         index = self.selection.get()
         self.update()
-        #popUP(index)
 
         plt.cla()
         plt.plot(t[index],s[index],color=master[0][index])
@@ -156,6 +155,7 @@ class App(tk.Tk):
         plt.cla()
         plt.plot(t[index],s[index],color=master[0][index])
         plt.draw()  
+    
     def update(self):
         index = self.selection.get()
         t[index]=(np.arange(0, 5, .02))
