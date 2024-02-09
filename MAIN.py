@@ -23,11 +23,11 @@ p_y = 0.025  # for 1080 : y = 27
 
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-master=[['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black'],[],[]]
+master=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Gray10'],[],[]]
 t = []
 s = []
 
-mu, sigma = 0, 0.1 
+mu, sigma = 30, 0.6 
 
 
 for x in range(len(master[0])):
@@ -37,14 +37,7 @@ for x in range(len(master[0])):
     s.append([])
     t[x]=(np.arange(0, 5, .02))
     s[x]=(np.random.normal(mu, sigma, len(t[x])))
-    
-
-
-#data={}
-#data[0]=np.arange(0, 3, .01)
-#data[1]= 2 * np.sin(2 * np.pi * data[0])
-
-
+  
 
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
 
@@ -53,7 +46,7 @@ class App(tk.Tk):
         super().__init__()
     #Window Builder
         window_width = 1920-100
-        window_height = 1080-100
+        window_height = 1080-180
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         center_x = int(screen_width/2 - window_width / 2)
@@ -96,7 +89,7 @@ class App(tk.Tk):
         self.header.place(relx=0, rely=0, relwidth=1, relheight=p_y)
         
         self.main = tk.Frame(self)
-        self.main.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1)
+        self.main.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1,pady=5)
         self.main.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
         self.selection = tk.IntVar()
@@ -106,7 +99,8 @@ class App(tk.Tk):
         mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
 
-        #tk.Button(self.header,text="Change Number",command=self.changeNUM).pack()
+        rnBTN=tk.Button(self.main,font=fontHeader,text="RUN DROP FUNCTION",command=self.dropper)
+        rnBTN.pack()
     
        
 
@@ -119,11 +113,11 @@ class App(tk.Tk):
 
             #grid layout
             self.group.rowconfigure(0,weight = 0)
-            self.group.columnconfigure((0,1,2),weight = 1,uniform='a')
+            self.group.columnconfigure((0,1),weight = 1,uniform='a')
             
             tk.Label(self.group,bg='white',font=fontGroups,text = master[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
             tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selection, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
-            #tk.Button(self.group,text = "Display",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
+            #tk.Button(self.group,text = "RUN",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
             
             self.group.pack(expand = False, fill ='both')
     
@@ -131,7 +125,7 @@ class App(tk.Tk):
     #PLOT
         f0 = tk.Frame(self.main)
         f0.pack()
-        fig = plt.figure(figsize=(16, 12))
+        fig = plt.figure(figsize=(16, 8))
         plt.ion()
         
         canvas = FigureCanvasTkAgg(fig, f0)
@@ -147,14 +141,15 @@ class App(tk.Tk):
 
 
 
-    def update(self):
+    def dropper(self):
         index = self.selection.get()
+        popUP(index)
+
         plt.cla()
-        plt.plot(t[index],s[index])
+        plt.plot(t[index],s[index],color=master[0][index])
         plt.draw()  
 
     def show_selection(self):
-        #self.update()
         index = self.selection.get()
         mainLab["text"]=master[2][index]
         self.header.configure(bg=master[0][index])
@@ -162,6 +157,28 @@ class App(tk.Tk):
         plt.plot(t[index],s[index],color=master[0][index])
         plt.draw()  
 
+class popUP(tk.Tk):
+    def __init__(self,index):
+        super().__init__()
+        color = master[0][index]
+        labelText = master[1][index]
+        window_width = 480
+        window_height = 480
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        center_x = int(screen_width/2 - window_width / 2)
+        center_y = int(screen_height/2 - window_height / 2)
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        self.wm_minsize(window_width, window_height)
+        self.wm_resizable(0,0)
+        self.wm_maxsize(window_width, window_height)
+        self.wm_attributes('-topmost', 1)
+        tk.Label(self,bg=color,text=s[index]).pack()
+        
+        self.configure(bg=color)
+        self.title('Lucy Drop Tower')
+        self.mainloop()
+        
 
 if __name__ == "__main__":
     App()
