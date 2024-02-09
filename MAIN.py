@@ -35,8 +35,7 @@ for x in range(len(master[0])):
     master[2].append('Showing Group: '+f'{x+1}')
     t.append([])
     s.append([])
-    t[x]=(np.arange(0, 5, .02))
-    s[x]=(np.random.normal(mu, sigma, len(t[x])))
+
   
 
 #https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
@@ -143,7 +142,8 @@ class App(tk.Tk):
 
     def dropper(self):
         index = self.selection.get()
-        popUP(index)
+        self.update()
+        #popUP(index)
 
         plt.cla()
         plt.plot(t[index],s[index],color=master[0][index])
@@ -156,7 +156,11 @@ class App(tk.Tk):
         plt.cla()
         plt.plot(t[index],s[index],color=master[0][index])
         plt.draw()  
-
+    def update(self):
+        index = self.selection.get()
+        t[index]=(np.arange(0, 5, .02))
+        s[index]=(np.random.normal(mu, sigma, len(t[index])))
+    
 class popUP(tk.Tk):
     def __init__(self,index):
         super().__init__()
@@ -173,7 +177,7 @@ class popUP(tk.Tk):
         self.wm_resizable(0,0)
         self.wm_maxsize(window_width, window_height)
         self.wm_attributes('-topmost', 1)
-        tk.Label(self,bg=color,text=s[index]).pack()
+        tk.Label(self,bg=color,text=index).pack()
         
         self.configure(bg=color)
         self.title('Lucy Drop Tower')
