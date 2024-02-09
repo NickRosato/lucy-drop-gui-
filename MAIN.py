@@ -23,16 +23,16 @@ p_y = 0.025  # for 1080 : y = 27
 
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-
-groupColor=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black']
-groups=[]
-btnLAB=[]
-for index in range(len(groupColor)):
-    groups.append('Showing Group: '+f'{index+1}')
-    btnLAB.append('Group: '+f'{index+1}')
-
+master=[['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Magenta','Purple','Navy','Grey','Black'],[],[]]
 t = []
 s = []
+
+for index in range(len(master[0])):
+    master[1].append('Group: '+f'{index+1}')
+    master[2].append('Showing Group: '+f'{index+1}')
+
+
+#s = np.sin(np.pi*t)
 
 
 #data={}
@@ -104,17 +104,17 @@ class App(tk.Tk):
        
 
     #SideBar Setup
-        for i in range(len(groupColor)):
+        for i in range(len(master[0])):
             #groupSeg(self.sidebar,index).pack(expand = False, fill ='both')
             self.group=tk.Frame(self.sidebar)
-            color = groupColor[i]
+            color = master[0][i]
             self.group.config(background = color,pady=10,padx=5)
 
             #grid layout
             self.group.rowconfigure(0,weight = 0)
             self.group.columnconfigure((0,1,2),weight = 1,uniform='a')
             
-            tk.Label(self.group,bg='white',font=fontGroups,text = btnLAB[i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
+            tk.Label(self.group,bg='white',font=fontGroups,text = master[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
             tk.Radiobutton(self.group,variable=self.selection, value=i,command=self.show_selection, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             #tk.Button(self.group,text = "Display",font=fontButtons,bg='white',fg='black').grid(row = 0, column=2)
             
@@ -135,6 +135,8 @@ class App(tk.Tk):
 
     #mainloop init
         self.mainloop()
+
+        
     def changeNUM(self):
         #plt.cla()
         t = np.arange(0.0,3.0,0.01)
@@ -151,8 +153,8 @@ class App(tk.Tk):
     def show_selection(self):
         self.update()
         index = self.selection.get()
-        mainLab["text"]=groups[index]
-        self.header.configure(bg=groupColor[index])
+        mainLab["text"]=master[2][index]
+        self.header.configure(bg=master[0][index])
 
 
 if __name__ == "__main__":
