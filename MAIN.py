@@ -27,12 +27,17 @@ master=[['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquois
 t = []
 s = []
 
-for index in range(len(master[0])):
-    master[1].append('Group: '+f'{index+1}')
-    master[2].append('Showing Group: '+f'{index+1}')
+mu, sigma = 0, 0.1 
 
 
-#s = np.sin(np.pi*t)
+for x in range(len(master[0])):
+    master[1].append('Group: '+f'{x+1}')
+    master[2].append('Showing Group: '+f'{x+1}')
+    t.append([])
+    s.append([])
+    t[x]=(np.arange(0, 5, .02))
+    s[x]=(np.random.normal(mu, sigma, len(t[x])))
+    
 
 
 #data={}
@@ -47,8 +52,8 @@ class App(tk.Tk):
     def __init__(self):  
         super().__init__()
     #Window Builder
-        window_width = 1920
-        window_height = 1080
+        window_width = 1920-100
+        window_height = 1080-100
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         center_x = int(screen_width/2 - window_width / 2)
@@ -60,6 +65,7 @@ class App(tk.Tk):
         self.wm_resizable(0,0)
         self.title('Lucy Drop Tower')
         self.wm_maxsize(window_width, window_height)
+        
         """
         if platform == "linux" or platform == "linux2":
             # linux
@@ -99,7 +105,7 @@ class App(tk.Tk):
         mainLab = tk.Label(self.main,bg=main_color,font=fontHeader,text='Group: '+f'{1}')
         mainLab.pack()
 
-        tk.Button(self.header,text="Update",command=self.changeNUM).pack()
+        #tk.Button(self.header,text="Change Number",command=self.changeNUM).pack()
     
        
 
@@ -132,30 +138,30 @@ class App(tk.Tk):
         
         plot_widget.pack(fill=tk.BOTH, expand=1)
         plt.cla()
+        plt.plot(t[0],s[0])
+        plt.draw() 
 
     #mainloop init
         self.mainloop()
 
-        
-    def changeNUM(self):
-        #plt.cla()
-        t = np.arange(0.0,3.0,0.01)
-        s = np.sin(np.pi*t)
-        plt.plot(t,s)
-        plt.draw()  
+
 
     def update(self):
         index = self.selection.get()
         plt.cla()
-        plt.plot(t,s)
+        plt.plot(t[index],s[index])
         plt.draw()  
 
     def show_selection(self):
-        self.update()
+        #self.update()
         index = self.selection.get()
         mainLab["text"]=master[2][index]
         self.header.configure(bg=master[0][index])
+        plt.cla()
+        plt.plot(t[index],s[index])
+        plt.draw()  
 
 
 if __name__ == "__main__":
     App()
+    
