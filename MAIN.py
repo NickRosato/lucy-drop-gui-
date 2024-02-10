@@ -23,7 +23,7 @@ p_y = 0.05
 
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Gray10'],[],[]]
+masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black'],[],[]]
 t = []
 s = []
 
@@ -48,13 +48,26 @@ class App(tk.Tk):
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        self.attributes('-type', 'splash')
         #icon = tk.PhotoImage(file = './assets/icon.png') 
         #self.iconphoto(False, icon) 
         #self.resizable(0,0)
         self.title('Lucy Drop Tower')
+    
+        if platform == "linux" or platform == "linux2":
+            # linux
+            self.attributes('-type', 'splash')
+        elif platform == "darwin":
+            # OS X
+            print("Mac")
+        elif platform == "win32":
+            # Windows...
+            self.attributes('-toolwindow', False)
+        
           
     
+
+
+
     #Macros
         #self.bind("<Escape>", lambda command: exit())
         #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
