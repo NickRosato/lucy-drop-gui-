@@ -48,9 +48,7 @@ class App(tk.Tk):
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        #icon = tk.PhotoImage(file = './assets/icon.png') 
-        #self.iconphoto(False, icon) 
-        #self.resizable(0,0)
+
         self.title('Lucy Drop Tower')
     
         if platform == "linux" or platform == "linux2":
@@ -58,14 +56,13 @@ class App(tk.Tk):
             self.attributes('-type', 'splash')
         elif platform == "darwin":
             # OS X
-            print("Mac")
+            self.attributes('-type', 'splash')
         elif platform == "win32":
             # Windows...
-            self.attributes('-toolwindow', False)
-        
-          
-    
-
+            self.wm_attributes('-toolwindow', False)
+            icon = tk.PhotoImage(file = './assets/icon.png') 
+            self.iconphoto(False, icon) 
+            self.resizable(0,0)
 
 
     #Macros
@@ -87,7 +84,7 @@ class App(tk.Tk):
         self.mainFrame.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1,pady=5)
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
-        self.selection = tk.IntVar()
+        self.userSelection = tk.IntVar()
     #Header Setup
         xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
         xBTN.pack(side=tk.RIGHT)
@@ -113,7 +110,7 @@ class App(tk.Tk):
             self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
             
             tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.groupFrame,variable=self.selection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
+            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             
             self.groupFrame.pack(expand = False, fill ='both')
     
@@ -125,8 +122,8 @@ class App(tk.Tk):
         plt.ion()
         
         canvas = FigureCanvasTkAgg(fig, self.plotFrame)
-        toolbar = NavigationToolbar2Tk(canvas, self.plotFrame)
-        toolbar.update()
+        #toolbar = NavigationToolbar2Tk(canvas, self.plotFrame)
+        #toolbar.update()
         canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
         self.plotFrame.pack(fill=tk.BOTH, expand=1)
         
@@ -140,7 +137,7 @@ class App(tk.Tk):
 
 
     def fShow(self):
-        index = self.selection.get()
+        index = self.userSelection.get()
         mainLab["text"]=masterName[2][index]
         self.headerFrame.configure(bg=masterName[0][index])
         plt.cla()
@@ -148,14 +145,14 @@ class App(tk.Tk):
         plt.draw()  
     
     def fDropper(self):
-        index = self.selection.get()
+        index = self.userSelection.get()
         self.fUpdate()
         plt.cla()
         plt.plot(t[index],s[index],color=masterName[0][index])
         plt.draw()  
 
     def fUpdate(self):
-        index = self.selection.get()
+        index = self.userSelection.get()
         t[index]=(np.arange(0, 5, .02))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
     
