@@ -6,8 +6,18 @@ from sys import platform
 import matplotlib.pyplot as plt
 from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
+
+
+
+if platform == "linux" or platform == "linux2":
 #import serial
 #import io
+    print("linux")
+elif platform == "darwin":
+    print("mac")
+elif platform == "win32":
+    print("windows")
+
 
 #style setup
 main_color = 'white'
