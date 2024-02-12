@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import tkinter as tk
-import tkinter.ttk as ttk
+#import tkinter.ttk as ttk
+from tkinter.filedialog import askopenfile
+from tkinter.filedialog import asksaveasfile
 import sys
 from sys import platform
 import matplotlib.pyplot as plt
@@ -26,9 +28,9 @@ sidebar_color = "white"
 outline_color = '#808080'
 frame_color = 'grey'
 fontHeader=("Arial", 18, "bold")
-fontGroups=("Arial", 12, "bold")
+fontGroups=("Arial", 14, "bold")
 fontButtons=("Arial", 10, "bold")
-p_x = 0.15 
+p_x = 0.20 
 p_y = 0.05  
 
 
@@ -36,8 +38,8 @@ p_y = 0.05
 masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black'],[],[]]
 t = []
 s = []
-
-mu, sigma = 30, 0.6 
+m = []
+mu, sigma = 30, .1
 
 
 for x in range(len(masterName[0])):
@@ -45,6 +47,7 @@ for x in range(len(masterName[0])):
     masterName[2].append('Showing Group: '+f'{x+1}')
     t.append([])
     s.append([])
+    m.append([])
 
   
 class App(tk.Tk):
@@ -83,7 +86,7 @@ class App(tk.Tk):
 
     #Frame Builder
         self.sidebarFrame = tk.Frame(self)
-        self.sidebarFrame.config(highlightbackground=outline_color,highlightthickness=1,pady=5,padx=5)
+        self.sidebarFrame.config(highlightbackground=outline_color,highlightthickness=1,pady=1,padx=5)
         self.sidebarFrame.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
         
         self.headerFrame = tk.Frame(self)
@@ -95,6 +98,7 @@ class App(tk.Tk):
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
         self.userSelection = tk.IntVar()
+    
     #Header Setup
         xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
         xBTN.pack(side=tk.RIGHT)
@@ -105,30 +109,38 @@ class App(tk.Tk):
         mainLab.pack()
 
         rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.pack()
+        rnBTN.pack(side='bottom')
     
-       
+
 
     #SideBar Setup
         for i in range(len(masterName[0])):
             self.groupFrame=tk.Frame(self.sidebarFrame)
-            color = masterName[0][i]
-            self.groupFrame.config(background = color,pady=10,padx=5)
-
-            #grid layout
+            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=1)
+            self.groupFrame.pack(expand = False, fill ='both')
             self.groupFrame.rowconfigure(0,weight = 0)
             self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
             
             tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
+            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=1)
             
-            self.groupFrame.pack(expand = False, fill ='both')
+            
 
+
+        finallyBTN=tk.Button(self.sidebarFrame,font=fontHeader,text="Finally Function", command=self.fFinally)
+        finallyBTN.pack(expand = False, fill ='both')
+        
         self.sidebarBTNFRAME = tk.Frame(self.sidebarFrame)
-        self.sidebarBTNFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=1)
-        self.sidebarBTNFRAME.pack(expand = False, fill ='both')
-        finallyBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Finally Function", command=self.fFinally)
-        finallyBTN.pack()
+        self.sidebarBTNFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarBTNFRAME.pack(expand = False, fill ='both')  
+        
+
+        
+        readBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Load File", command=self.fLoad)
+        readBTN.pack(expand = False, fill ='both')
+        writeBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Save File", command=self.fSave)
+        writeBTN.pack(expand = False, fill ='both')
+
 
         
 
@@ -147,11 +159,20 @@ class App(tk.Tk):
         self.fShow()
     
 
-    def fQuit(self):
-        exit()
 
     def fFinally(self):
-        print("Finally Showcase")
+        print("Finally function")
+        finallyPopUp()
+
+    def fLoad(self):
+        print("Load function")
+        filename=askopenfile()
+        print(filename)
+
+    def fSave(self):
+        print("Save function")
+        filename=asksaveasfile()
+        
 
     def fShow(self):
         index = self.userSelection.get()
@@ -172,13 +193,16 @@ class App(tk.Tk):
         index = self.userSelection.get()
         t[index]=(np.arange(0, 5, .02))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
+        m[index]=max(s[index])
+        print("MAX VALUE LIST M: "+f'{m}')
     
-"""
-class popUP(tk.Tk):
-    def __init__(self,index):
+    def fQuit(self):
+        exit()
+
+
+class finallyPopUp(tk.Tk):
+    def __init__(self):
         super().__init__()
-        color = masterName[0][index]
-        labelText = masterName[1][index]
         window_width = 480
         window_height = 480
         screen_width = self.winfo_screenwidth()
@@ -190,12 +214,12 @@ class popUP(tk.Tk):
         self.wm_resizable(0,0)
         self.wm_maxsize(window_width, window_height)
         self.wm_attributes('-topmost', 1)
-        tk.Label(self,bg=color,text=index).pack()
+        self.title('Lucy Drop Tower')  
         
-        self.configure(bg=color)
-        self.title('Lucy Drop Tower')
-        self.mainFrameloop()
-"""
+
+
+        self.mainloop()
+
       
 
 if __name__ == "__main__":
