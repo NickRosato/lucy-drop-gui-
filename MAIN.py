@@ -113,7 +113,13 @@ class App(tk.Tk):
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=color,fg='black').grid(row = 0, column=1)
             
             self.groupFrame.pack(expand = False, fill ='both')
-    
+
+        self.sidebarBTNFRAME = tk.Frame(self.sidebarFrame)
+        self.sidebarBTNFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=1)
+        self.sidebarBTNFRAME.pack(expand = False, fill ='both')
+        finallyBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Finally Function", command=self.fFinally)
+        finallyBTN.pack()
+
         
 
     #PLOT
@@ -134,7 +140,8 @@ class App(tk.Tk):
     def fQuit(self):
         exit()
 
-
+    def fFinally(self):
+        print("Finally Showcase")
 
     def fShow(self):
         index = self.userSelection.get()
