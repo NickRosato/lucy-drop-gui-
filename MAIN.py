@@ -140,8 +140,16 @@ class App(tk.Tk):
         readBTN.pack(expand = False, fill ='both')
         writeBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Save File", command=self.fSave)
         writeBTN.pack(expand = False, fill ='both')
-
-
+        
+        self.sidebarCOMFRAME = tk.Frame(self.sidebarFrame)
+        self.sidebarCOMFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarCOMFRAME.pack(expand = False, fill ='both')  
+        
+        com=tk.StringVar(self)
+        com.set("COM1")
+        comSLCT=tk.OptionMenu(self.sidebarCOMFRAME,com,'COM1','COM2','COM3','COM4')
+        comSLCT.pack(side='left')
+        
         
 
     #PLOT
