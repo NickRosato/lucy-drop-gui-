@@ -8,17 +8,8 @@ from sys import platform
 import matplotlib.pyplot as plt
 from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
-
-
-
-if platform == "linux" or platform == "linux2":
 #import serial
 #import io
-    print("linux")
-elif platform == "darwin":
-    print("mac")
-elif platform == "win32":
-    print("windows")
 
 
 #style setup
@@ -26,7 +17,6 @@ main_color = 'white'
 header_color = '#E61231'
 sidebar_color = "white"
 outline_color = 'black'
-#outline_color = '#808080'
 frame_color = 'grey'
 fontHeader=("Arial", 18, "bold")
 fontGroups=("Arial", 14, "bold")
@@ -34,18 +24,17 @@ fontButtons=("Arial", 10, "bold")
 p_x = 0.20 
 p_y = 0.05  
 
+BAUD_RATE = 9600
+BYTES_RECORDED = 1000
+SERIAL_PORT="COM3"
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black'],[],[]]
 t = []
 s = []
 m = []
+
 mu, sigma = 30, .1
-
-
-BAUD_RATE = 9600
-BYTES_RECORDED = 1000
-SERIAL_PORT="COM3"
 
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}')
@@ -59,16 +48,17 @@ class App(tk.Tk):
     def __init__(self):  
         super().__init__()
     #Window Builder
+        #screen_width = self.winfo_screenwidth()*1.25
+        #screen_height = self.winfo_screenheight()*1.25       
         window_width = 1920-100
         window_height = 1080-180
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        center_x = int(screen_width/2 - window_width / 2)
-        center_y = int(screen_height/2 - window_height / 2)
-        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-
+        #center_x = int(screen_width/2 - window_width / 2)
+        #center_y = int(screen_height/2 - window_height / 2)
+        #self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        self.geometry(f'{window_width}x{window_height}')
+        #self.eval('tk::PlaceWindow . center')
         self.title('Lucy Drop Tower')
-    
+        self.tk.call('tk', 'scaling', 1.25)
         if platform == "linux" or platform == "linux2":
             # linux
             self.attributes('-type', 'splash')
@@ -81,6 +71,7 @@ class App(tk.Tk):
             icon = tk.PhotoImage(file = './assets/icon.png') 
             self.iconphoto(False, icon) 
             self.resizable(0,0)
+            #self.overrideredirect(True)
 
 
     #Macros
@@ -99,10 +90,12 @@ class App(tk.Tk):
         self.headerFrame.place(relx=0, rely=0, relwidth=1, relheight=p_y)
         
         self.mainFrame = tk.Frame(self)
-        self.mainFrame.configure(bg=main_color,highlightbackground=outline_color,highlightthickness=1,pady=5)
+        self.mainFrame.configure(highlightbackground=outline_color,highlightthickness=1,pady=5)
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-        
-        self.userSelection = tk.IntVar()
+        self.mainFrame.rowconfigure((0),weight = 1)
+        self.mainFrame.rowconfigure((1),weight = 10)
+        self.mainFrame.rowconfigure((2),weight = 1)
+        self.mainFrame.columnconfigure(0,weight = 1)
     
     #Header Setup
         xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
@@ -110,15 +103,18 @@ class App(tk.Tk):
 
     #Main Window Setup
         global mainLab
-        mainLab = tk.Label(self.mainFrame,bg=main_color,font=fontHeader,text='')
-        mainLab.pack()
+        mainLab = tk.Label(self.mainFrame,font=fontHeader)
+        mainLab.grid(row = 0, column =0)
+
 
         rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.pack(side='bottom')
+        rnBTN.grid(row = 3, column =0)
     
 
 
+
     #SideBar Setup
+        self.userSelection = tk.IntVar()
         for i in range(len(masterName[0])):
             self.groupFrame=tk.Frame(self.sidebarFrame)
             self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=1)
@@ -172,14 +168,14 @@ class App(tk.Tk):
 
     #PLOT
         self.plotFrame = tk.Frame(self.mainFrame)
-        fig = plt.figure(figsize=(16, 8))
+        #fig = plt.figure()
+        fig = plt.figure(linewidth=10,facecolor="#c0c0c0",edgecolor=outline_color)
         plt.ion()
-        
         canvas = FigureCanvasTkAgg(fig, self.plotFrame)
         #toolbar = NavigationToolbar2Tk(canvas, self.plotFrame)
         #toolbar.update()
         canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
-        self.plotFrame.pack(fill=tk.BOTH, expand=1)
+        self.plotFrame.grid(row = 1, column =0,sticky="news")
         
         
         self.fShow()
