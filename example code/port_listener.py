@@ -1,4 +1,4 @@
-import serial
+import serial as ser
 import io
 
 # STATIC VARIABLES

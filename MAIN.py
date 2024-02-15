@@ -25,7 +25,8 @@ elif platform == "win32":
 main_color = 'white'
 header_color = '#E61231'
 sidebar_color = "white"
-outline_color = '#808080'
+outline_color = 'black'
+#outline_color = '#808080'
 frame_color = 'grey'
 fontHeader=("Arial", 18, "bold")
 fontGroups=("Arial", 14, "bold")
@@ -41,6 +42,10 @@ s = []
 m = []
 mu, sigma = 30, .1
 
+
+BAUD_RATE = 9600
+BYTES_RECORDED = 1000
+SERIAL_PORT="COM3"
 
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}')
@@ -118,37 +123,50 @@ class App(tk.Tk):
             self.groupFrame=tk.Frame(self.sidebarFrame)
             self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=1)
             self.groupFrame.pack(expand = False, fill ='both')
-            self.groupFrame.rowconfigure(0,weight = 0)
+            self.groupFrame.rowconfigure(0,weight = 1)
             self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
             
             tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=1)
-            
-            
+        
 
+        # Finally Frame
+        self.sidebarFinallyFrame = tk.Frame(self.sidebarFrame)
+        self.sidebarFinallyFrame.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarFinallyFrame.pack(expand = False, fill ='both')      
 
-        finallyBTN=tk.Button(self.sidebarFrame,font=fontHeader,text="Finally Function", command=self.fFinally)
+        finallyBTN=tk.Button(self.sidebarFinallyFrame,font=fontHeader,text="Finally Function", command=self.fFinally)
         finallyBTN.pack(expand = False, fill ='both')
-        
-        self.sidebarBTNFRAME = tk.Frame(self.sidebarFrame)
-        self.sidebarBTNFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=2)
-        self.sidebarBTNFRAME.pack(expand = False, fill ='both')  
-        
 
-        
-        readBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Load File", command=self.fLoad)
-        readBTN.pack(expand = False, fill ='both')
-        writeBTN=tk.Button(self.sidebarBTNFRAME,font=fontButtons,text="Save File", command=self.fSave)
-        writeBTN.pack(expand = False, fill ='both')
-        
+
+        # Save/Load Frame
+        self.sidebarFileFrame = tk.Frame(self.sidebarFrame)
+        self.sidebarFileFrame.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarFileFrame.pack(expand = False, fill ='both')  
+        self.sidebarFileFrame.rowconfigure((0,1),weight = 1,uniform='a')
+        self.sidebarFileFrame.columnconfigure(0,weight = 1)
+
+        readBTN=tk.Button(self.sidebarFileFrame,font=fontButtons,text="Load File", command=self.fLoad)
+        readBTN.grid(row = 0, column =0)
+        writeBTN=tk.Button(self.sidebarFileFrame,font=fontButtons,text="Save File", command=self.fSave)
+        writeBTN.grid(row = 1, column =0)
+
+        # COM Frame
         self.sidebarCOMFRAME = tk.Frame(self.sidebarFrame)
-        self.sidebarCOMFRAME.config(background='white',pady=10,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarCOMFRAME.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.sidebarCOMFRAME.pack(expand = False, fill ='both')  
+        self.sidebarCOMFRAME.rowconfigure(0,weight = 1)
+        self.sidebarCOMFRAME.columnconfigure((0,1),weight = 1,uniform='a')
         
+        global com
+        BAUD_RATE = 9600
+
         com=tk.StringVar(self)
         com.set("COM1")
         comSLCT=tk.OptionMenu(self.sidebarCOMFRAME,com,'COM1','COM2','COM3','COM4')
-        comSLCT.pack(side='left')
+        comSLCT.grid(row = 0, column =0)
+        comShowBTN=tk.Button(self.sidebarCOMFRAME,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
+        comShowBTN.grid(row = 0, column =1)
         
         
 
@@ -181,6 +199,10 @@ class App(tk.Tk):
         print("Save function")
         filename=asksaveasfile()
         
+    def fComUpdate(self):
+        SERIAL_PORT = str(com.get())
+        print("Value Selected is: "+com.get())
+        print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
         index = self.userSelection.get()
@@ -203,6 +225,7 @@ class App(tk.Tk):
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
         m[index]=max(s[index])
         print("MAX VALUE LIST M: "+f'{m}')
+        
     
     def fQuit(self):
         exit()
