@@ -12,21 +12,25 @@ import numpy as np
 #import io
 
 
+
 #style setup
-main_color = 'white'
-header_color = '#E61231'
-sidebar_color = "white"
-outline_color = 'black'
-frame_color = 'grey'
+main_color = '#FFFFFF'
+header_color = '#000000'
+sidebar_color = "#FFFFFF"
+outline_color = '#000000'
+frame_color = '#c0c0c0'
 fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
+xAxis="Time (s)"
+yAxis="Force Gravity (g)"
 p_x = 0.20 
 p_y = 0.05  
 
 BAUD_RATE = 9600
 BYTES_RECORDED = 1000
 SERIAL_PORT="COM3"
+#5 to 40 Hz band pass filter as Liz
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black'],[],[]]
@@ -119,7 +123,7 @@ class App(tk.Tk):
         self.userSelection = tk.IntVar()
         for i in range(len(masterName[0])):
             self.groupFrame=tk.Frame(self.sidebarFrame)
-            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=1)
+            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
             self.groupFrame.pack(expand = False, fill ='both')
             self.groupFrame.rowconfigure(0,weight = 1)
             self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
@@ -171,11 +175,10 @@ class App(tk.Tk):
     #PLOT
         self.plotFrame = tk.Frame(self.mainFrame)
         self.plotFrame.grid(row = 1, column =0, sticky="news")
-        fig = plt.Figure(linewidth=2,facecolor="#c0c0c0",edgecolor=outline_color) 
+        self.plotFrame.configure(highlightbackground=outline_color,highlightthickness=2)
+        fig = plt.Figure(facecolor="#c0c0c0") 
         global ax
         ax = fig.add_subplot(111) 
-        ax.set_xlabel("X axis") 
-        ax.set_ylabel("Y axis") 
         global graph
         graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
         graph.get_tk_widget().pack(side="top",fill='both',expand=True) 
@@ -205,6 +208,8 @@ class App(tk.Tk):
         mainLab["text"]=masterName[2][index]
         self.headerFrame.configure(bg=masterName[0][index])
         ax.cla()
+        ax.set_xlabel(xAxis) 
+        ax.set_ylabel(yAxis) 
         ax.grid()
         ax.plot(t[index],s[index],color=masterName[0][index])
         graph.draw()  
@@ -216,6 +221,8 @@ class App(tk.Tk):
         m[index]=max(s[index])
         print("MAX VALUE LIST M: "+f'{m}')
         ax.cla()
+        ax.set_xlabel(xAxis) 
+        ax.set_ylabel(yAxis) 
         ax.grid()
         ax.plot(t[index],s[index],color=masterName[0][index])
         graph.draw() 
