@@ -6,7 +6,7 @@ from tkinter.filedialog import asksaveasfile
 import sys
 from sys import platform
 import matplotlib.pyplot as plt
-from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
 import numpy as np
 #import serial
 #import io
@@ -18,9 +18,9 @@ header_color = '#E61231'
 sidebar_color = "white"
 outline_color = 'black'
 frame_color = 'grey'
-fontHeader=("Arial", 18, "bold")
-fontGroups=("Arial", 14, "bold")
-fontButtons=("Arial", 10, "bold")
+fontHeader=('Inter',18, "bold")
+fontGroups=("Inter", 14, "bold")
+fontButtons=("Inter", 10, "bold")
 p_x = 0.20 
 p_y = 0.05  
 
@@ -48,35 +48,37 @@ class App(tk.Tk):
     def __init__(self):  
         super().__init__()
     #Window Builder
-        #screen_width = self.winfo_screenwidth()*1.25
-        #screen_height = self.winfo_screenheight()*1.25       
-        window_width = 1920-100
-        window_height = 1080-180
+        self.title('Lucy Drop Tower')
+        window_width = 1920-200
+        window_height = 1080-200
+        self.geometry(f'{window_width}x{window_height}')
+
+        #screen_width = self.winfo_screenwidth()
+        #screen_height = self.winfo_screenheight()    
         #center_x = int(screen_width/2 - window_width / 2)
         #center_y = int(screen_height/2 - window_height / 2)
         #self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        self.geometry(f'{window_width}x{window_height}')
         #self.eval('tk::PlaceWindow . center')
-        self.title('Lucy Drop Tower')
-        self.tk.call('tk', 'scaling', 1.25)
+        #self.tk.call('tk', 'scaling', 1)
+
         if platform == "linux" or platform == "linux2":
             # linux
-            self.attributes('-type', 'splash')
+            #self.attributes('-type', 'splash')
+            self.resizable(0,0)
         elif platform == "darwin":
             # OS X
-            self.attributes('-type', 'splash')
+            self.resizable(0,0)
+            #self.attributes('-type', 'splash')
         elif platform == "win32":
             # Windows...
-            self.wm_attributes('-toolwindow', False)
             icon = tk.PhotoImage(file = './assets/icon.png') 
             self.iconphoto(False, icon) 
-            self.resizable(0,0)
-            #self.overrideredirect(True)
+            self.minsize(window_width,window_height)
 
 
     #Macros
-        #self.bind("<Escape>", lambda command: exit())
-        #self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        self.bind("<Escape>", lambda command: exit())
+        self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         
 
 
@@ -98,17 +100,17 @@ class App(tk.Tk):
         self.mainFrame.columnconfigure(0,weight = 1)
     
     #Header Setup
-        xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
-        xBTN.pack(side=tk.RIGHT)
+        #xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
+        #xBTN.pack(side=tk.RIGHT)
 
     #Main Window Setup
         global mainLab
         mainLab = tk.Label(self.mainFrame,font=fontHeader)
-        mainLab.grid(row = 0, column =0)
+        mainLab.grid(row = 0, column =0,sticky="ns")
 
 
         rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.grid(row = 3, column =0)
+        rnBTN.grid(row = 3, column =0,sticky="ns")
     
 
 
@@ -168,19 +170,17 @@ class App(tk.Tk):
 
     #PLOT
         self.plotFrame = tk.Frame(self.mainFrame)
-        #fig = plt.figure()
-        fig = plt.figure(linewidth=10,facecolor="#c0c0c0",edgecolor=outline_color)
-        plt.ion()
-        canvas = FigureCanvasTkAgg(fig, self.plotFrame)
-        #toolbar = NavigationToolbar2Tk(canvas, self.plotFrame)
-        #toolbar.update()
-        canvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
-        self.plotFrame.grid(row = 1, column =0,sticky="news")
-        
-        
+        self.plotFrame.grid(row = 1, column =0, sticky="news")
+        fig = plt.Figure(linewidth=2,facecolor="#c0c0c0",edgecolor=outline_color) 
+        global ax
+        ax = fig.add_subplot(111) 
+        ax.set_xlabel("X axis") 
+        ax.set_ylabel("Y axis") 
+        global graph
+        graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
+        graph.get_tk_widget().pack(side="top",fill='both',expand=True) 
         self.fShow()
-    
-
+        
 
     def fFinally(self):
         print("Finally function")
@@ -204,25 +204,22 @@ class App(tk.Tk):
         index = self.userSelection.get()
         mainLab["text"]=masterName[2][index]
         self.headerFrame.configure(bg=masterName[0][index])
-        plt.cla()
-        plt.plot(t[index],s[index],color=masterName[0][index])
-        plt.draw()  
+        ax.cla()
+        ax.grid()
+        ax.plot(t[index],s[index],color=masterName[0][index])
+        graph.draw()  
     
     def fDropper(self):
         index = self.userSelection.get()
-        self.fUpdate()
-        plt.cla()
-        plt.plot(t[index],s[index],color=masterName[0][index])
-        plt.draw()  
-
-    def fUpdate(self):
-        index = self.userSelection.get()
-        t[index]=(np.arange(0, 5, .02))
+        t[index]=(np.arange(0, 20, .5))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
         m[index]=max(s[index])
         print("MAX VALUE LIST M: "+f'{m}')
-        
-    
+        ax.cla()
+        ax.grid()
+        ax.plot(t[index],s[index],color=masterName[0][index])
+        graph.draw() 
+
     def fQuit(self):
         exit()
 
@@ -252,4 +249,5 @@ class finallyPopUp(tk.Tk):
 if __name__ == "__main__":
     app=App()
     app.mainloop()
+    
     
