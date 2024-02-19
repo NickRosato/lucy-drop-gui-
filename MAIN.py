@@ -37,7 +37,7 @@ masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Gr
 t = []
 s = []
 m = []
-
+mLock=[]
 mu, sigma = 30, .1
 
 for x in range(len(masterName[0])):
@@ -46,7 +46,7 @@ for x in range(len(masterName[0])):
     t.append([])
     s.append([])
     m.append([])
-
+    mLock.append([])
   
 class App(tk.Tk):
     def __init__(self):  
@@ -54,7 +54,7 @@ class App(tk.Tk):
     #Window Builder
         self.title('Lucy Drop Tower')
         window_width = 1920-200
-        window_height = 1080-200
+        window_height = 1080-100
         self.geometry(f'{window_width}x{window_height}')
 
         #screen_width = self.winfo_screenwidth()
@@ -204,27 +204,29 @@ class App(tk.Tk):
         print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
-        index = self.userSelection.get()
-        mainLab["text"]=masterName[2][index]
-        self.headerFrame.configure(bg=masterName[0][index])
+        i = self.userSelection.get()
+        mainLab["text"]=masterName[2][i]
+        self.headerFrame.configure(bg=masterName[0][i])
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(t[index],s[index],color=masterName[0][index])
+        ax.plot(t[i],s[i],color=masterName[0][i])
         graph.draw()  
     
     def fDropper(self):
-        index = self.userSelection.get()
-        t[index]=(np.arange(0, 20, .5))
-        s[index]=(np.random.normal(mu, sigma, len(t[index])))
-        m[index]=max(s[index])
+        i = self.userSelection.get()
+        t[i]=(np.arange(0, 20, .5))
+        s[i]=(np.random.normal(mu, sigma, len(t[i])))
+        m[i]=max(s[i])
+        #mLock[i]=[t[i].index(max(s[i])),m[i]]
         print("MAX VALUE LIST M: "+f'{m}')
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(t[index],s[index],color=masterName[0][index])
+        ax.plot(t[i],s[i],color=masterName[0][i])
+        print(mLock[i][0])
         graph.draw() 
 
     def fQuit(self):
