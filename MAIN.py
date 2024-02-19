@@ -38,14 +38,29 @@ t = []
 s = []
 m = []
 
+
+
+groupData=[[[],[],[]],[[],[],[]]]
+
+
 mu, sigma = 30, .1
 
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}')
     masterName[2].append('Showing Group: '+f'{x+1}')
+    groupData[0][0].append([]) #Create TRIAL 1 GROUP X t
+    groupData[0][1].append([]) #Create TRIAL 1 GROUP X s
+    groupData[0][2].append([]) #Create TRIAL 1 GROUP X m
+    groupData[1][0].append([]) #Create TRIAL 2 GROUP X t
+    groupData[1][1].append([]) #Create TRIAL 2 GROUP X s
+    groupData[1][2].append([]) #Create TRIAL 2 GROUP X m
+
+
     t.append([])
     s.append([])
     m.append([])
+
+print(groupData[0][0])
 
   
 class App(tk.Tk):
@@ -55,15 +70,17 @@ class App(tk.Tk):
         self.title('Lucy Drop Tower')
         window_width = 1920-200
         window_height = 1080-200
-        self.geometry(f'{window_width}x{window_height}')
+        #self.geometry(f'{window_width}x{window_height}')
 
-        #screen_width = self.winfo_screenwidth()
-        #screen_height = self.winfo_screenheight()    
-        #center_x = int(screen_width/2 - window_width / 2)
-        #center_y = int(screen_height/2 - window_height / 2)
-        #self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()    
+        print(screen_height)
+        print(screen_width)
+        center_x = int(screen_width/2 - window_width / 2)
+        center_y = int(screen_height/2 - window_height / 2)
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         #self.eval('tk::PlaceWindow . center')
-        #self.tk.call('tk', 'scaling', 1)
+        self.tk.call('tk', 'scaling', 1.25)
 
         if platform == "linux" or platform == "linux2":
             # linux
@@ -99,8 +116,8 @@ class App(tk.Tk):
         self.mainFrame.configure(highlightbackground=outline_color,highlightthickness=1,pady=5)
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         self.mainFrame.rowconfigure((0),weight = 1)
-        self.mainFrame.rowconfigure((1),weight = 10)
-        self.mainFrame.rowconfigure((2),weight = 1)
+        self.mainFrame.rowconfigure((1),weight = 1)
+        self.mainFrame.rowconfigure((2),weight = 15)
         self.mainFrame.columnconfigure(0,weight = 1)
     
     #Header Setup
@@ -114,23 +131,24 @@ class App(tk.Tk):
 
 
         rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.grid(row = 3, column =0,sticky="ns")
+        rnBTN.grid(row = 1, column =0,sticky="ns")
     
 
 
 
     #SideBar Setup
-        self.userSelection = tk.IntVar()
+        self.userSelection1 = tk.IntVar()
+        self.userSelection2 = tk.IntVar()
         for i in range(len(masterName[0])):
             self.groupFrame=tk.Frame(self.sidebarFrame)
             self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
             self.groupFrame.pack(expand = False, fill ='both')
             self.groupFrame.rowconfigure(0,weight = 1)
-            self.groupFrame.columnconfigure((0,1),weight = 1,uniform='a')
+            self.groupFrame.columnconfigure((0,1,2),weight = 1,uniform='a')
             
             tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=1)
-        
+            tk.Radiobutton(self.groupFrame,variable=self.userSelection1, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=1)
+            #tk.Radiobutton(self.groupFrame,variable=self.userSelection2, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=2)
 
         # Finally Frame
         self.sidebarFinallyFrame = tk.Frame(self.sidebarFrame)
@@ -174,8 +192,8 @@ class App(tk.Tk):
 
     #PLOT
         self.plotFrame = tk.Frame(self.mainFrame)
-        self.plotFrame.grid(row = 1, column =0, sticky="news")
-        self.plotFrame.configure(highlightbackground=outline_color,highlightthickness=2)
+        self.plotFrame.grid(row = 2, column =0, sticky="news")
+        self.plotFrame.configure(highlightbackground=outline_color,highlightthickness=10)
         fig = plt.Figure(facecolor="#c0c0c0") 
         global ax
         ax = fig.add_subplot(111) 
@@ -204,9 +222,10 @@ class App(tk.Tk):
         print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
-        index = self.userSelection.get()
+        index = self.userSelection1.get()
         mainLab["text"]=masterName[2][index]
         self.headerFrame.configure(bg=masterName[0][index])
+        self.plotFrame.configure(highlightcolor=masterName[0][index])
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
@@ -215,7 +234,7 @@ class App(tk.Tk):
         graph.draw()  
     
     def fDropper(self):
-        index = self.userSelection.get()
+        index = self.userSelection1.get()
         t[index]=(np.arange(0, 20, .5))
         s[index]=(np.random.normal(mu, sigma, len(t[index])))
         m[index]=max(s[index])
