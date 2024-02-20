@@ -261,12 +261,7 @@ class App(tk.Tk):
             ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i],linestyle='dashed')
         graph.draw() 
     
-
-
-    def fMenu1(self):
-        self.plotFrame.tkraise()
-    def fMenu2(self):
-        self.allFrame.tkraise()
+    def fShowAll(self):
         allAX.cla()
         allAX.set_xlabel(xAxis) 
         allAX.set_ylabel(yAxis) 
@@ -275,7 +270,11 @@ class App(tk.Tk):
             allAX.plot(runTime[0][i],runForce[0][i],color=masterName[0][i])
             allAX.plot(runTime[1][i],runForce[1][i],color=masterName[0][i],linestyle='dashed')
         allGraph.draw()  
-
+    
+    def fMenu1(self):
+        self.plotFrame.tkraise()
+    def fMenu2(self):
+        self.allFrame.tkraise()
     def fMenu3(self):
         self.rankFrame.tkraise()
         
@@ -286,6 +285,7 @@ class App(tk.Tk):
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
         self.fShow()
+        self.fShowAll()
 
 
 
