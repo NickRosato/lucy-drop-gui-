@@ -21,6 +21,7 @@ outline_color = '#000000'
 frame_color = '#c0c0c0'
 btnColor = '#cccccc'
 btnColor_pressed = 'pink'
+topBG='white'
 fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
@@ -42,7 +43,7 @@ runTime=[[],[]]
 runForce=[[],[]]
 maxForce=[[],[]]
 
-mu, sigma = 30, .1
+mu, sigma = 30, 5
 
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}') # Radio Button Name
@@ -116,7 +117,7 @@ class App(tk.Tk):
 
     # Top Settings Frame
         self.topSettingsFrame = tk.Frame(self.topFrame)
-        self.topSettingsFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.topSettingsFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
@@ -138,13 +139,13 @@ class App(tk.Tk):
 
     # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
-        self.topRunFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.topRunFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topRunFrame.grid(row = 0, column =1,sticky='news')
         self.topRunFrame.rowconfigure(0,weight = 1)
         self.topRunFrame.rowconfigure((0,1,2),weight = 1)
         self.topRunFrame.columnconfigure((0,1),weight = 1,uniform="foo")
         global mainLab
-        mainLab = tk.Label(self.topRunFrame,font=fontHeader)
+        mainLab = tk.Label(self.topRunFrame,background=topBG,font=fontHeader)
         mainLab.grid(row = 0, column =0,sticky='ew',columnspan=2)
         rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fDropper)
         rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=2)
@@ -156,18 +157,18 @@ class App(tk.Tk):
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
     # Top Finally Frame
-        self.sidebarFinallyFrame = tk.Frame(self.topFrame)
-        self.sidebarFinallyFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
-        self.sidebarFinallyFrame.grid(row = 0, column =2,sticky='news') 
-        self.sidebarFinallyFrame.rowconfigure((0,1,2),weight = 1, uniform = 'a')
-        self.sidebarFinallyFrame.columnconfigure(0,weight = 1)
+        self.topMenuFrame = tk.Frame(self.topFrame)
+        self.topMenuFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.topMenuFrame.grid(row = 0, column =2,sticky='news') 
+        self.topMenuFrame.rowconfigure((0,1,2),weight = 1, uniform = 'a')
+        self.topMenuFrame.columnconfigure(0,weight = 1)
 
         self.menuSelection = tk.IntVar()
-        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=0,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+        tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=0,command=self.fMenu1,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Single Graph ', font=fontGroups, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
-        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=1,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+        tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show All Graphs ',font=fontGroups,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
-        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=2,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+        tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Ranking ',font=fontGroups,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
 
@@ -191,20 +192,40 @@ class App(tk.Tk):
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
 
-
-
         self.plotFrame = tk.Frame(self.mainFrame)
         self.plotFrame.config(highlightbackground=outline_color,highlightthickness=1)
-        self.plotFrame.pack(fill='both',expand=True)
+        self.plotFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
         fig = plt.Figure() 
         global ax
         ax = fig.add_subplot(111) 
         global graph
         graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
-        graph.get_tk_widget().pack(fill='both',expand=True) 
-        self.fShow()
+        graph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
         
+        
+
+        self.allFrame = tk.Frame(self.mainFrame)
+        self.allFrame.config(background='red',highlightbackground=outline_color,highlightthickness=1)
+        self.allFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        allFig = plt.Figure() 
+        global allAX
+        allAX = allFig.add_subplot(111) 
+        global allGraph
+        allGraph = FigureCanvasTkAgg(allFig, master=self.allFrame) 
+        allGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.rankFrame = tk.Frame(self.mainFrame)
+        self.rankFrame.config(background='green',highlightbackground=outline_color,highlightthickness=1)
+        self.rankFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
+        
+        
+        
+        
+        
+        self.fShow()
+        self.fMenu1()
 
     def fFinally(self):
         print("Finally function")
@@ -234,49 +255,44 @@ class App(tk.Tk):
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
-        graph.draw()  
+        if trl ==0:
+            ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
+        if trl ==1: 
+            ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i],linestyle='dashed')
+        graph.draw() 
     
+
+
+    def fMenu1(self):
+        self.plotFrame.tkraise()
+    def fMenu2(self):
+        self.allFrame.tkraise()
+        allAX.cla()
+        allAX.set_xlabel(xAxis) 
+        allAX.set_ylabel(yAxis) 
+        allAX.grid()
+        for i in range(len(masterName[0])):
+            allAX.plot(runTime[0][i],runForce[0][i],color=masterName[0][i])
+            allAX.plot(runTime[1][i],runForce[1][i],color=masterName[0][i],linestyle='dashed')
+        allGraph.draw()  
+
+    def fMenu3(self):
+        self.rankFrame.tkraise()
+        
     def fDropper(self):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
-        runTime[trl][i]=(np.arange(0, 20, .5))
+        runTime[trl][i]=(np.arange(0, 20, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
+        self.fShow()
 
-        print(maxForce)
-        ax.cla()
-        ax.set_xlabel(xAxis) 
-        ax.set_ylabel(yAxis) 
-        ax.grid()
-        ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
-        graph.draw() 
+
 
     def fQuit(self):
         exit()
 
-
-class finallyPopUp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        window_width = 480
-        window_height = 480
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        center_x = int(screen_width/2 - window_width / 2)
-        center_y = int(screen_height/2 - window_height / 2)
-        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        self.wm_minsize(window_width, window_height)
-        self.wm_resizable(0,0)
-        self.wm_maxsize(window_width, window_height)
-        self.wm_attributes('-topmost', 1)
-        self.title('Lucy Drop Tower')  
-        
-
-
-        self.mainloop()
-
-      
+     
 
 if __name__ == "__main__":
     app=App()
