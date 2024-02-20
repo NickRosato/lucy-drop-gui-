@@ -19,6 +19,8 @@ header_color = '#000000'
 sidebar_color = "#FFFFFF"
 outline_color = '#000000'
 frame_color = '#c0c0c0'
+btnColor = '#cccccc'
+btnColor_pressed = 'pink'
 fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
@@ -33,32 +35,24 @@ SERIAL_PORT="COM3"
 #5 to 40 Hz band pass filter as Liz
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-masterName=[['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black'],[],[]]
-t = []
-s = []
-m = []
+masterName=[[],[],[]]
+masterName[0]=['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black']
 
-
-
-groupData=[[[],[],[]],[[],[],[]]]
+runTime=[[],[]]
+runForce=[[],[]]
+maxForce=[[],[]]
 
 mu, sigma = 30, .1
 
 for x in range(len(masterName[0])):
-    masterName[1].append('Group: '+f'{x+1}')
-    masterName[2].append('Group: '+f'{x+1} Settings')
-    groupData[0][0].append([]) #Create TRIAL 1 GROUP X t
-    groupData[0][1].append([]) #Create TRIAL 1 GROUP X s
-    groupData[0][2].append([]) #Create TRIAL 1 GROUP X m
-    groupData[1][0].append([]) #Create TRIAL 2 GROUP X t
-    groupData[1][1].append([]) #Create TRIAL 2 GROUP X s
-    groupData[1][2].append([]) #Create TRIAL 2 GROUP X m
-    t.append([])
-    s.append([])
-    m.append([])
-
-
-
+    masterName[1].append('Group: '+f'{x+1}') # Radio Button Name
+    masterName[2].append('Group: '+f'{x+1} Settings') # Top Frame Header
+    runTime[0].append([])
+    runTime[1].append([])
+    runForce[0].append([])
+    runForce[1].append([])
+    maxForce[0].append([])
+    maxForce[1].append([])
   
   
 class App(tk.Tk):
@@ -107,13 +101,9 @@ class App(tk.Tk):
         self.sidebarFrame.place(relx=0, rely=0, relwidth=p_x, relheight=1)
         
         self.headerFrame = tk.Frame(self)
-        self.headerFrame.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,pady=15,padx = 15)
+        self.headerFrame.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,pady=10,padx = 10)
         self.headerFrame.place(relx=p_x, rely=0, relwidth=1-p_x, relheight=p_y)
         
-        self.mainFrame = tk.Frame(self)
-        self.mainFrame.configure(highlightbackground=outline_color,highlightthickness=1)
-        self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-  
 
         self.topFrame = tk.Frame(self.headerFrame)
         self.topFrame.config(highlightbackground=outline_color,highlightthickness=1)
@@ -126,7 +116,7 @@ class App(tk.Tk):
 
     # Top Settings Frame
         self.topSettingsFrame = tk.Frame(self.topFrame)
-        self.topSettingsFrame.config(highlightbackground=outline_color,highlightthickness=2)
+        self.topSettingsFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
@@ -136,42 +126,49 @@ class App(tk.Tk):
         com.set("COM1")
         comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
         comSLCT.grid(row = 0, column =0)
-        comShowBTN=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        comShowBTN.grid(row = 0, column =1)
+        comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
+        comShowbtnColor.grid(row = 0, column =1)
         #Save/Load
-        readBTN=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readBTN.grid(row = 1, column =0)
-        writeBTN=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
-        writeBTN.grid(row = 1, column =1)
+        readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
+        readbtnColor.grid(row = 1, column =0)
+        writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
+        writebtnColor.grid(row = 1, column =1)
 
 
 
     # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
-        self.topRunFrame.config(highlightbackground=outline_color,highlightthickness=2)
+        self.topRunFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topRunFrame.grid(row = 0, column =1,sticky='news')
         self.topRunFrame.rowconfigure(0,weight = 1)
         self.topRunFrame.rowconfigure((0,1,2),weight = 1)
-        self.topRunFrame.columnconfigure((0,1),weight = 1,uniform='a')
+        self.topRunFrame.columnconfigure((0,1),weight = 1,uniform="foo")
         global mainLab
         mainLab = tk.Label(self.topRunFrame,font=fontHeader)
-        mainLab.grid(row = 0, column =0)
-        rnBTN=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.grid(row = 0, column =1)
+        mainLab.grid(row = 0, column =0,sticky='ew',columnspan=2)
+        rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fDropper)
+        rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=2)
         
         self.trialSelection = tk.IntVar()
-        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=0,command=self.fShow, text=' Trial 1 ', font=fontGroups, indicatoron=0,bg='white',fg='black').grid(row = 2, column=0)
-        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, text=' Trial 2 ',font=fontGroups, indicatoron=0,bg='white',fg='black').grid(row = 2, column=1)
+        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=0,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+                        text=' Trial 1 ', font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=0)
+        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
+                        text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
     # Top Finally Frame
         self.sidebarFinallyFrame = tk.Frame(self.topFrame)
         self.sidebarFinallyFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.sidebarFinallyFrame.grid(row = 0, column =2,sticky='news') 
+        self.sidebarFinallyFrame.rowconfigure((0,1,2),weight = 1, uniform = 'a')
+        self.sidebarFinallyFrame.columnconfigure(0,weight = 1)
 
-        finallyBTN=tk.Button(self.sidebarFinallyFrame,font=fontButtons,text="Finally",background='white',command=self.fFinally)
-        finallyBTN.pack(expand = False, fill ='both')
-
-
+        self.menuSelection = tk.IntVar()
+        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=0,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+                        text=' Show Single Graph ', font=fontGroups, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
+        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=1,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+                        text=' Show All Graphs ',font=fontGroups,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
+        tk.Radiobutton(self.sidebarFinallyFrame,variable=self.menuSelection, value=2,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
+                        text=' Show Ranking ',font=fontGroups,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
 
     # SideBar Setup
@@ -183,16 +180,24 @@ class App(tk.Tk):
             self.groupFrame.rowconfigure(0,weight = 1)
             self.groupFrame.columnconfigure((0),weight = 1)
             
-            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0,bg='white',font=fontGroups,text = masterName[1][i],fg='black',highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column=0)
-
+            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
+                            bg=btnColor,font=fontGroups,text = masterName[1][i],fg='black',highlightbackground=outline_color,highlightthickness=2,padx=5,pady=5).grid(row = 0, column=0)
 
       
 
-    #PLOT
+    # Main Menu Frames
+        self.mainFrame = tk.Frame(self)
+        self.mainFrame.config(background='black',highlightbackground=outline_color,highlightthickness=1,pady=5,padx = 5)
+        self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+
+
+
+
         self.plotFrame = tk.Frame(self.mainFrame)
-        self.plotFrame.pack()
-        self.plotFrame.configure(highlightbackground=outline_color,highlightthickness=10)
-        fig = plt.Figure(facecolor="#c0c0c0") 
+        self.plotFrame.config(highlightbackground=outline_color,highlightthickness=1)
+        self.plotFrame.pack(fill='both',expand=True)
+
+        fig = plt.Figure() 
         global ax
         ax = fig.add_subplot(111) 
         global graph
@@ -220,28 +225,31 @@ class App(tk.Tk):
         print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
+        trl=self.trialSelection.get()
         i = self.userSelection.get()
         mainLab["text"]=masterName[2][i]
-        self.plotFrame.configure(highlightcolor=masterName[0][i])
         self.headerFrame.configure(bg=masterName[0][i])
+
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(t[i],s[i],color=masterName[0][i])
+        ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
         graph.draw()  
     
     def fDropper(self):
+        trl=self.trialSelection.get()
         i = self.userSelection.get()
-        t[i]=(np.arange(0, 20, .5))
-        s[i]=(np.random.normal(mu, sigma, len(t[i])))
-        m[i]=max(s[i])
-        #print("MAX VALUE LIST M: "+f'{m}')
+        runTime[trl][i]=(np.arange(0, 20, .5))
+        runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
+        maxForce[trl][i]=max(runForce[trl][i])
+
+        print(maxForce)
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(t[i],s[i],color=masterName[0][i])
+        ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
         graph.draw() 
 
     def fQuit(self):
