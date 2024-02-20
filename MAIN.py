@@ -37,7 +37,8 @@ SERIAL_PORT="COM3"
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 masterName=[[],[],[]]
-masterName[0]=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Brown','Grey','Black']
+#masterName[0]=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Brown','Grey','Black']
+masterName[0]=['Red','DarkOrange2','Gold2','dark green','navy','DarkOrchid4','deep pink','red4','MediumPurple1','cyan3','lawn green','saddle brown','black','grey38']
 
 runTime=[[],[]]
 runForce=[[],[]]
