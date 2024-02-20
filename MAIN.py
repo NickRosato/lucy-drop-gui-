@@ -37,7 +37,7 @@ SERIAL_PORT="COM3"
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 masterName=[[],[],[]]
-masterName[0]=['DeepPink','Hotpink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Grey','Black']
+masterName[0]=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Brown','Grey','Black']
 
 runTime=[[],[]]
 runForce=[[],[]]
@@ -121,6 +121,8 @@ class App(tk.Tk):
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
+        
+        
         global com
         BAUD_RATE = 9600
         com=tk.StringVar(self)
@@ -142,7 +144,7 @@ class App(tk.Tk):
         self.topRunFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topRunFrame.grid(row = 0, column =1,sticky='news')
         self.topRunFrame.rowconfigure(0,weight = 1)
-        self.topRunFrame.rowconfigure((0,1,2),weight = 1)
+        self.topRunFrame.rowconfigure((0,1,2,3),weight = 1)
         self.topRunFrame.columnconfigure((0,1),weight = 1,uniform="foo")
         global mainLab
         mainLab = tk.Label(self.topRunFrame,background=topBG,font=fontHeader)
@@ -156,6 +158,8 @@ class App(tk.Tk):
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
+        clearBTN=tk.Button(self.topRunFrame,font=fontGroups,text="Clear Group Data", command=self.fClear)
+        clearBTN.grid(row = 3, column =0,sticky='ew',columnspan=2)
     # Top Finally Frame
         self.topMenuFrame = tk.Frame(self.topFrame)
         self.topMenuFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
@@ -165,7 +169,7 @@ class App(tk.Tk):
 
         self.menuSelection = tk.IntVar()
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=0,command=self.fMenu1,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show Single Graph ', font=fontGroups, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
+                        text=' Show Single Group Graphs ', font=fontGroups, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show All Graphs ',font=fontGroups,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
@@ -220,33 +224,14 @@ class App(tk.Tk):
         self.rankFrame.config(background='green',highlightbackground=outline_color,highlightthickness=1)
         self.rankFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
         
-        
-        
-        
-        
+           
         self.fShow()
         self.fMenu1()
 
-    def fFinally(self):
-        print("Finally function")
-        finallyPopUp()
 
-    def fLoad(self):
-        print("Load function")
-        filename=askopenfile()
-        print(filename)
-
-    def fSave(self):
-        print("Save function")
-        filename=asksaveasfile()
-        
-    def fComUpdate(self):
-        SERIAL_PORT = str(com.get())
-        print("Value Selected is: "+com.get())
-        print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
-        trl=self.trialSelection.get()
+        #trl=self.trialSelection.get()
         i = self.userSelection.get()
         mainLab["text"]=masterName[2][i]
         self.headerFrame.configure(bg=masterName[0][i])
@@ -255,10 +240,8 @@ class App(tk.Tk):
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        if trl ==0:
-            ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i])
-        if trl ==1: 
-            ax.plot(runTime[trl][i],runForce[trl][i],color=masterName[0][i],linestyle='dashed')
+        ax.plot(runTime[0][i],runForce[0][i],color=masterName[0][i])
+        ax.plot(runTime[1][i],runForce[1][i],color=masterName[0][i],linestyle='dashed')
         graph.draw() 
     
     def fShowAll(self):
@@ -287,7 +270,30 @@ class App(tk.Tk):
         self.fShow()
         self.fShowAll()
 
+    def fFinally(self):
+        print("Finally function")
+        finallyPopUp()
 
+    def fLoad(self):
+        print("Load function")
+        filename=askopenfile()
+        print(filename)
+
+    def fSave(self):
+        print("Save function")
+        filename=asksaveasfile()
+        
+    def fComUpdate(self):
+        SERIAL_PORT = str(com.get())
+        print("Value Selected is: "+com.get())
+        print("Value of Serial Port STR is: "+SERIAL_PORT)
+
+
+    def fClear(self):
+        runTime[0][1].clear
+        runForce[0][1].clear
+        self.fShow()
+        self.fShowAll()
 
     def fQuit(self):
         exit()
