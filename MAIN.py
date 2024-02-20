@@ -30,32 +30,46 @@ yAxis="Force Gravity (g)"
 p_x = 0.1
 p_y = 0.2 
 
+mu, sigma = 30, 5
 BAUD_RATE = 9600
 BYTES_RECORDED = 1000
 SERIAL_PORT="COM3"
 #5 to 40 Hz band pass filter as Liz
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
-masterName=[[],[],[]]
-#masterName[0]=['DeepPink','Red','Coral','Orange','Gold','Chartreuse','Green','Turquoise','Blue','Navy','Purple','Brown','Grey','Black']
-masterName[0]=['Red','DarkOrange2','Gold2','dark green','navy','DarkOrchid4','deep pink','red4','MediumPurple1','cyan3','lawn green','saddle brown','black','grey38']
 
+
+cG1=['#FF0000','Red']
+cG2=['#EE7600','Orange']
+cG3=['#EEC900','Yellow']
+cG4=['#006400','Green']
+cG5=['#000080','Blue']
+cG6=['#68228B', 'Purple']
+cG7=['#FF1493','Pink']
+cG8=['#630031','Maroon']
+cG9=['#AB82FF','Lavender']
+cG10=['#00CDCD','Turquoise']
+cG11=['#7CFC00','Lime']
+cG12=['#8B4513', 'Brown']
+cG13=['#000000', 'Black']
+cG14=['#616161', 'Grey']
+
+
+masterName=[[],[],[]]
+masterName[0]=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
+colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
 runTime=[[],[]]
 runForce=[[],[]]
 maxForce=[[],[]]
-
-mu, sigma = 30, 5
-
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}') # Radio Button Name
-    masterName[2].append('Group: '+f'{x+1} Settings') # Top Frame Header
+    masterName[2].append('('+f'{colorName[x]}' ') Group: '+f'{x+1} Settings') # Top Frame Header
     runTime[0].append([])
     runTime[1].append([])
     runForce[0].append([])
     runForce[1].append([])
     maxForce[0].append([])
     maxForce[1].append([])
-  
   
 class App(tk.Tk):
     def __init__(self):  
@@ -159,8 +173,8 @@ class App(tk.Tk):
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
-        clearBTN=tk.Button(self.topRunFrame,font=fontGroups,text="Clear Group Data", command=self.fClear)
-        clearBTN.grid(row = 3, column =0,sticky='ew',columnspan=2)
+        #clearBTN=tk.Button(self.topRunFrame,font=fontGroups,text="Clear Group Data", command=self.fClear)
+        #clearBTN.grid(row = 3, column =0,sticky='ew',columnspan=2)
     # Top Finally Frame
         self.topMenuFrame = tk.Frame(self.topFrame)
         self.topMenuFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
@@ -236,7 +250,6 @@ class App(tk.Tk):
         i = self.userSelection.get()
         mainLab["text"]=masterName[2][i]
         self.headerFrame.configure(bg=masterName[0][i])
-
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
@@ -265,7 +278,7 @@ class App(tk.Tk):
     def fDropper(self):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
-        runTime[trl][i]=(np.arange(0, 20, 5))
+        runTime[trl][i]=(np.arange(0, 100, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
         self.fShow()
