@@ -24,8 +24,8 @@ fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
 yAxis="Force Gravity (g)"
-p_x = 0.20 
-p_y = 0.05  
+p_x = 0.1
+p_y = 0.2 
 
 BAUD_RATE = 9600
 BYTES_RECORDED = 1000
@@ -42,26 +42,22 @@ m = []
 
 groupData=[[[],[],[]],[[],[],[]]]
 
-
-mLock=[]
 mu, sigma = 30, .1
 
 for x in range(len(masterName[0])):
     masterName[1].append('Group: '+f'{x+1}')
-    masterName[2].append('Showing Group: '+f'{x+1}')
+    masterName[2].append('Group: '+f'{x+1} Settings')
     groupData[0][0].append([]) #Create TRIAL 1 GROUP X t
     groupData[0][1].append([]) #Create TRIAL 1 GROUP X s
     groupData[0][2].append([]) #Create TRIAL 1 GROUP X m
     groupData[1][0].append([]) #Create TRIAL 2 GROUP X t
     groupData[1][1].append([]) #Create TRIAL 2 GROUP X s
     groupData[1][2].append([]) #Create TRIAL 2 GROUP X m
-
-
     t.append([])
     s.append([])
     m.append([])
-    mLock.append([])
-print(groupData[0][0])
+
+
 
   
   
@@ -108,100 +104,100 @@ class App(tk.Tk):
     #Frame Builder
         self.sidebarFrame = tk.Frame(self)
         self.sidebarFrame.config(highlightbackground=outline_color,highlightthickness=1,pady=1,padx=5)
-        self.sidebarFrame.place(relx=0, rely=p_y, relwidth=p_x, relheight=1)
+        self.sidebarFrame.place(relx=0, rely=0, relwidth=p_x, relheight=1)
         
         self.headerFrame = tk.Frame(self)
-        self.headerFrame.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,padx = 20)
-        self.headerFrame.place(relx=0, rely=0, relwidth=1, relheight=p_y)
+        self.headerFrame.config(background=header_color,highlightbackground=outline_color,highlightthickness=1,pady=15,padx = 15)
+        self.headerFrame.place(relx=p_x, rely=0, relwidth=1-p_x, relheight=p_y)
         
         self.mainFrame = tk.Frame(self)
-        self.mainFrame.configure(highlightbackground=outline_color,highlightthickness=1,pady=5)
+        self.mainFrame.configure(highlightbackground=outline_color,highlightthickness=1)
         self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-        self.mainFrame.rowconfigure((0),weight = 1)
-        self.mainFrame.rowconfigure((1),weight = 1)
-        self.mainFrame.rowconfigure((2),weight = 15)
-        self.mainFrame.columnconfigure(0,weight = 1)
-    
-    #Header Setup
-        #xBTN=tk.Button(self.headerFrame,command= self.fQuit,text="Close (X)",font=fontButtons)
-        #xBTN.pack(side=tk.RIGHT)
+  
 
-    #Main Window Setup
+        self.topFrame = tk.Frame(self.headerFrame)
+        self.topFrame.config(highlightbackground=outline_color,highlightthickness=1)
+        self.topFrame.pack(expand = True, fill ='both')
+        self.topFrame.rowconfigure(0,weight = 1,)
+        self.topFrame.columnconfigure(0,weight = 1,uniform='a')
+        self.topFrame.columnconfigure(1,weight = 2,uniform='a')
+        self.topFrame.columnconfigure(2,weight = 1,uniform='a')
+
+
+    # Top Settings Frame
+        self.topSettingsFrame = tk.Frame(self.topFrame)
+        self.topSettingsFrame.config(highlightbackground=outline_color,highlightthickness=2)
+        self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
+        self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
+        self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
+        global com
+        BAUD_RATE = 9600
+        com=tk.StringVar(self)
+        com.set("COM1")
+        comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
+        comSLCT.grid(row = 0, column =0)
+        comShowBTN=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
+        comShowBTN.grid(row = 0, column =1)
+        #Save/Load
+        readBTN=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
+        readBTN.grid(row = 1, column =0)
+        writeBTN=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
+        writeBTN.grid(row = 1, column =1)
+
+
+
+    # Top Run Frame
+        self.topRunFrame = tk.Frame(self.topFrame)
+        self.topRunFrame.config(highlightbackground=outline_color,highlightthickness=2)
+        self.topRunFrame.grid(row = 0, column =1,sticky='news')
+        self.topRunFrame.rowconfigure(0,weight = 1)
+        self.topRunFrame.rowconfigure((0,1,2),weight = 1)
+        self.topRunFrame.columnconfigure((0,1),weight = 1,uniform='a')
         global mainLab
-        mainLab = tk.Label(self.mainFrame,font=fontHeader)
-        mainLab.grid(row = 0, column =0,sticky="ns")
+        mainLab = tk.Label(self.topRunFrame,font=fontHeader)
+        mainLab.grid(row = 0, column =0)
+        rnBTN=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
+        rnBTN.grid(row = 0, column =1)
+        
+        self.trialSelection = tk.IntVar()
+        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=0,command=self.fShow, text=' Trial 1 ', font=fontGroups, indicatoron=0,bg='white',fg='black').grid(row = 2, column=0)
+        tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, text=' Trial 2 ',font=fontGroups, indicatoron=0,bg='white',fg='black').grid(row = 2, column=1)
 
+    # Top Finally Frame
+        self.sidebarFinallyFrame = tk.Frame(self.topFrame)
+        self.sidebarFinallyFrame.config(pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+        self.sidebarFinallyFrame.grid(row = 0, column =2,sticky='news') 
 
-        rnBTN=tk.Button(self.mainFrame,font=fontHeader,text="Run Dropper Function",command=self.fDropper)
-        rnBTN.grid(row = 1, column =0,sticky="ns")
-    
-
-
-
-    #SideBar Setup
-        self.userSelection1 = tk.IntVar()
-        self.userSelection2 = tk.IntVar()
-        for i in range(len(masterName[0])):
-            self.groupFrame=tk.Frame(self.sidebarFrame)
-            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
-            self.groupFrame.pack(expand = False, fill ='both')
-            self.groupFrame.rowconfigure(0,weight = 1)
-            self.groupFrame.columnconfigure((0,1,2),weight = 1,uniform='a')
-            
-            tk.Label(self.groupFrame,bg='white',font=fontGroups,text = masterName[1][i],highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column =0)
-            tk.Radiobutton(self.groupFrame,variable=self.userSelection1, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=1)
-            #tk.Radiobutton(self.groupFrame,variable=self.userSelection2, value=i,command=self.fShow, indicatoron=1,bg=masterName[0][i],fg='black').grid(row = 0, column=2)
-
-        # Finally Frame
-        self.sidebarFinallyFrame = tk.Frame(self.sidebarFrame)
-        self.sidebarFinallyFrame.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
-        self.sidebarFinallyFrame.pack(expand = False, fill ='both')      
-
-        finallyBTN=tk.Button(self.sidebarFinallyFrame,font=fontHeader,text="Finally Function", command=self.fFinally)
+        finallyBTN=tk.Button(self.sidebarFinallyFrame,font=fontButtons,text="Finally",background='white',command=self.fFinally)
         finallyBTN.pack(expand = False, fill ='both')
 
 
-        # Save/Load Frame
-        self.sidebarFileFrame = tk.Frame(self.sidebarFrame)
-        self.sidebarFileFrame.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
-        self.sidebarFileFrame.pack(expand = False, fill ='both')  
-        self.sidebarFileFrame.rowconfigure((0,1),weight = 1,uniform='a')
-        self.sidebarFileFrame.columnconfigure(0,weight = 1)
 
-        readBTN=tk.Button(self.sidebarFileFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readBTN.grid(row = 0, column =0)
-        writeBTN=tk.Button(self.sidebarFileFrame,font=fontButtons,text="Save File", command=self.fSave)
-        writeBTN.grid(row = 1, column =0)
 
-        # COM Frame
-        self.sidebarCOMFRAME = tk.Frame(self.sidebarFrame)
-        self.sidebarCOMFRAME.config(background='white',pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
-        self.sidebarCOMFRAME.pack(expand = False, fill ='both')  
-        self.sidebarCOMFRAME.rowconfigure(0,weight = 1)
-        self.sidebarCOMFRAME.columnconfigure((0,1),weight = 1,uniform='a')
-        
-        global com
-        BAUD_RATE = 9600
+    # SideBar Setup
+        self.userSelection = tk.IntVar()
+        for i in range(len(masterName[0])):
+            self.groupFrame=tk.Frame(self.sidebarFrame)
+            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+            self.groupFrame.pack(expand = True , fill ='both')
+            self.groupFrame.rowconfigure(0,weight = 1)
+            self.groupFrame.columnconfigure((0),weight = 1)
+            
+            tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0,bg='white',font=fontGroups,text = masterName[1][i],fg='black',highlightbackground=outline_color,highlightthickness=1.5).grid(row = 0, column=0)
 
-        com=tk.StringVar(self)
-        com.set("COM1")
-        comSLCT=tk.OptionMenu(self.sidebarCOMFRAME,com,'COM1','COM2','COM3','COM4')
-        comSLCT.grid(row = 0, column =0)
-        comShowBTN=tk.Button(self.sidebarCOMFRAME,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        comShowBTN.grid(row = 0, column =1)
-        
-        
+
+      
 
     #PLOT
         self.plotFrame = tk.Frame(self.mainFrame)
-        self.plotFrame.grid(row = 2, column =0, sticky="news")
+        self.plotFrame.pack()
         self.plotFrame.configure(highlightbackground=outline_color,highlightthickness=10)
         fig = plt.Figure(facecolor="#c0c0c0") 
         global ax
         ax = fig.add_subplot(111) 
         global graph
         graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
-        graph.get_tk_widget().pack(side="top",fill='both',expand=True) 
+        graph.get_tk_widget().pack(fill='both',expand=True) 
         self.fShow()
         
 
@@ -224,12 +220,9 @@ class App(tk.Tk):
         print("Value of Serial Port STR is: "+SERIAL_PORT)
 
     def fShow(self):
-        index = self.userSelection1.get()
-        mainLab["text"]=masterName[2][index]
-        self.headerFrame.configure(bg=masterName[0][index])
-        self.plotFrame.configure(highlightcolor=masterName[0][index])
         i = self.userSelection.get()
         mainLab["text"]=masterName[2][i]
+        self.plotFrame.configure(highlightcolor=masterName[0][i])
         self.headerFrame.configure(bg=masterName[0][i])
         ax.cla()
         ax.set_xlabel(xAxis) 
@@ -243,14 +236,12 @@ class App(tk.Tk):
         t[i]=(np.arange(0, 20, .5))
         s[i]=(np.random.normal(mu, sigma, len(t[i])))
         m[i]=max(s[i])
-        #mLock[i]=[t[i].index(max(s[i])),m[i]]
-        print("MAX VALUE LIST M: "+f'{m}')
+        #print("MAX VALUE LIST M: "+f'{m}')
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
         ax.plot(t[i],s[i],color=masterName[0][i])
-        print(mLock[i][0])
         graph.draw() 
 
     def fQuit(self):
