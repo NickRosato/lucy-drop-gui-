@@ -8,6 +8,7 @@ from sys import platform
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
 import numpy as np
+import pandas as pd
 #import serial
 #import io
 
@@ -53,11 +54,12 @@ cG11=['#7CFC00','Lime']
 cG12=['#8B4513', 'Brown']
 cG13=['#000000', 'Black']
 cG14=['#616161', 'Grey']
+colorHex=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
+colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
 
 
 masterName=[[],[],[]]
-masterName[0]=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
-colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
+masterName[0]=colorName
 runTime=[[],[]]
 runForce=[[],[]]
 maxForce=[[],[]]
@@ -70,7 +72,8 @@ for x in range(len(masterName[0])):
     runForce[1].append([])
     maxForce[0].append([])
     maxForce[1].append([])
-  
+
+
 class App(tk.Tk):
     def __init__(self):  
         super().__init__()
@@ -217,7 +220,11 @@ class App(tk.Tk):
 
         fig = plt.Figure() 
         global ax
-        ax = fig.add_subplot(111) 
+        ax = fig.subplots() 
+        ax.cla()
+        ax.set_xlabel(xAxis) 
+        ax.set_ylabel(yAxis) 
+        ax.grid()
         global graph
         graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
         graph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -230,7 +237,11 @@ class App(tk.Tk):
 
         allFig = plt.Figure() 
         global allAX
-        allAX = allFig.add_subplot(111) 
+        allAX = allFig.subplots() 
+        allAX.cla()
+        allAX.set_xlabel(xAxis) 
+        allAX.set_ylabel(yAxis) 
+        allAX.grid()
         global allGraph
         allGraph = FigureCanvasTkAgg(allFig, master=self.allFrame) 
         allGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -238,11 +249,12 @@ class App(tk.Tk):
         self.rankFrame = tk.Frame(self.mainFrame)
         self.rankFrame.config(background='green',highlightbackground=outline_color,highlightthickness=1)
         self.rankFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
-        
+
            
         self.fShow()
         self.fMenu1()
 
+    #def fSort(self):
 
 
     def fShow(self):
