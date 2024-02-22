@@ -82,8 +82,8 @@ for x in range(len(colorHex)):
     runForce[1].append([])
     maxForce[0].append([])
     maxForce[1].append([])
-    groupName[0].append(['Group: '+f'{x+1} Trial 1'])
-    groupName[1].append(['Group: '+f'{x+1} Trial 2'])
+    groupName[0].append('Group: '+f'{x+1} Trial 1')
+    groupName[1].append('Group: '+f'{x+1} Trial 2')
 
 groupNameLegend=groupName[0]+groupName[1]
 #maxForceLegend=maxForce[0]+maxForce[0]
@@ -261,15 +261,51 @@ class App(tk.Tk):
         allGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
 
         self.rankFrame = tk.Frame(self.mainFrame)
-        self.rankFrame.config(background='green',highlightbackground=outline_color,highlightthickness=1)
+        self.rankFrame.config(highlightbackground=outline_color,highlightthickness=1)
         self.rankFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
-
-           
+        
+        rankFig = plt.Figure() 
+        global rankAX
+        rankAX = rankFig.subplots() 
+        rankAX.cla()
+        global rankGraph
+        rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
+        rankGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
+        
+        
         self.fShow()
         self.fMenu1()
 
-    #def fSort(self):
+        
+    def fMenu1(self):
+        self.plotFrame.tkraise()
+    def fMenu2(self):
+        self.allFrame.tkraise()
+    def fMenu3(self):
+        self.rankFrame.tkraise()
+        
+    def fDropper(self):
+        trl=self.trialSelection.get()
+        i = self.userSelection.get()
+        runTime[trl][i]=(np.arange(0, 20, 5))
+        runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
+        maxForce[trl][i]=max(runForce[trl][i])
+        self.fShow()
+        self.fShowAll()
+        self.fSort()
+    
+    def fSort(self):
+        groupNameLegend=groupName[0]+groupName[1]
+        maxForceLegend=maxForce[0]+maxForce[1]
+        rank= []
 
+
+        #for x in range(len(groupNameLegend)):
+            
+
+        #sorted()
+        
+        
     def fHeaderUpdate(self):
         i = self.userSelection.get()
         mainLab["text"]=masterName[1][i]
@@ -295,27 +331,6 @@ class App(tk.Tk):
             allAX.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
             allAX.plot(runTime[1][i],runForce[1][i],color=colorHex[i],linestyle='dashed')
         allGraph.draw()  
-    
-    def fMenu1(self):
-        self.plotFrame.tkraise()
-    def fMenu2(self):
-        self.allFrame.tkraise()
-    def fMenu3(self):
-        self.rankFrame.tkraise()
-        
-    def fDropper(self):
-        trl=self.trialSelection.get()
-        i = self.userSelection.get()
-        runTime[trl][i]=(np.arange(0, 20, 5))
-        runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
-        maxForce[trl][i]=max(runForce[trl][i])
-        maxForceLegend=maxForce[0]+maxForce[0]
-        self.fShow()
-        self.fShowAll()
-
-    def fFinally(self):
-        print("Finally function")
-        finallyPopUp()
 
     def fLoad(self):
         print("Load function")
@@ -341,7 +356,13 @@ class App(tk.Tk):
     def fQuit(self):
         exit()
 
-     
+class Ranking:
+    def __init__(self, name, maxScore):
+        self.name = name
+        self.maxScore = maxScore
+
+    def __repr__(self):
+        return repr((self.name, self.maxScore)) 
 
 if __name__ == "__main__":
     app=App()
