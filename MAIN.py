@@ -306,7 +306,7 @@ class App(tk.Tk):
     def fDropper(self):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
-        runTime[trl][i]=(np.arange(0, 100, 5))
+        runTime[trl][i]=(np.arange(0, 20, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
         maxForceLegend=maxForce[0]+maxForce[0]
