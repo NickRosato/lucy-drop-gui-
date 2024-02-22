@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+__author__ = "Nicholas Rosato"
+__copyright__ = "Copyright 2024, Collins Aerospace"
+__credits__ = ["Nicholas Rosato"]
+__version__ = "1.0.1a"
+__maintainer__ = "Nicholas Rosato"
+__email__ = "nicholas.rosato@collins.com"
+__status__ = "Alpha"
+
+
 import tkinter as tk
 #import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfile
@@ -29,7 +38,7 @@ fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
 yAxis="Force Gravity (g)"
 p_x = 0.1
-p_y = 0.2 
+p_y = 0.175 
 
 mu, sigma = 30, 5
 BAUD_RATE = 9600
@@ -58,21 +67,26 @@ colorHex=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0]
 colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
 
 
-masterName=[[],[],[]]
-masterName[0]=colorName
+masterName=[[],[]]
 runTime=[[],[]]
 runForce=[[],[]]
 maxForce=[[],[]]
-for x in range(len(masterName[0])):
-    masterName[1].append('Group: '+f'{x+1}') # Radio Button Name
-    masterName[2].append('('+f'{colorName[x]}' ') Group: '+f'{x+1} Settings') # Top Frame Header
+groupName = [[],[]]
+
+for x in range(len(colorHex)):
+    masterName[0].append('Group: '+f'{x+1}') # Radio Button Name
+    masterName[1].append('('+f'{colorName[x]}' ') Group: '+f'{x+1} Settings') # Top Frame Header
     runTime[0].append([])
     runTime[1].append([])
     runForce[0].append([])
     runForce[1].append([])
     maxForce[0].append([])
     maxForce[1].append([])
+    groupName[0].append(['Group: '+f'{x+1} Trial 1'])
+    groupName[1].append(['Group: '+f'{x+1} Trial 2'])
 
+groupNameLegend=groupName[0]+groupName[1]
+#maxForceLegend=maxForce[0]+maxForce[0]
 
 class App(tk.Tk):
     def __init__(self):  
@@ -85,8 +99,8 @@ class App(tk.Tk):
 
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()    
-        print(screen_height)
-        print(screen_width)
+        #print(screen_height)
+        #print(screen_width)
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
@@ -196,15 +210,15 @@ class App(tk.Tk):
 
     # SideBar Setup
         self.userSelection = tk.IntVar()
-        for i in range(len(masterName[0])):
+        for i in range(len(colorHex)):
             self.groupFrame=tk.Frame(self.sidebarFrame)
-            self.groupFrame.config(background = masterName[0][i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+            self.groupFrame.config(bg=colorHex[i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
             self.groupFrame.pack(expand = True , fill ='both')
             self.groupFrame.rowconfigure(0,weight = 1)
             self.groupFrame.columnconfigure((0),weight = 1)
             
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
-                            bg=btnColor,font=fontGroups,text = masterName[1][i],fg='black',highlightbackground=outline_color,highlightthickness=2,padx=5,pady=5).grid(row = 0, column=0)
+                            bg=btnColor,font=fontGroups,text = masterName[0][i],fg='black',highlightbackground=outline_color,highlightthickness=2,padx=5,pady=5).grid(row = 0, column=0)
 
       
 
@@ -256,18 +270,20 @@ class App(tk.Tk):
 
     #def fSort(self):
 
+    def fHeaderUpdate(self):
+        i = self.userSelection.get()
+        mainLab["text"]=masterName[1][i]
+        self.headerFrame.configure(bg=colorHex[i])
+        return i
 
     def fShow(self):
-        #trl=self.trialSelection.get()
-        i = self.userSelection.get()
-        mainLab["text"]=masterName[2][i]
-        self.headerFrame.configure(bg=masterName[0][i])
+        i = self.fHeaderUpdate()
         ax.cla()
         ax.set_xlabel(xAxis) 
         ax.set_ylabel(yAxis) 
         ax.grid()
-        ax.plot(runTime[0][i],runForce[0][i],color=masterName[0][i])
-        ax.plot(runTime[1][i],runForce[1][i],color=masterName[0][i],linestyle='dashed')
+        ax.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
+        ax.plot(runTime[1][i],runForce[1][i],color=colorHex[i],linestyle='dashed')
         graph.draw() 
     
     def fShowAll(self):
@@ -275,9 +291,9 @@ class App(tk.Tk):
         allAX.set_xlabel(xAxis) 
         allAX.set_ylabel(yAxis) 
         allAX.grid()
-        for i in range(len(masterName[0])):
-            allAX.plot(runTime[0][i],runForce[0][i],color=masterName[0][i])
-            allAX.plot(runTime[1][i],runForce[1][i],color=masterName[0][i],linestyle='dashed')
+        for i in range(len(colorHex)):
+            allAX.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
+            allAX.plot(runTime[1][i],runForce[1][i],color=colorHex[i],linestyle='dashed')
         allGraph.draw()  
     
     def fMenu1(self):
@@ -293,6 +309,7 @@ class App(tk.Tk):
         runTime[trl][i]=(np.arange(0, 100, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
+        maxForceLegend=maxForce[0]+maxForce[0]
         self.fShow()
         self.fShowAll()
 
