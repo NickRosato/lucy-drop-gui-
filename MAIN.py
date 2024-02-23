@@ -297,13 +297,13 @@ class App(tk.Tk):
     def fSort(self):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
-        rank= []
-
-
-        #for x in range(len(groupNameLegend)):
-            
-
-        #sorted()
+        
+        groupObjects = []
+        
+        for n in range(len(groupNameLegend)):
+            groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
+        print(groupObjects)
+        #groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore)
         
         
     def fHeaderUpdate(self):
