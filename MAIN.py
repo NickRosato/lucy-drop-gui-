@@ -80,8 +80,8 @@ for x in range(len(colorHex)):
     runTime[1].append([])
     runForce[0].append([])
     runForce[1].append([])
-    maxForce[0].append([])
-    maxForce[1].append([])
+    maxForce[0].append(0)
+    maxForce[1].append(0)
     groupName[0].append('Group: '+f'{x+1} Trial 1')
     groupName[1].append('Group: '+f'{x+1} Trial 2')
 
@@ -290,6 +290,7 @@ class App(tk.Tk):
         runTime[trl][i]=(np.arange(0, 20, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
         maxForce[trl][i]=max(runForce[trl][i])
+        maxForce[trl][i] = round(maxForce[trl][i].item(), 2)
         self.fShow()
         self.fShowAll()
         self.fSort()
@@ -298,12 +299,15 @@ class App(tk.Tk):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
         
+
         groupObjects = []
         
         for n in range(len(groupNameLegend)):
-            groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
-        print(groupObjects)
-        #groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore)
+            if not maxForceLegend[n] ==0:
+                groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
+        groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore) 
+        print(groupSorted)
+
         
         
     def fHeaderUpdate(self):
