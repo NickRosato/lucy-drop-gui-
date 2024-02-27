@@ -297,15 +297,28 @@ class App(tk.Tk):
     def fSort(self):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
-        
 
-        groupObjects = []
+                  
+        maxForceSorted,groupNameSorted =zip(*sorted(zip(maxForceLegend,groupNameLegend)))
         
-        for n in range(len(groupNameLegend)):
-            if not maxForceLegend[n] ==0:
-                groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
-        groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore) 
-        print(groupSorted)
+        print(maxForceSorted)
+                
+        #for n in range(len(groupNameLegend)):
+        #    if not maxForceLegend[n] ==0:
+        #        print(groupNameSorted[n] + " "+ f'{maxForceSorted[n]}')
+        #print(maxForceSorted)
+
+        #groupObjects = []
+        
+        #for n in range(len(groupNameLegend)):
+        #    if not maxForceLegend[n] ==0:
+        #        groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
+        #groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore) 
+        #test= groupSorted[0]
+        
+        
+        
+        #print(test)
 
         
         
@@ -359,13 +372,6 @@ class App(tk.Tk):
     def fQuit(self):
         exit()
 
-class Ranking:
-    def __init__(self, name, maxScore):
-        self.name = name
-        self.maxScore = maxScore
-
-    def __repr__(self):
-        return repr((self.name, self.maxScore)) 
 
 if __name__ == "__main__":
     app=App()
