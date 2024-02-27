@@ -297,30 +297,19 @@ class App(tk.Tk):
     def fSort(self):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
-
-                  
-        maxForceSorted,groupNameSorted =zip(*sorted(zip(maxForceLegend,groupNameLegend)))
+        groupNameSorted=[]
+        maxForceSorted=[]
+        for n in range(len(groupNameLegend)):
+            if not maxForceLegend[n] ==0:
+                groupNameSorted.append(groupNameLegend[n])
+                maxForceSorted.append(maxForceLegend[n])
+        maxForceSorted,groupNameSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted)))
+        print(groupNameSorted[0])
         
-        print(maxForceSorted)
-                
-        #for n in range(len(groupNameLegend)):
-        #    if not maxForceLegend[n] ==0:
-        #        print(groupNameSorted[n] + " "+ f'{maxForceSorted[n]}')
-        #print(maxForceSorted)
-
-        #groupObjects = []
-        
-        #for n in range(len(groupNameLegend)):
-        #    if not maxForceLegend[n] ==0:
-        #        groupObjects.append(Ranking(groupNameLegend[n],maxForceLegend[n]))    
-        #groupSorted= sorted(groupObjects, key=lambda Ranking: Ranking.maxScore) 
-        #test= groupSorted[0]
-        
-        
-        
-        #print(test)
-
-        
+        print("---- RANKING ----")
+        for m in range(len(groupNameSorted)):
+                print("Rank #"+f'{m+1}' ": "+ f'{groupNameSorted[m]}' + " = " +f'{maxForceSorted[m]}')
+                       
         
     def fHeaderUpdate(self):
         i = self.userSelection.get()
