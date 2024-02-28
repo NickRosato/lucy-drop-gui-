@@ -37,10 +37,10 @@ fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
 yAxis="Force Gravity (g)"
-p_x = 0.1
+p_x = 0.09
 p_y = 0.175 
 
-mu, sigma = 30, 5
+mu, sigma = 10, 1
 BAUD_RATE = 9600
 BYTES_RECORDED = 1000
 SERIAL_PORT="COM3"
@@ -93,7 +93,7 @@ class App(tk.Tk):
         super().__init__()
     #Window Builder
         self.title('Lucy Drop Tower')
-        window_width = 1920-200
+        window_width = 1920-100
         window_height = 1080-200
         self.geometry(f'{window_width}x{window_height}')
 
@@ -105,7 +105,7 @@ class App(tk.Tk):
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         #self.eval('tk::PlaceWindow . center')
-        self.tk.call('tk', 'scaling', 1.25)
+        self.tk.call('tk', 'scaling', 1.5)
 
         if platform == "linux" or platform == "linux2":
             # linux
@@ -169,7 +169,8 @@ class App(tk.Tk):
         writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
         writebtnColor.grid(row = 1, column =1)
 
-
+        superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
+        superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
 
     # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
@@ -190,8 +191,7 @@ class App(tk.Tk):
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
-        #clearBTN=tk.Button(self.topRunFrame,font=fontGroups,text="Clear Group Data", command=self.fClear)
-        #clearBTN.grid(row = 3, column =0,sticky='ew',columnspan=2)
+        
     # Top Finally Frame
         self.topMenuFrame = tk.Frame(self.topFrame)
         self.topMenuFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
@@ -212,13 +212,13 @@ class App(tk.Tk):
         self.userSelection = tk.IntVar()
         for i in range(len(colorHex)):
             self.groupFrame=tk.Frame(self.sidebarFrame)
-            self.groupFrame.config(bg=colorHex[i],pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
+            self.groupFrame.config(bg=colorHex[i],pady=2,padx=2,highlightbackground=outline_color,highlightthickness=2)
             self.groupFrame.pack(expand = True , fill ='both')
             self.groupFrame.rowconfigure(0,weight = 1)
             self.groupFrame.columnconfigure((0),weight = 1)
             
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
-                            bg=btnColor,font=fontGroups,text = masterName[0][i],fg='black',highlightbackground=outline_color,highlightthickness=2,padx=5,pady=5).grid(row = 0, column=0)
+                            bg=btnColor,font=fontGroups,text = masterName[0][i],fg='black',padx=5,pady=5).grid(row = 0, column=0)
 
       
 
@@ -295,6 +295,18 @@ class App(tk.Tk):
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
 
+    def fSuperDropper(self):
+        
+        for trl in range(2):
+            for i in range(len(colorHex)):
+                runTime[trl][i]=(np.arange(0, 20, 5))
+                runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
+                maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
+                self.fShow()
+                self.fShowAll()
+                nameSorted,forceSorted,colorSorted= self.fSort()
+                self.fRankShow(nameSorted,forceSorted,colorSorted)
+    
     def fSort(self):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
@@ -313,7 +325,7 @@ class App(tk.Tk):
         
         #print("---- RANKING ----")
         for m in range(len(groupNameSorted)):
-                rankNameSorted[m]="Rank #"+f'{m+1}'+" " +f'{groupNameSorted[m]}'
+                rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
 
         return rankNameSorted, maxForceSorted,colorSorted            
         
@@ -347,6 +359,8 @@ class App(tk.Tk):
         rankAX.cla()
         for p in range(len(names)):
             rankAX.barh(names[p],scores[p],color=color[p])
+            
+        rankAX.invert_yaxis()
         rankGraph.draw()
 
 
