@@ -292,24 +292,30 @@ class App(tk.Tk):
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
         self.fShow()
         self.fShowAll()
-        self.fSort()
-    
+        nameSorted,forceSorted,colorSorted= self.fSort()
+        self.fRankShow(nameSorted,forceSorted,colorSorted)
+
     def fSort(self):
         groupNameLegend=groupName[0]+groupName[1]
         maxForceLegend=maxForce[0]+maxForce[1]
+        colorLegend= colorHex+colorHex
         groupNameSorted=[]
         maxForceSorted=[]
+        colorSorted=[]
+        rankNameSorted=[]
         for n in range(len(groupNameLegend)):
             if not maxForceLegend[n] ==0:
                 groupNameSorted.append(groupNameLegend[n])
                 maxForceSorted.append(maxForceLegend[n])
-        maxForceSorted,groupNameSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted)))
-        print(groupNameSorted[0])
+                colorSorted.append(colorLegend[n])
+                rankNameSorted.append([])
+        maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
         
-        print("---- RANKING ----")
+        #print("---- RANKING ----")
         for m in range(len(groupNameSorted)):
-                print("Rank #"+f'{m+1}' ": "+ f'{groupNameSorted[m]}' + " = " +f'{maxForceSorted[m]}')
-                       
+                rankNameSorted[m]="Rank #"+f'{m+1}'+" " +f'{groupNameSorted[m]}' + " = " +f'{maxForceSorted[m]}'
+
+        return groupNameSorted, maxForceSorted,colorSorted            
         
     def fHeaderUpdate(self):
         i = self.userSelection.get()
@@ -337,6 +343,13 @@ class App(tk.Tk):
             allAX.plot(runTime[1][i],runForce[1][i],color=colorHex[i],linestyle='dashed')
         allGraph.draw()  
 
+    def fRankShow(self,names,scores,color):
+        rankAX.cla()
+        for p in range(len(names)):
+            rankAX.barh(names[p],scores[p],color=color[p])
+        rankGraph.draw()
+
+
     def fLoad(self):
         print("Load function")
         filename=askopenfile()
@@ -352,11 +365,6 @@ class App(tk.Tk):
         print("Value of Serial Port STR is: "+SERIAL_PORT)
 
 
-    def fClear(self):
-        runTime[0][1].clear
-        runForce[0][1].clear
-        self.fShow()
-        self.fShowAll()
 
     def fQuit(self):
         exit()
