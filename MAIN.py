@@ -313,9 +313,9 @@ class App(tk.Tk):
         
         #print("---- RANKING ----")
         for m in range(len(groupNameSorted)):
-                rankNameSorted[m]="Rank #"+f'{m+1}'+" " +f'{groupNameSorted[m]}' + " = " +f'{maxForceSorted[m]}'
+                rankNameSorted[m]="Rank #"+f'{m+1}'+" " +f'{groupNameSorted[m]}'
 
-        return groupNameSorted, maxForceSorted,colorSorted            
+        return rankNameSorted, maxForceSorted,colorSorted            
         
     def fHeaderUpdate(self):
         i = self.userSelection.get()
