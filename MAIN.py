@@ -16,8 +16,10 @@ import sys
 from sys import platform
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import pandas as pd
+import math
 #import serial
 #import io
 
@@ -27,6 +29,7 @@ import pandas as pd
 main_color = '#FFFFFF'
 header_color = '#000000'
 sidebar_color = "#FFFFFF"
+figure_color= "#F0F0F0"
 outline_color = '#000000'
 frame_color = '#c0c0c0'
 btnColor = '#cccccc'
@@ -105,7 +108,7 @@ class App(tk.Tk):
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         #self.eval('tk::PlaceWindow . center')
-        self.tk.call('tk', 'scaling', 1.5)
+        #self.tk.call('tk', 'scaling', 1.5)
 
         if platform == "linux" or platform == "linux2":
             # linux
@@ -223,16 +226,10 @@ class App(tk.Tk):
       
 
     # Main Menu Frames
-        self.mainFrame = tk.Frame(self)
-        self.mainFrame.config(background='black',highlightbackground=outline_color,highlightthickness=1,pady=5,padx = 5)
-        self.mainFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
+        self.plotFrame = tk.Frame(self)
+        self.plotFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
-
-        self.plotFrame = tk.Frame(self.mainFrame)
-        self.plotFrame.config(highlightbackground=outline_color,highlightthickness=1)
-        self.plotFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
-
-        fig = plt.Figure() 
+        fig = plt.Figure(facecolor=figure_color) 
         global ax
         ax = fig.subplots() 
         ax.cla()
@@ -245,11 +242,10 @@ class App(tk.Tk):
         
         
 
-        self.allFrame = tk.Frame(self.mainFrame)
-        self.allFrame.config(background='red',highlightbackground=outline_color,highlightthickness=1)
-        self.allFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.allFrame = tk.Frame(self)
+        self.allFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
-        allFig = plt.Figure() 
+        allFig = plt.Figure(facecolor=figure_color) 
         global allAX
         allAX = allFig.subplots() 
         allAX.cla()
@@ -260,17 +256,17 @@ class App(tk.Tk):
         allGraph = FigureCanvasTkAgg(allFig, master=self.allFrame) 
         allGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        self.rankFrame = tk.Frame(self.mainFrame)
-        self.rankFrame.config(highlightbackground=outline_color,highlightthickness=1)
-        self.rankFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.rankFrame = tk.Frame(self)
+        self.rankFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
-        rankFig = plt.Figure() 
+        rankFig = plt.Figure(facecolor=figure_color)
         global rankAX
-        rankAX = rankFig.subplots() 
+        rankAX = rankFig.subplots()
         rankAX.cla()
         global rankGraph
         rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
-        rankGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
+        rankGraph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
         
         
         self.fShow()
@@ -357,9 +353,19 @@ class App(tk.Tk):
 
     def fRankShow(self,names,scores,color):
         rankAX.cla()
+
+
+        low = min(scores)
+        high = max(scores)
+
+        print(low)
+        print(high)
+
         for p in range(len(names)):
             rankAX.barh(names[p],scores[p],color=color[p])
-            
+        
+        #rankAX.xlim([math.ceil(low-0.5*(high-low)), math.ceil(high+0.5*(high-low))])
+
         rankAX.invert_yaxis()
         rankGraph.draw()
 
