@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 __author__ = "Nicholas Rosato"
 __copyright__ = "Copyright 2024, Collins Aerospace"
-__credits__ = ["Nicholas Rosato"]
-__version__ = "1.0.1a"
+__credits__ = ["Nicholas Rosato","Stephen Kridel"]
 __maintainer__ = "Nicholas Rosato"
 __email__ = "nicholas.rosato@collins.com"
-__status__ = "Alpha"
 
 
 import tkinter as tk
@@ -283,8 +281,16 @@ class App(tk.Tk):
     def fDropper(self):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
+        
+        
+        
+        #Sensor Code Goes here
         runTime[trl][i]=(np.arange(0, 20, 5))
         runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
+        
+        
+        
+        
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
         self.fShow()
         self.fShowAll()
@@ -358,8 +364,8 @@ class App(tk.Tk):
         low = min(scores)
         high = max(scores)
 
-        print(low)
-        print(high)
+        #print(low)
+        #print(high)
 
         for p in range(len(names)):
             rankAX.barh(names[p],scores[p],color=color[p])
