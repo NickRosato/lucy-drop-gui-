@@ -47,7 +47,7 @@ void loop(void)
   sensors_event_t event;
   accel.getEvent(&event);
   
-  Serial.println(event.acceleration.z/9.82);
+  Serial.println(event.acceleration.z/9.81);
 
-  delay(1);
+  delay(.1);
 }
