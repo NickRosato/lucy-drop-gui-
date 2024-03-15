@@ -42,10 +42,18 @@ p_x = 0.09
 p_y = 0.175 
 
 mu, sigma = 10, 1
-BAUD_RATE = 9600
+
+
+
+
+BAUD_RATE = 115200
 BYTES_RECORDED = 1000
-SERIAL_PORT="COM3"
-#5 to 40 Hz band pass filter as Liz
+SERIAL_PORT="COM4"
+
+
+ser = ser.Serial()
+ser.baudrate = BAUD_RATE
+ser.port = SERIAL_PORT
 
 #filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
 
@@ -282,13 +290,30 @@ class App(tk.Tk):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
         
-        
-        
+        print('Ready...')##countdown
+        print(SERIAL_PORT)
+
+        ser.open()
+        recorded_buffer = ser.read(100)
+        ser.close()
+
+        output = recorded_buffer.decode()
+        newOutput = output.splitlines()
+        newNewOutput=np.array(newOutput,dtype=np.float32)
+
+
         #Sensor Code Goes here
-        runTime[trl][i]=(np.arange(0, 20, 5))
-        runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
-        
-        
+
+
+
+        runForce[trl][i]=newNewOutput
+        print(runForce)
+        runTime[trl][i]=(np.arange(0, len(runForce[trl][i]), 5))
+
+
+        print('----------------------')
+
+        print(runTime)
         
         
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
@@ -386,10 +411,10 @@ class App(tk.Tk):
         filename=asksaveasfile()
         
     def fComUpdate(self):
-        SERIAL_PORT = str(com.get())
+        #SERIAL_PORT = str(com.get())
         print("Value Selected is: "+com.get())
-        print("Value of Serial Port STR is: "+SERIAL_PORT)
-
+        #print("Value of Serial Port STR is: "+SERIAL_PORT)
+        #ser.port = SERIAL_PORT
 
 
     def fQuit(self):

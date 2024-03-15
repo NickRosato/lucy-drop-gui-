@@ -1,9 +1,10 @@
 import serial as ser
 import io
+import numpy as np
 
 # STATIC VARIABLES
-BAUD_RATE = 9600
-SERIAL_PORT = 'COM3'
+BAUD_RATE = 115200
+SERIAL_PORT = 'COM4'
 BYTES_RECORDED = 2000
 
 # setting up pyserial
@@ -13,6 +14,7 @@ ser.port = SERIAL_PORT
 
 # sio needed if decoding while capturing data, sio wraps ser class
 # sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser), None, None, '\r\n')
+
 
 # currently data captured in buffer is likely wrong, need to look into emptying buffer right before or after input statement
 
@@ -24,7 +26,14 @@ def collect_data():
   recorded_buffer = ser.read(BYTES_RECORDED)
   # changes data from type byte to type string and removes EOL characters
   output = recorded_buffer.decode()
-  print(output)
+  newOutput = output.splitlines()
+  newNewOutput=np.array(newOutput,dtype=np.float32)
+  #output = recorded_buffer.decode()
+  print('----------------------')
+  print(newNewOutput)
+  print(type(newNewOutput))
+  print(type(newNewOutput[0]))
+  print(np.shape(newNewOutput))
 
 collect_data()
 
