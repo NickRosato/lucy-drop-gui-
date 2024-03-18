@@ -1,19 +1,36 @@
+from serial.tools import list_ports
 import serial
 import time
-# set up the serial line
-ser = serial.Serial('COM4', 115200)
-time.sleep(2)
+import csv
 
-# Read and record the data
-data =[]                       # empty list to store the data
-for i in range(50):
-	b = ser.readline()         # read a byte string
-	string_n = b.decode()  # decode byte string into Unicode  
-	string = string_n.rstrip() # remove \n and \r
-	flt = float(string)        # convert string to float
-	print(flt)
-	data.append(flt)           # add to the end of data list
-	time.sleep(0.1)            # wait (sleep) 0.1 seconds
+ports = list_ports.comports()
+for port in ports: print(port)
 
-ser.close()
+f = open('data.csv','w',newline='')
+f.truncate()
 
+serialCom=serial.Serial('COM3',115200)
+print("Flush")
+serialCom.setDTR(False)
+time.sleep(1)
+serialCom.flushInput()
+serialCom.setDTR(True)
+print("Start")
+kmax=500
+for k in range(kmax):
+    try:
+        s_bytes=serialCom.readline()
+        decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
+        
+        if k==0:
+            values= decode_bytes.split(",")
+        else:
+            values = [float(x) for x in decode_bytes.split(",")]
+        #print(values)
+
+        writer = csv.writer(f,delimiter =',')
+        writer.writerow(values)
+    except:
+        print("Error: Line was not recorded")
+
+f.close()

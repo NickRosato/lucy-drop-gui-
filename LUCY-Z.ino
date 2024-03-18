@@ -23,7 +23,9 @@ Adafruit_ADXL343 accel = Adafruit_ADXL343(12345);
 void setup(void)
 {
   Serial.begin(115200);
-
+  accel.begin();
+  delay(100);
+  
   /* Initialise the sensor */
   if(!accel.begin())
   {
@@ -32,12 +34,20 @@ void setup(void)
     while(1);
   }
 
-  /* Set the range to whatever is appropriate for your project */
+  // Set the range to whatever is appropriate for your project 
   accel.setRange(ADXL343_RANGE_16_G);
 
   // accel.setRange(ADXL343_RANGE_8_G);
   // accel.setRange(ADXL343_RANGE_4_G);
   // accel.setRange(ADXL343_RANGE_2_G);
+  Serial.print("Time (s)");
+  Serial.print(',');
+  Serial.print("X (m/s^2)");
+  Serial.print(',');
+  Serial.print("Y (m/s^2)");
+  Serial.print(',');
+  Serial.println("Z (m/s^2)");
+
 }
 
 void loop(void)
@@ -45,7 +55,19 @@ void loop(void)
   /* Get a new sensor event */
   sensors_event_t event;
   accel.getEvent(&event);
-  float sensorData = event.acceleration.z;
-  Serial.println(sensorData);
+  float x = event.acceleration.x;
+  float y = event.acceleration.y;
+  float z = event.acceleration.z;
+  float t = ((float) millis())/1000.0;
+
+  Serial.print(t,3);
+  Serial.print(',');
+  Serial.print(x,3);
+  Serial.print(',');
+  Serial.print(y,3);
+  Serial.print(',');
+  Serial.println(z,3);
+  
+
   
 }

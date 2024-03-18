@@ -18,9 +18,13 @@ from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import pandas as pd
 import math
-import serial as ser
-import io
+from serial.tools import list_ports
+import serial
+import time
+import csv
 
+#ports = list_ports.comports()
+#for port in ports: print(port)
 
 
 #style setup
@@ -44,18 +48,9 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-
-
+dropTime=2000
 BAUD_RATE = 115200
-BYTES_RECORDED = 1000
-SERIAL_PORT="COM4"
-
-
-ser = ser.Serial()
-ser.baudrate = BAUD_RATE
-ser.port = SERIAL_PORT
-
-#filepath = "/home/LucyDropTower/Documents/lucy-drop-gui-/"
+SERIAL_PORT="COM3"
 
 
 cG1=['#FF0000','Red']
@@ -100,7 +95,7 @@ groupNameLegend=groupName[0]+groupName[1]
 class App(tk.Tk):
     def __init__(self):  
         super().__init__()
-    #Window Builder
+        #Window Builder
         self.title('Lucy Drop Tower')
         window_width = 1920-100
         window_height = 1080-200
@@ -131,13 +126,13 @@ class App(tk.Tk):
             self.minsize(window_width,window_height)
 
 
-    #Macros
+        #Macros
         self.bind("<Escape>", lambda command: exit())
         self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         
 
 
-    #Frame Builder
+        #Frame Builder
         self.sidebarFrame = tk.Frame(self)
         self.sidebarFrame.config(highlightbackground=outline_color,highlightthickness=1,pady=1,padx=5)
         self.sidebarFrame.place(relx=0, rely=0, relwidth=p_x, relheight=1)
@@ -156,7 +151,7 @@ class App(tk.Tk):
         self.topFrame.columnconfigure(2,weight = 1,uniform='a')
 
 
-    # Top Settings Frame
+        # Top Settings Frame
         self.topSettingsFrame = tk.Frame(self.topFrame)
         self.topSettingsFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
@@ -181,7 +176,7 @@ class App(tk.Tk):
         superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
         superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
 
-    # Top Run Frame
+        # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
         self.topRunFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topRunFrame.grid(row = 0, column =1,sticky='news')
@@ -201,7 +196,7 @@ class App(tk.Tk):
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
 
         
-    # Top Finally Frame
+        # Top Finally Frame
         self.topMenuFrame = tk.Frame(self.topFrame)
         self.topMenuFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topMenuFrame.grid(row = 0, column =2,sticky='news') 
@@ -217,7 +212,7 @@ class App(tk.Tk):
                         text=' Show Ranking ',font=fontGroups,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
 
-    # SideBar Setup
+        # SideBar Setup
         self.userSelection = tk.IntVar()
         for i in range(len(colorHex)):
             self.groupFrame=tk.Frame(self.sidebarFrame)
@@ -231,7 +226,7 @@ class App(tk.Tk):
 
       
 
-    # Main Menu Frames
+        # Main Menu Frames
         self.plotFrame = tk.Frame(self)
         self.plotFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
 
@@ -273,11 +268,8 @@ class App(tk.Tk):
         rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
         rankGraph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-        
-        
         self.fShow()
         self.fMenu1()
-
         
     def fMenu1(self):
         self.plotFrame.tkraise()
@@ -290,42 +282,48 @@ class App(tk.Tk):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
         
-        print('Ready...')##countdown
-        print(SERIAL_PORT)
-
-        ser.open()
-        recorded_buffer = ser.read(BYTES_RECORDED)
-        ser.close()
-
-        output = recorded_buffer.decode()
-        print(output)
-        print('----------------------')
-        newOutput = output.splitlines()
-        newNewOutput=np.array(newOutput,dtype=np.float32)
-        print(newNewOutput)
-
-        #Sensor Code Goes here
-
-
-
-        runForce[trl][i]=newNewOutput
-        #print(runForce[trl][i])
-
-        print('----------------------')
-
-        runTime[trl][i]=(np.arange(0, len(runForce[trl][i]), 5))
-
-
-        print('----------------------')
-
-        #print(runTime)
-        
-        
+        self.fFileWriter()
+        data=pd.read_csv("data.csv")
+        D=data.to_numpy()
+        t=D[:,0]
+        x=D[:,1]
+        y=D[:,2]
+        z=D[:,3] /9.81 
+        runForce[trl][i]=z
+        runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
+        
         self.fShow()
         self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
+
+    def fFileWriter(self):
+        f = open('data.csv','w',newline='')
+        f.truncate()
+
+        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+        serialCom.setDTR(False)
+        time.sleep(1)
+        serialCom.flushInput()
+        serialCom.setDTR(True)
+        
+        for k in range(dropTime):
+            try:
+                s_bytes=serialCom.readline()
+                decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
+                
+                if k==0:
+                    values= decode_bytes.split(",")
+                else:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                #print(values)
+
+                writer = csv.writer(f,delimiter =',')
+                writer.writerow(values)
+            except:
+                print("Error: Line was not recorded")
+        f.close()
 
     def fSuperDropper(self):
         
