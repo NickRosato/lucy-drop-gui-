@@ -291,7 +291,7 @@ class App(tk.Tk):
         z=D[:,3] /9.81 
         runForce[trl][i]=z
         runTime[trl][i]=t
-        maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
+        maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
         self.fShow()
         self.fShowAll()
