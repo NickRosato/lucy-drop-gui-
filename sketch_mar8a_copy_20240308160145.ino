@@ -34,7 +34,6 @@ void setup(void)
 
   /* Set the range to whatever is appropriate for your project */
   accel.setRange(ADXL343_RANGE_16_G);
-  //accel.setDateRate(ADXL343_DATARATE_100_HZ);
 
   // accel.setRange(ADXL343_RANGE_8_G);
   // accel.setRange(ADXL343_RANGE_4_G);
@@ -46,5 +45,7 @@ void loop(void)
   /* Get a new sensor event */
   sensors_event_t event;
   accel.getEvent(&event);
-  Serial.print(event.acceleration.z/9.81);
+  float sensorData = event.acceleration.z;
+  Serial.println(sensorData);
+  
 }

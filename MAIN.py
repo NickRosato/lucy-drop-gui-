@@ -294,26 +294,31 @@ class App(tk.Tk):
         print(SERIAL_PORT)
 
         ser.open()
-        recorded_buffer = ser.read(100)
+        recorded_buffer = ser.read(BYTES_RECORDED)
         ser.close()
 
         output = recorded_buffer.decode()
+        print(output)
+        print('----------------------')
         newOutput = output.splitlines()
         newNewOutput=np.array(newOutput,dtype=np.float32)
-
+        print(newNewOutput)
 
         #Sensor Code Goes here
 
 
 
         runForce[trl][i]=newNewOutput
-        print(runForce)
+        #print(runForce[trl][i])
+
+        print('----------------------')
+
         runTime[trl][i]=(np.arange(0, len(runForce[trl][i]), 5))
 
 
         print('----------------------')
 
-        print(runTime)
+        #print(runTime)
         
         
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)

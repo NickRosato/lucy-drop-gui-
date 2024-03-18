@@ -19,7 +19,7 @@ ser.port = SERIAL_PORT
 # currently data captured in buffer is likely wrong, need to look into emptying buffer right before or after input statement
 
 def collect_data():
-  input('Press ENTER when you are ready to collect data...')
+  #input('Press ENTER when you are ready to collect data...')
   print('Ready...')##countdown
   ser.open()
   print('Start...')##greenlight
@@ -31,9 +31,15 @@ def collect_data():
   #output = recorded_buffer.decode()
   print('----------------------')
   print(newNewOutput)
+  print('----------------------')
+
   print(type(newNewOutput))
+  print('----------------------')
+
   print(type(newNewOutput[0]))
-  print(np.shape(newNewOutput))
+  print('----------------------')
+  print(newNewOutput[0])
+  #print(np.shape(newNewOutput))
 
 collect_data()
 
