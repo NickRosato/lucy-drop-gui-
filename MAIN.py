@@ -50,7 +50,7 @@ mu, sigma = 10, 1
 
 dropTime=2000
 BAUD_RATE = 115200
-SERIAL_PORT="COM3"
+SERIAL_PORT="COM4"
 
 
 cG1=['#FF0000','Red']
@@ -166,10 +166,10 @@ class App(tk.Tk):
         comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
         comSLCT.grid(row = 0, column =0)
         comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        comShowbtnColor.grid(row = 0, column =1)
+        comShowbtnColor.grid(row = 1, column =0)
         #Save/Load
         readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readbtnColor.grid(row = 1, column =0)
+        readbtnColor.grid(row = 0, column =1)
         writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
         writebtnColor.grid(row = 1, column =1)
 
@@ -285,10 +285,11 @@ class App(tk.Tk):
         self.fFileWriter()
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
+        print(data)
         t=D[:,0]
         x=D[:,1]
         y=D[:,2]
-        z=D[:,3] /9.81 
+        z=D[:,3] 
         runForce[trl][i]=z
         runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
@@ -304,7 +305,7 @@ class App(tk.Tk):
 
         serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
         serialCom.setDTR(False)
-        time.sleep(1)
+        time.sleep(.5)
         serialCom.flushInput()
         serialCom.setDTR(True)
         
