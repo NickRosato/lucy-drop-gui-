@@ -41,7 +41,7 @@ fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
-yAxis="Force Gravity (g)"
+yAxis="Acceleration (m/s^2)"
 p_x = 0.09
 p_y = 0.175 
 
@@ -159,14 +159,13 @@ class App(tk.Tk):
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
         
         
-        global com
-        BAUD_RATE = 9600
-        com=tk.StringVar(self)
-        com.set("COM1")
-        comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
-        comSLCT.grid(row = 0, column =0)
-        comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        comShowbtnColor.grid(row = 1, column =0)
+
+        #com=tk.StringVar(self)
+        #com.set("COM1")
+        #comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
+        #comSLCT.grid(row = 0, column =0)
+        #comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
+        #comShowbtnColor.grid(row = 1, column =0)
         #Save/Load
         readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
         readbtnColor.grid(row = 0, column =1)
