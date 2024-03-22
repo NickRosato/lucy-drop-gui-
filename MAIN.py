@@ -312,6 +312,7 @@ class App(tk.Tk):
         time.sleep(.05)
         serialCom.flushInput()
         serialCom.setDTR(True)
+        values = []
         for k in range(dropTime):
             try:
                 s_bytes=serialCom.readline()
@@ -323,6 +324,7 @@ class App(tk.Tk):
                     self.topSettingsFrame.update_idletasks()
                 elif round(k/dropTime*100) %5 ==0:
                     values = [float(x) for x in decode_bytes.split(",")]
+                    #print(values[0])
                     var.set(f'{round(k/dropTime*100)}'+'%')
                     self.topSettingsFrame.update_idletasks()
                 else:
@@ -334,7 +336,7 @@ class App(tk.Tk):
         f.close()
         var.set("Stopped - Data Capture")
 
-
+    
     def fSuperDropper(self):
         
         for trl in range(2):
