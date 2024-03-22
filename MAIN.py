@@ -309,7 +309,7 @@ class App(tk.Tk):
 
         serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
         serialCom.setDTR(False)
-        time.sleep(.1)
+        time.sleep(.05)
         serialCom.flushInput()
         serialCom.setDTR(True)
         for k in range(dropTime):
@@ -327,8 +327,6 @@ class App(tk.Tk):
                     self.topSettingsFrame.update_idletasks()
                 else:
                     values = [float(x) for x in decode_bytes.split(",")]
-                    #var.set(f'{round(k/dropTime*100)}'+'%')
-                    #self.topSettingsFrame.update_idletasks()
                 writer = csv.writer(f,delimiter =',')
                 writer.writerow(values)
             except:
