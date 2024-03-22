@@ -48,7 +48,7 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-dropTime=2000
+dropTime=1500
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
 
@@ -158,7 +158,12 @@ class App(tk.Tk):
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
         
-        
+        global readOut
+        global var
+        var = tk.StringVar()
+        var.set("Waiting for Run")
+        readOut = tk.Label(self.topSettingsFrame,textvariable=var,highlightthickness=1,highlightbackground=frame_color,background=topBG,font=fontHeader)
+        readOut.grid(row = 0, column =0,sticky='ew',columnspan=2)
 
         #com=tk.StringVar(self)
         #com.set("COM1")
@@ -168,7 +173,7 @@ class App(tk.Tk):
         #comShowbtnColor.grid(row = 1, column =0)
         #Save/Load
         readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readbtnColor.grid(row = 0, column =1)
+        readbtnColor.grid(row = 1, column =0)
         writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
         writebtnColor.grid(row = 1, column =1)
 
@@ -284,7 +289,6 @@ class App(tk.Tk):
         self.fFileWriter()
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
-        print(data)
         t=D[:,0]
         x=D[:,1]
         y=D[:,2]
@@ -297,7 +301,7 @@ class App(tk.Tk):
         self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
-
+        var.set("Waiting for Run")
     def fDataCollect(self):
         serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
         serialCom.setDTR(False)
@@ -327,26 +331,28 @@ class App(tk.Tk):
 
         serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
         serialCom.setDTR(False)
-        time.sleep(.25)
+        time.sleep(.1)
         serialCom.flushInput()
         serialCom.setDTR(True)
-        
         for k in range(dropTime):
             try:
                 s_bytes=serialCom.readline()
                 decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
                 
                 if k==0:
+                    var.set("Started - Data Capture")
                     values= decode_bytes.split(",")
+                    self.topSettingsFrame.update_idletasks()
                 else:
                     values = [float(x) for x in decode_bytes.split(",")]
-                #print(values)
 
                 writer = csv.writer(f,delimiter =',')
                 writer.writerow(values)
             except:
                 print("Error: Line was not recorded")
         f.close()
+        var.set("Stopped - Data Capture")
+
 
     def fSuperDropper(self):
         
