@@ -298,13 +298,36 @@ class App(tk.Tk):
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
 
+    def fDataCollect(self):
+        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+        serialCom.setDTR(False)
+        time.sleep(.25)
+        serialCom.flushInput()
+        serialCom.setDTR(True)
+        
+        for k in range(dropTime):
+            try:
+                s_bytes=serialCom.readline()
+                decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
+                
+                if k==0:
+                    values= decode_bytes.split(",")
+                else:
+                    values = [float(x) for x in decode_bytes.split(",")]
+
+
+                writer = csv.writer(f,delimiter =',')
+                writer.writerow(values)
+            except:
+                print("Error: Line was not recorded")
+
     def fFileWriter(self):
         f = open('data.csv','w',newline='')
         f.truncate()
 
         serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
         serialCom.setDTR(False)
-        time.sleep(.5)
+        time.sleep(.25)
         serialCom.flushInput()
         serialCom.setDTR(True)
         
