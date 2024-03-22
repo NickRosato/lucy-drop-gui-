@@ -302,29 +302,7 @@ class App(tk.Tk):
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
         var.set("Waiting for Run")
-    def fDataCollect(self):
-        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-        serialCom.setDTR(False)
-        time.sleep(.25)
-        serialCom.flushInput()
-        serialCom.setDTR(True)
-        
-        for k in range(dropTime):
-            try:
-                s_bytes=serialCom.readline()
-                decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
-                
-                if k==0:
-                    values= decode_bytes.split(",")
-                else:
-                    values = [float(x) for x in decode_bytes.split(",")]
-
-
-                writer = csv.writer(f,delimiter =',')
-                writer.writerow(values)
-            except:
-                print("Error: Line was not recorded")
-
+    
     def fFileWriter(self):
         f = open('data.csv','w',newline='')
         f.truncate()
@@ -343,9 +321,14 @@ class App(tk.Tk):
                     var.set("Started - Data Capture")
                     values= decode_bytes.split(",")
                     self.topSettingsFrame.update_idletasks()
+                elif round(k/dropTime*100) %5 ==0:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    var.set(f'{round(k/dropTime*100)}'+'%')
+                    self.topSettingsFrame.update_idletasks()
                 else:
                     values = [float(x) for x in decode_bytes.split(",")]
-
+                    #var.set(f'{round(k/dropTime*100)}'+'%')
+                    #self.topSettingsFrame.update_idletasks()
                 writer = csv.writer(f,delimiter =',')
                 writer.writerow(values)
             except:
