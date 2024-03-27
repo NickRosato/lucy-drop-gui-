@@ -48,7 +48,7 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-dropTime=1500
+dropTime=2500
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
 
@@ -158,12 +158,12 @@ class App(tk.Tk):
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
         
-        global readOut
-        global var
-        var = tk.StringVar()
-        var.set("Waiting for Run")
-        readOut = tk.Label(self.topSettingsFrame,textvariable=var,highlightthickness=1,highlightbackground=frame_color,background=topBG,font=fontHeader)
-        readOut.grid(row = 0, column =0,sticky='ew',columnspan=2)
+        #global graphVar
+        #graphVar=tk.StringVar(self)
+        #graphVar.set("z")
+        #graphDrop = tk.OptionMenu(self.topSettingsFrame, graphVar, "x", "y", "z")
+        #graphDrop.grid(row = 0, column =0,sticky='ew',columnspan=2)
+        
 
         #com=tk.StringVar(self)
         #com.set("COM1")
@@ -172,10 +172,10 @@ class App(tk.Tk):
         #comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
         #comShowbtnColor.grid(row = 1, column =0)
         #Save/Load
-        readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readbtnColor.grid(row = 1, column =0)
-        writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
-        writebtnColor.grid(row = 1, column =1)
+        #readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
+        #readbtnColor.grid(row = 1, column =0)
+        #writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
+        #writebtnColor.grid(row = 1, column =1)
 
         superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
         superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
@@ -186,18 +186,26 @@ class App(tk.Tk):
         self.topRunFrame.grid(row = 0, column =1,sticky='news')
         self.topRunFrame.rowconfigure(0,weight = 1)
         self.topRunFrame.rowconfigure((0,1,2,3),weight = 1)
-        self.topRunFrame.columnconfigure((0,1),weight = 1,uniform="foo")
+        self.topRunFrame.columnconfigure((0,1,2,3,4),weight = 1,uniform="foo")
+
+        global readOut
+        global var
+        var = tk.StringVar()
+        var.set("Waiting for Run")
+        readOut = tk.Label(self.topRunFrame,textvariable=var,highlightthickness=1,highlightbackground=frame_color,background=topBG,font=fontHeader)
+        readOut.grid(row = 2, column=1,sticky='ew',columnspan=3)
+
         global mainLab
         mainLab = tk.Label(self.topRunFrame,background=topBG,font=fontHeader)
-        mainLab.grid(row = 0, column =0,sticky='ew',columnspan=2)
+        mainLab.grid(row = 0, column =0,sticky='ew',columnspan=5)
         rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fDropper)
-        rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=2)
+        rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=5)
         
         self.trialSelection = tk.IntVar()
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=0,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Trial 1 ', font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=0)
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
-                        text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=1)
+                        text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=4)
 
         
         # Top Finally Frame
@@ -293,7 +301,7 @@ class App(tk.Tk):
         x=D[:,1]
         y=D[:,2]
         z=D[:,3] 
-        runForce[trl][i]=z
+        runForce[trl][i]=y
         runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
