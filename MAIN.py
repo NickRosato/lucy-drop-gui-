@@ -301,7 +301,7 @@ class App(tk.Tk):
         x=D[:,1]
         y=D[:,2]
         z=D[:,3] 
-        runForce[trl][i]=y
+        runForce[trl][i]=z
         runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
