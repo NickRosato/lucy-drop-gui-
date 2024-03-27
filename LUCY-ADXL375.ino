@@ -30,7 +30,16 @@ void setup(void)
     Serial.println("Ooops, no ADXL375 detected ... Check your wiring!");
     while(1);
   }
+  accel.setTrimOffsets(0, 0, 0);
+  delay(10);
 
+  float x = accel.getX();
+  float y = accel.getY();
+  float z = accel.getZ();
+
+  accel.setTrimOffsets(-(x+2)/4, 
+                       -(y+2)/4, 
+                       -(z-20+2)/4);  // Z should be '20' at 1g (49mg per bit)
   // Range is fixed at +-200g
 
   Serial.print("Time (s)");
@@ -40,7 +49,7 @@ void setup(void)
   Serial.print("Y (m/s^2)");
   Serial.print(',');
   Serial.println("Z (m/s^2)");
-
+  
 }
 
 void loop(void)
@@ -48,7 +57,6 @@ void loop(void)
   /* Get a new sensor event */
   sensors_event_t event;
   accel.getEvent(&event);
-
 
   float x = event.acceleration.x;
   float y = event.acceleration.y;
