@@ -48,7 +48,7 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-dropTime=2500
+dropTime=1500
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
 
