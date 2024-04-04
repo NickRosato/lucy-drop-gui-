@@ -298,10 +298,11 @@ class App(tk.Tk):
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
         t=D[:,0]
-        x=D[:,1]
-        y=D[:,2]
-        z=D[:,3] 
-        runForce[trl][i]=z
+        v=D[:,1]
+        #x=D[:,1]
+        #y=D[:,2]
+        #z=D[:,3] 
+        runForce[trl][i]=v
         runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
