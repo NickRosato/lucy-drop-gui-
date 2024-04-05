@@ -44,10 +44,6 @@ void setup(void)
 
   Serial.print("Time (s)");
   Serial.print(',');
-  Serial.print("X (m/s^2)");
-  Serial.print(',');
-  Serial.print("Y (m/s^2)");
-  Serial.print(',');
   Serial.println("Z (m/s^2)");
   
 }
@@ -58,19 +54,11 @@ void loop(void)
   sensors_event_t event;
   accel.getEvent(&event);
 
-  float x = event.acceleration.x;
-  float y = event.acceleration.y;
   float z = event.acceleration.z;
   float t = ((float) millis())/1000.0;
 
   Serial.print(t,3);
   Serial.print(',');
-  Serial.print(x,3);
-  Serial.print(',');
-  Serial.print(y,3);
-  Serial.print(',');
-  Serial.println(z,3);
-  
-
-  
+  Serial.println(z,1);
+   
 }

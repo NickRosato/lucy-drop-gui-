@@ -48,7 +48,7 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-dropTime=1500
+dropTime=2000
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
 
@@ -298,11 +298,8 @@ class App(tk.Tk):
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
         t=D[:,0]
-        v=D[:,1]
-        #x=D[:,1]
-        #y=D[:,2]
-        #z=D[:,3] 
-        runForce[trl][i]=v
+        z=D[:,1]
+        runForce[trl][i]=z
         runTime[trl][i]=t
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
@@ -331,11 +328,11 @@ class App(tk.Tk):
                     var.set("Started - Data Capture")
                     values= decode_bytes.split(",")
                     self.topSettingsFrame.update_idletasks()
-                elif round(k/dropTime*100) %5 ==0:
-                    values = [float(x) for x in decode_bytes.split(",")]
-                    #print(values[0])
-                    var.set(f'{round(k/dropTime*100)}'+'%')
-                    self.topSettingsFrame.update_idletasks()
+                #elif round(k/dropTime*100) %10 ==0:
+                #    values = [float(x) for x in decode_bytes.split(",")]
+                #    #print(values[0])
+                #    var.set(f'{round(k/dropTime*100)}'+'%')
+                #    self.topSettingsFrame.update_idletasks()
                 else:
                     values = [float(x) for x in decode_bytes.split(",")]
                 writer = csv.writer(f,delimiter =',')
@@ -345,7 +342,39 @@ class App(tk.Tk):
         f.close()
         var.set("Stopped - Data Capture")
 
-    
+
+    def fFileWriter2(self):
+        f = open('data1.csv','w',newline='')
+        f.truncate()
+        
+        var.set("TEST")
+        self.topSettingsFrame.update_idletasks()
+        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+        serialCom.setDTR(False)
+        time.sleep(.05)
+        serialCom.flushInput()
+        serialCom.setDTR(True)
+        
+        li=[]
+        newli=[]
+        var.set("Started - Data Capture")
+        self.topSettingsFrame.update_idletasks()
+        for i in range(dropTime):
+            li+=[serialCom.readline()]
+
+        var.set("Stopped - Data Capture")
+        self.topSettingsFrame.update_idletasks()
+        for i in li:
+            try:
+                decode_bytes=i.decode("utf-8").strip('\r\n')
+                values = [float(x) for x in decode_bytes.split(",")]
+            except:
+                values=[0,0,0,0]
+            newli+[values]
+            writer = csv.writer(f,delimiter =',')
+            writer.writerow(values)
+        f.close()
+
     def fSuperDropper(self):
         
         for trl in range(2):
