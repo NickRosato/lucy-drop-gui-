@@ -297,10 +297,11 @@ class App(tk.Tk):
         self.fFileWriter()
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
-        t=D[:,0]
-        z=D[:,1]
+        #t=D[:,0]
+        #z=D[:,1]
+        z=D[:,0]
         runForce[trl][i]=z
-        runTime[trl][i]=t
+        runTime[trl][i]=np.linspace(0,5,len(z))
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
         self.fShow()
@@ -323,16 +324,30 @@ class App(tk.Tk):
             try:
                 s_bytes=serialCom.readline()
                 decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
-                
+                #var.set(f'{round(k/dropTime*100)}'+'%')
                 if k==0:
                     var.set("Started - Data Capture")
                     values= decode_bytes.split(",")
                     self.topSettingsFrame.update_idletasks()
-                #elif round(k/dropTime*100) %10 ==0:
-                #    values = [float(x) for x in decode_bytes.split(",")]
-                #    #print(values[0])
-                #    var.set(f'{round(k/dropTime*100)}'+'%')
-                #    self.topSettingsFrame.update_idletasks()
+                elif 0 < k/dropTime*100 <= 25:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    var.set('25%')
+                    self.topSettingsFrame.update_idletasks()
+                
+                elif 25 < k/dropTime*100 <= 50:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    var.set('25%')
+                    self.topSettingsFrame.update_idletasks()
+                
+                elif 50 < k/dropTime*100 <= 75:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    var.set('50%')
+                    self.topSettingsFrame.update_idletasks()
+                
+                elif 75 < k/dropTime*100 <= 100:
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    var.set('75%')
+                    self.topSettingsFrame.update_idletasks()
                 else:
                     values = [float(x) for x in decode_bytes.split(",")]
                 writer = csv.writer(f,delimiter =',')
@@ -370,6 +385,36 @@ class App(tk.Tk):
                 values = [float(x) for x in decode_bytes.split(",")]
             except:
                 values=[0,0,0,0]
+            newli+[values]
+            writer = csv.writer(f,delimiter =',')
+            writer.writerow(values)
+        f.close()
+
+    def fFileWriter3(self):
+        f = open('data.csv','w',newline='')
+        f.truncate()
+        self.topSettingsFrame.update_idletasks()
+        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+        serialCom.setDTR(False)
+        time.sleep(.05)
+        serialCom.flushInput()
+        serialCom.setDTR(True)
+        
+        li=[]
+        newli=[]
+        var.set("Started - Data Capture")
+        self.topSettingsFrame.update_idletasks()
+        for i in range(dropTime):
+            li+=[serialCom.readline()]
+
+        var.set("Stopped - Data Capture")
+        self.topSettingsFrame.update_idletasks()
+        for i in li:
+            try:
+                decode_bytes=i.decode("utf-8").strip('\r\n')
+                values = [float(x) for x in decode_bytes.split(",")]
+            except:
+                values=[0,0]
             newli+[values]
             writer = csv.writer(f,delimiter =',')
             writer.writerow(values)
