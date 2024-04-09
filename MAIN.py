@@ -41,7 +41,7 @@ fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
-yAxis="Acceleration (m/s^2)"
+yAxis="Gravitational Magnitude (g)"
 p_x = 0.09
 p_y = 0.175 
 
@@ -300,7 +300,7 @@ class App(tk.Tk):
         #t=D[:,0]
         #z=D[:,1]
         z=D[:,0]
-        runForce[trl][i]=z
+        runForce[trl][i]=z/9.81
         runTime[trl][i]=np.linspace(0,5,len(z))
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
         
