@@ -98,7 +98,7 @@ groupNameLegend=groupName[0]+groupName[1]
 
 now = datetime.now()
 dt_string = "LUCY-DATE-"+now.strftime("%d-%m-%Y")+"-TIME-"+now.strftime("%H-%M-%S")+".csv"
-dt_string = 'LUCY-DATE.csv'
+#dt_string = 'LUCY-DATE.csv'
 DF=pd.DataFrame(master,columns=groupNameLegend) 
 DF.to_csv(dt_string)
 
@@ -525,10 +525,12 @@ class App(tk.Tk):
 
 
     def fLoad(self):
-        data=pd.read_csv(dt_string)
+        filename = askopenfile(title = "Select file",filetypes = (("CSV Files","*.csv"),))    
+        data=pd.read_csv(filename)
         master=data.to_numpy()
+        #print(master[0,:])
         dropTime=len(master[:,0])+1
-        
+
 
     def fSave(self,trial,groupIndex,data):
         masterColumn=groupIndex+groupIndex*trial
