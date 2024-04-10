@@ -21,20 +21,13 @@ void setup(void) {
     // if (!dso32.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
     // Serial.println("Failed to find LSM6DSO32 chip");
     while (1) {
-      delay(10);
+      delay(15);
     }
   }
 
   dso32.setAccelRange(LSM6DSO32_ACCEL_RANGE_32_G);
-  dso32.setAccelDataRate(LSM6DS_RATE_208_HZ);
+  dso32.setAccelDataRate(LSM6DS_RATE_416_HZ);
 
-  Serial.print("Time (s)");
-  Serial.print(',');
-  Serial.print("X (m/s^2)");
-  Serial.print(',');
-  Serial.print("Y (m/s^2)");
-  Serial.print(',');
-  Serial.println("Z (m/s^2)");
 }
 
 void loop() {
@@ -44,17 +37,8 @@ void loop() {
   sensors_event_t gyro;
   sensors_event_t temp;
   dso32.getEvent(&accel, &gyro, &temp);
-  float x = accel.acceleration.x;
-  float y = accel.acceleration.y;
   float z = accel.acceleration.z;
-  float t = ((float) millis())/1000.0;
 
-  Serial.print(t,3);
-  Serial.print(',');
-  Serial.print(x,3);
-  Serial.print(',');
-  Serial.print(y,3);
-  Serial.print(',');
   Serial.println(z,3);
   
 }

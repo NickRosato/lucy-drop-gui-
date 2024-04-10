@@ -54,7 +54,7 @@ p_y = 0.175
 mu, sigma = 10, 1
 
 
-
+trialNumber=2
 cG1=['#FF0000','Red']
 cG2=['#EE7600','Orange']
 cG3=['#EEC900','Yellow']
@@ -71,6 +71,10 @@ cG13=['#000000', 'Black']
 cG14=['#616161', 'Grey']
 colorHex=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
 colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
+
+runLength=len(colorHex)*trialNumber
+
+master=np.zeros(shape=(dropTime-1,runLength))
 
 
 masterName=[[],[]]
@@ -90,22 +94,13 @@ for x in range(len(colorHex)):
     maxForce[1].append(0)
     groupName[0].append('Group: '+f'{x+1} Trial 1')
     groupName[1].append('Group: '+f'{x+1} Trial 2')
-
 groupNameLegend=groupName[0]+groupName[1]
-print(groupNameLegend)
 
 now = datetime.now()
 dt_string = "LUCY-DATE-"+now.strftime("%d-%m-%Y")+"-TIME-"+now.strftime("%H-%M-%S")+".csv"
-dt_string='LUCY-DATE.csv'
-appFile = open(dt_string,'w',newline='')
-appFile.close()
-
-#df=pd.read_csv(dt_string)
-#df.columns=groupNameLegend
-#print(df)
-#appFile = open(dt_string,'w',newline='')
-#appFile.close()
-
+dt_string = 'LUCY-DATE.csv'
+DF=pd.DataFrame(master,columns=groupNameLegend) 
+DF.to_csv(dt_string)
 
 
 class App(tk.Tk):
@@ -173,13 +168,7 @@ class App(tk.Tk):
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
         self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
-        
-        #global graphVar
-        #graphVar=tk.StringVar(self)
-        #graphVar.set("z")
-        #graphDrop = tk.OptionMenu(self.topSettingsFrame, graphVar, "x", "y", "z")
-        #graphDrop.grid(row = 0, column =0,sticky='ew',columnspan=2)
-        
+
 
         #com=tk.StringVar(self)
         #com.set("COM1")
@@ -310,7 +299,6 @@ class App(tk.Tk):
     def fDropper(self):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
-        
         self.fFileWriter(trl,i)
         data=pd.read_csv("data.csv")
         D=data.to_numpy()
@@ -318,8 +306,8 @@ class App(tk.Tk):
         runForce[trl][i]=z/9.81
         runTime[trl][i]=np.linspace(0,5,len(z))
         maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
-        
-        #self.fSave(trl,i,z)
+
+        self.fSave(trl,i,z)
         self.fShow()
         self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
@@ -456,35 +444,6 @@ class App(tk.Tk):
             writer.writerow(values)
         f.close()
 
-    def fFileWriter3(self):
-        f = open('data.csv','w',newline='')
-        f.truncate()
-        self.topSettingsFrame.update_idletasks()
-        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-        serialCom.setDTR(False)
-        time.sleep(.05)
-        serialCom.flushInput()
-        serialCom.setDTR(True)
-        
-        li=[]
-        newli=[]
-        var.set("Started - Data Capture")
-        self.topSettingsFrame.update_idletasks()
-        for i in range(dropTime):
-            li+=[serialCom.readline()]
-
-        var.set("Stopped - Data Capture")
-        self.topSettingsFrame.update_idletasks()
-        for i in li:
-            try:
-                decode_bytes=i.decode("utf-8").strip('\r\n')
-                values = [float(x) for x in decode_bytes.split(",")]
-            except:
-                values=[0,0]
-            newli+[values]
-            writer = csv.writer(f,delimiter =',')
-            writer.writerow(values)
-        f.close()
 
     def fSuperDropper(self):
         
@@ -565,14 +524,16 @@ class App(tk.Tk):
         rankGraph.draw()
 
 
-    def fLoad(self):
-        print("Load function")
-
-        #filename=askopenfile()
-        #print(filename)
+    def fLoad(self,fileName):
+        data=pd.read_csv(fileName)
+        master=data.to_numpy()
+        
 
     def fSave(self,trial,groupIndex,data):
-        print("Save function")
+        masterColumn=groupIndex+groupIndex*trial
+        master[:,masterColumn]=data
+        DF=pd.DataFrame(master,columns=groupNameLegend) 
+        DF.to_csv(dt_string)
         
         
     def fComUpdate(self):
