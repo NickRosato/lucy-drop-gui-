@@ -524,9 +524,10 @@ class App(tk.Tk):
         rankGraph.draw()
 
 
-    def fLoad(self,fileName):
-        data=pd.read_csv(fileName)
+    def fLoad(self):
+        data=pd.read_csv(dt_string)
         master=data.to_numpy()
+        dropTime=len(master[:,0])+1
         
 
     def fSave(self,trial,groupIndex,data):
