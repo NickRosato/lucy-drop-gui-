@@ -8,8 +8,7 @@ __email__ = "nicholas.rosato@collins.com"
 
 import tkinter as tk
 #import tkinter.ttk as ttk
-from tkinter.filedialog import askopenfile
-from tkinter.filedialog import asksaveasfile
+from tkinter.filedialog import askopenfilename
 import sys
 from sys import platform
 import matplotlib.pyplot as plt
@@ -23,15 +22,6 @@ import serial
 import time
 import csv
 from datetime import datetime
-
-
-dropTime=2000
-BAUD_RATE = 115200
-SERIAL_PORT="COM3"
-
-#ports = list_ports.comports()
-#for port in ports: print(port)
-#SERIAL_PORT = port[0]
 
 #style setup
 main_color = '#FFFFFF'
@@ -74,8 +64,6 @@ colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1
 
 runLength=len(colorHex)*trialNumber
 
-master=np.zeros(shape=(dropTime-1,runLength))
-
 
 headerName=[[],[]]
 runTime=[[],[]]
@@ -96,13 +84,91 @@ for x in range(len(colorHex)):
     maxForce[1].append(0)
 
 
-groupNameLegend=groupName[0]+groupName[1]
+dropTime=2000
+BAUD_RATE = 115200
+SERIAL_PORT="COM3"
 
-now = datetime.now()
-fileNameMaster = "LUCY-DATE-"+now.strftime("%d-%m-%Y")+"-TIME-"+now.strftime("%H-%M-%S")+".csv"
-#fileNameMaster = 'LUCY-DATE.csv'
-DF=pd.DataFrame(master,columns=groupNameLegend) 
-DF.to_csv(fileNameMaster)
+
+
+groupNameLegend=groupName[0]+groupName[1]
+master=np.zeros(shape=(dropTime-1,runLength))
+fileNameMaster=""
+menuSelection=""
+
+
+
+class menuAPP(tk.Tk):
+    def __init__(self):  
+        super().__init__()
+
+        self.title('Lucy Drop Tower - File System')
+        window_width = 250
+        window_height = 250
+        self.geometry(f'{window_width}x{window_height}')
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()    
+        center_x = int(screen_width/2 - window_width / 2)
+        center_y = int(screen_height/2 - window_height / 2)
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
+        if platform == "linux" or platform == "linux2":
+            # linux
+            #self.attributes('-type', 'splash')
+            self.resizable(0,0)
+        elif platform == "darwin":
+            # OS X
+            self.resizable(0,0)
+            #self.attributes('-type', 'splash')
+        elif platform == "win32":
+            # Windows...
+            icon = tk.PhotoImage(file = './assets/icon.png') 
+            self.iconphoto(False, icon) 
+            self.resizable(False, False)
+
+
+        self.fileFrame = tk.Frame(self)
+        self.fileFrame.config(highlightbackground=outline_color,highlightthickness=1)
+        self.fileFrame.pack(expand = True, fill ='both')
+        self.fileFrame.rowconfigure(0,weight = 1,)
+        self.fileFrame.columnconfigure(0,weight = 1,uniform='a')
+        self.fileFrame.columnconfigure(1,weight = 1,uniform='a')
+        
+        NEWbtnColor=tk.Button(self.fileFrame,font=fontButtons,text="New File", command=self.fNewFile)
+        NEWbtnColor.grid(row=0,column=0,sticky="nsew")
+        LOADbtnColor=tk.Button(self.fileFrame,font=fontButtons,text="Load File", command=self.fLoad)
+        LOADbtnColor.grid(row=0,column=1,sticky="nsew")
+        
+    def fLoad(self):
+        global menuSelection
+        menuSelection="LOAD"
+        global fileNameMaster
+        fileNameMaster = askopenfilename(title = "Select file",filetypes = (("CSV Files","*.csv"),))
+        print(str(fileNameMaster))
+        DF=pd.read_csv(fileNameMaster)
+        global master
+        master=DF.to_numpy()
+        print(fileNameMaster)
+        self.destroy()
+        self.fRunApp()
+
+
+    def fNewFile(self):
+        global menuSelection
+        menuSelection="NEW"
+        now = datetime.now()
+        global fileNameMaster
+        fileNameMaster = "LUCY-DATE-"+now.strftime("%d-%m-%Y")+"-TIME-"+now.strftime("%H-%M-%S")+".csv"
+        DF=pd.DataFrame(master,columns=groupNameLegend) 
+        DF.to_csv(fileNameMaster, index=False)
+        print("File Created: " + fileNameMaster)
+        self.destroy()
+        self.fRunApp()
+
+
+    def fRunApp(self):
+        app=App()
+        app.mainloop()
+
 
 
 class App(tk.Tk):
@@ -113,16 +179,11 @@ class App(tk.Tk):
         window_width = 1920-100
         window_height = 1080-200
         self.geometry(f'{window_width}x{window_height}')
-
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()    
-        #print(screen_height)
-        #print(screen_width)
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        #self.eval('tk::PlaceWindow . center')
-        #self.tk.call('tk', 'scaling', 1.5)
 
         if platform == "linux" or platform == "linux2":
             # linux
@@ -169,24 +230,22 @@ class App(tk.Tk):
         self.topSettingsFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
-        self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
+        self.topSettingsFrame.columnconfigure((0),weight = 1,uniform='a')
 
 
-        #com=tk.StringVar(self)
-        #com.set("COM1")
-        #comSLCT=tk.OptionMenu(self.topSettingsFrame,com,'COM1','COM2','COM3','COM4')
-        #comSLCT.grid(row = 0, column =0)
-        #comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        #comShowbtnColor.grid(row = 1, column =0)
-        
-        #Save/Load
-        readbtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Load File", command=self.fLoad)
-        readbtnColor.grid(row = 1, column =0)
-        writebtnColor=tk.Button(self.topSettingsFrame,font=fontButtons,text="Save File", command=self.fSave)
-        writebtnColor.grid(row = 1, column =1)
+        global com
+        com=tk.StringVar(self)
+        global readOut
+        com.set(SERIAL_PORT)
+        comOut = tk.Label(self.topSettingsFrame,textvariable=com,highlightthickness=1,highlightbackground=frame_color,background=topBG,font=fontHeader)
+        comOut.grid(row = 0, column=0,sticky='ew')
 
-        superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
-        superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
+        comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
+        comShowbtnColor.grid(row = 1, column =0)
+
+
+        #superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
+        #superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
 
         # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
@@ -288,10 +347,13 @@ class App(tk.Tk):
         rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
         rankGraph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-
+        
         self.fShow()
         self.fMenu1()
+        if menuSelection=="LOAD":
+            self.fLoadUpdater()
         
+
     def fMenu1(self):
         self.plotFrame.tkraise()
     def fMenu2(self):
@@ -300,25 +362,29 @@ class App(tk.Tk):
         self.rankFrame.tkraise()
         
     def fDropper(self):
-        trl=self.trialSelection.get()
-        i = self.userSelection.get()
-        self.fFileWriter(trl,i)
-        data=pd.read_csv("data.csv")
-        D=data.to_numpy()
-        z=D[:,0]
-        var.set("Processing")
-        self.topSettingsFrame.update_idletasks()
-        self.fSave(trl,i,z)
+        try:
+            trl=self.trialSelection.get()
+            i = self.userSelection.get()
+            self.fFileWriter(trl,i)
+            data=pd.read_csv("data.csv")
+            D=data.to_numpy()
+            z=D[:,0]
+            var.set("Processing")
+            self.topSettingsFrame.update_idletasks()
+            self.fSave(trl,i,z)
+            var.set("Saved")
+            self.fUpdater(trl,i,z)
 
-        self.fUpdater(trl,i,z)
 
-
-        self.fShow()
-        self.fShowAll()
-        nameSorted,forceSorted,colorSorted= self.fSort()
-        self.fRankShow(nameSorted,forceSorted,colorSorted)
-        var.set("Waiting for Run")
-        self.topSettingsFrame.update_idletasks()
+            self.fShow()
+            self.fShowAll()
+            nameSorted,forceSorted,colorSorted= self.fSort()
+            self.fRankShow(nameSorted,forceSorted,colorSorted)
+            var.set("Waiting for Run")
+            self.topSettingsFrame.update_idletasks()
+        except:
+            var.set("Waiting for Run")
+            self.topSettingsFrame.update_idletasks()
     
     def fUpdater(self,trial,groupID,data):
         runForce[trial][groupID]=data/9.81
@@ -371,7 +437,7 @@ class App(tk.Tk):
                 except:
                     print("Error: Line was not recorded")
         except:
-                print("Error: Line was not recorded")
+                print("Arduino Not Found")
         f.close()
         var.set("Stopped - Data Capture")
 
@@ -534,49 +600,56 @@ class App(tk.Tk):
         rankGraph.draw()
 
 
-    def fLoad(self):
+    def fLoadUpdater(self):
         var.set('LOAD SEQUENCE STARTED')
         self.topSettingsFrame.update_idletasks()
-
-        filename = askopenfile(title = "Select file",filetypes = (("CSV Files","*.csv"),))    
-        data=pd.read_csv(filename)
-        master=data.to_numpy()
-        #print(master[0,:])
-        dropTime=len(master[:,0])+1
-
-        #for trl in range(2):
-        #    for i in range(len(colorHex)):
-        #        loc=i+trl*i
-        #        runForce[trl][i]=master[:,loc]/9.81
-        #        runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
-        #        maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
-        #        self.fShow()
-        #        self.fShowAll()
-        #        nameSorted,forceSorted,colorSorted= self.fSort()
-        #        self.fRankShow(nameSorted,forceSorted,colorSorted)
+        for trl in range(2):
+            for i in range(len(colorHex)):
+                loc=i+(len(colorHex)*trl)
+                if master[100,loc]!=0:
+                    runForce[trl][i]=master[:,loc]/9.81
+                    runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
+                    maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
+                    self.fShow()
+                
+        self.fShowAll()
+        nameSorted,forceSorted,colorSorted= self.fSort()
+        self.fRankShow(nameSorted,forceSorted,colorSorted)
         var.set('Waiting on Run')
         self.topSettingsFrame.update_idletasks()
 
     def fSave(self,trial,groupIndex,data):
-        masterColumn=groupIndex+groupIndex*trial
+        var.set('SAVE SEQUENCE STARTED')
+        self.topSettingsFrame.update_idletasks()
+        masterColumn=groupIndex+(len(colorHex)*trial)
         master[:,masterColumn]=data
-        DF=pd.DataFrame(master,columns=groupNameLegend) 
-        DF.to_csv(fileNameMaster)
+        DF=pd.DataFrame(master,columns=groupNameLegend)
+        DF.to_csv(fileNameMaster,mode='w',index=False)
+
         
         
     def fComUpdate(self):
-        #SERIAL_PORT = str(com.get())
-        print("Value Selected is: "+com.get())
-        #print("Value of Serial Port STR is: "+SERIAL_PORT)
-        #ser.port = SERIAL_PORT
+        try:
+            ports = list_ports.comports()
+            for port in ports: print(port)
+            SERIAL_PORT = port[0]
+            com.set(SERIAL_PORT)
+            self.topSettingsFrame.update_idletasks()
+            serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+            serialCom.setDTR(False)
+            time.sleep(.05)
+            serialCom.flushInput()
+            serialCom.setDTR(True)
+        except:     
+            print("ComUpdate Error")
+
 
 
     def fQuit(self):
         exit()
 
 
+
 if __name__ == "__main__":
-    app=App()
-    app.mainloop()
-    
-    
+    file=menuAPP()
+    file.mainloop()
