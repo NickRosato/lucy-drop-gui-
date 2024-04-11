@@ -64,7 +64,7 @@ colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1
 
 runLength=len(colorHex)*trialNumber
 
-modifyer=1
+modifyer=1276.0
 
 headerName=[[],[]]
 runTime=[[],[]]
