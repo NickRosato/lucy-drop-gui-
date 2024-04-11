@@ -413,7 +413,7 @@ class App(tk.Tk):
                         self.topSettingsFrame.update_idletasks()
                     elif 0 < k/dropTime*100 <= 25:
                         values = [float(x) for x in decode_bytes.split(",")]
-                        var.set('25%')
+                        var.set('0%')
                         self.topSettingsFrame.update_idletasks()
                     
                     elif 25 < k/dropTime*100 <= 50:
