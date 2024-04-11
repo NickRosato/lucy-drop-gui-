@@ -86,7 +86,7 @@ for x in range(len(colorHex)):
 
 dropTime=2000
 BAUD_RATE = 115200
-SERIAL_PORT="COM3"
+SERIAL_PORT="COM4"
 
 
 
@@ -522,7 +522,7 @@ class App(tk.Tk):
         for trl in range(2):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
-                if master[1,loc]!=0 and master[100,loc]!=0:
+                if sum(master[:,loc])!=0.0:
                     runForce[trl][i]=master[:,loc]/9.81
                     runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
@@ -548,14 +548,15 @@ class App(tk.Tk):
         try:
             ports = list_ports.comports()
             for port in ports: print(port)
-            SERIAL_PORT = port[0]
-            com.set(SERIAL_PORT)
-            self.topSettingsFrame.update_idletasks()
-            serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-            serialCom.setDTR(False)
-            time.sleep(.05)
-            serialCom.flushInput()
-            serialCom.setDTR(True)
+            print(port[0])
+            #SERIAL_PORT = port[0]
+            #com.set(SERIAL_PORT)
+            #self.topSettingsFrame.update_idletasks()
+            #serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+            #serialCom.setDTR(False)
+            #time.sleep(.05)
+            #serialCom.flushInput()
+            #serialCom.setDTR(True)
         except:     
             print("ComUpdate Error")
 
