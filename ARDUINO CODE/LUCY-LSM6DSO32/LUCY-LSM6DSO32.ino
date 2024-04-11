@@ -38,7 +38,6 @@ void loop() {
   sensors_event_t temp;
   dso32.getEvent(&accel, &gyro, &temp);
   float z = accel.acceleration.z;
-
-  Serial.println(z,3);
+  Serial.println(z,1);
   
 }

@@ -102,8 +102,8 @@ class menuAPP(tk.Tk):
         super().__init__()
 
         self.title('Lucy Drop Tower - File System')
-        window_width = 250
-        window_height = 250
+        window_width = 480
+        window_height = 240
         self.geometry(f'{window_width}x{window_height}')
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()    
@@ -245,7 +245,7 @@ class App(tk.Tk):
 
 
         #superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
-        #superDropper.grid(row = 3, column =0,sticky='ew',columnspan=2)
+        #superDropper.grid(row = 2, column =0,sticky='ew',columnspan=2)
 
         # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
@@ -441,87 +441,6 @@ class App(tk.Tk):
         f.close()
         var.set("Stopped - Data Capture")
 
-    def fFileWriterMAIN(self,trial,groupID):
-        f = open('data.csv','w',newline='')
-        #f.truncate()
-        try:
-            serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-            serialCom.setDTR(False)
-            time.sleep(.05)
-            serialCom.flushInput()
-            serialCom.setDTR(True)
-            values = []
-            for k in range(dropTime):
-                try:
-                    s_bytes=serialCom.readline()
-                    decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
-                    #var.set(f'{round(k/dropTime*100)}'+'%')
-                    if k==0:
-                        var.set("Started - Data Capture")
-                        values= decode_bytes.split(",")
-                        self.topSettingsFrame.update_idletasks()
-                    elif 0 < k/dropTime*100 <= 25:
-                        values = [float(x) for x in decode_bytes.split(",")]
-                        var.set('25%')
-                        self.topSettingsFrame.update_idletasks()
-                    
-                    elif 25 < k/dropTime*100 <= 50:
-                        values = [float(x) for x in decode_bytes.split(",")]
-                        var.set('25%')
-                        self.topSettingsFrame.update_idletasks()
-                    
-                    elif 50 < k/dropTime*100 <= 75:
-                        values = [float(x) for x in decode_bytes.split(",")]
-                        var.set('50%')
-                        self.topSettingsFrame.update_idletasks()
-                    
-                    elif 75 < k/dropTime*100 <= 100:
-                        values = [float(x) for x in decode_bytes.split(",")]
-                        var.set('75%')
-                        self.topSettingsFrame.update_idletasks()
-                    else:
-                        values = [float(x) for x in decode_bytes.split(",")]
-                    writer = csv.writer(f,delimiter =',')
-                    writer.writerow(values)
-                except:
-                    print("Error: Line was not recorded")
-        except:
-                print("Error: Line was not recorded")
-        f.close()
-        var.set("Stopped - Data Capture")
-    
-    def fFileWriter2(self):
-        f = open('data1.csv','w',newline='')
-        f.truncate()
-        
-        var.set("TEST")
-        self.topSettingsFrame.update_idletasks()
-        serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-        serialCom.setDTR(False)
-        time.sleep(.05)
-        serialCom.flushInput()
-        serialCom.setDTR(True)
-        
-        li=[]
-        newli=[]
-        var.set("Started - Data Capture")
-        self.topSettingsFrame.update_idletasks()
-        for i in range(dropTime):
-            li+=[serialCom.readline()]
-
-        var.set("Stopped - Data Capture")
-        self.topSettingsFrame.update_idletasks()
-        for i in li:
-            try:
-                decode_bytes=i.decode("utf-8").strip('\r\n')
-                values = [float(x) for x in decode_bytes.split(",")]
-            except:
-                values=[0,0,0,0]
-            newli+[values]
-            writer = csv.writer(f,delimiter =',')
-            writer.writerow(values)
-        f.close()
-
     def fSuperDropper(self):
         
         for trl in range(2):
@@ -584,18 +503,15 @@ class App(tk.Tk):
     def fRankShow(self,names,scores,color):
         rankAX.cla()
 
-
-        low = min(scores)
-        high = max(scores)
-
-        #print(low)
-        #print(high)
-
+        low = min(scores)*.90
+        high = max(scores)*1.1
         for p in range(len(names)):
             rankAX.barh(names[p],scores[p],color=color[p])
         
-        #rankAX.xlim([math.ceil(low-0.5*(high-low)), math.ceil(high+0.5*(high-low))])
-
+        for index, value in enumerate(scores):
+            rankAX.text(value,index,str(value))
+        
+        rankAX.set(xlim=(low,high))
         rankAX.invert_yaxis()
         rankGraph.draw()
 
@@ -606,7 +522,7 @@ class App(tk.Tk):
         for trl in range(2):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
-                if master[100,loc]!=0:
+                if master[1,loc]!=0 and master[100,loc]!=0:
                     runForce[trl][i]=master[:,loc]/9.81
                     runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
