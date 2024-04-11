@@ -64,6 +64,7 @@ colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1
 
 runLength=len(colorHex)*trialNumber
 
+modifyer=1
 
 headerName=[[],[]]
 runTime=[[],[]]
@@ -387,7 +388,7 @@ class App(tk.Tk):
             self.topSettingsFrame.update_idletasks()
     
     def fUpdater(self,trial,groupID,data):
-        runForce[trial][groupID]=data/9.81
+        runForce[trial][groupID]=data/modifyer
         runTime[trial][groupID]=np.linspace(0,5,len(data))
         maxForce[trial][groupID] = round(max(runForce[trial][groupID]).item(), 3)
 
@@ -523,7 +524,7 @@ class App(tk.Tk):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
                 if sum(master[:,loc])!=0.0:
-                    runForce[trl][i]=master[:,loc]/9.81
+                    runForce[trl][i]=master[:,loc]/modifyer
                     runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
                     self.fShow()
