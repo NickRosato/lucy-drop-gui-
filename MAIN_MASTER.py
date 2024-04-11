@@ -351,7 +351,7 @@ class App(tk.Tk):
         
         self.fShow()
         self.fMenu1()
-        if menuSelection=="LOAD" and sum(master[:,:])!=0:
+        if menuSelection=="LOAD" and sum(master[0,:])!=0:
             self.fLoadUpdater()
         
 
