@@ -41,8 +41,6 @@ yAxis="Gravitational Magnitude (g)"
 p_x = 0.09
 p_y = 0.175 
 
-mu, sigma = 10, 1
-
 
 trialNumber=2
 cG1=['#FF0000','Red']
@@ -62,10 +60,6 @@ cG14=['#616161', 'Grey']
 colorHex=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
 colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
 
-runLength=len(colorHex)*trialNumber
-
-modifyer=1276.0
-
 headerName=[[],[]]
 runTime=[[],[]]
 runForce=[[],[]]
@@ -84,12 +78,12 @@ for x in range(len(colorHex)):
     maxForce[0].append(0)
     maxForce[1].append(0)
 
-
-dropTime=2000
+runLength=len(colorHex)*trialNumber
+modifyer=1650.0
+trialTime=6.6
+dropTime=5000
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
-
-
 
 groupNameLegend=groupName[0]+groupName[1]
 master=np.zeros(shape=(dropTime-1,runLength))
@@ -245,8 +239,8 @@ class App(tk.Tk):
         comShowbtnColor.grid(row = 1, column =0)
 
 
-        #superDropper=tk.Button(self.topSettingsFrame,font=fontGroups,text="Run Super Dropper", command=self.fSuperDropper)
-        #superDropper.grid(row = 2, column =0,sticky='ew',columnspan=2)
+        testbtnColor=tk.Button(self.topSettingsFrame,text='TEST RUN',font=fontButtons,command=self.fTestRun)
+        testbtnColor.grid(row = 2, column =0)
 
         # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
@@ -291,7 +285,6 @@ class App(tk.Tk):
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Ranking ',font=fontGroups,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
-
         # SideBar Setup
         self.userSelection = tk.IntVar()
         for i in range(len(colorHex)):
@@ -303,8 +296,6 @@ class App(tk.Tk):
             
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
                             bg=btnColor,font=fontGroups,text = headerName[0][i],fg='black',padx=5,pady=5).grid(row = 0, column=0)
-
-      
 
         # Main Menu Frames
         self.plotFrame = tk.Frame(self)
@@ -320,12 +311,10 @@ class App(tk.Tk):
         global graph
         graph = FigureCanvasTkAgg(fig, master=self.plotFrame) 
         graph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
-        
-        
+                
 
         self.allFrame = tk.Frame(self)
         self.allFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-
         allFig = plt.Figure(facecolor=figure_color) 
         global allAX
         allAX = allFig.subplots() 
@@ -339,7 +328,6 @@ class App(tk.Tk):
 
         self.rankFrame = tk.Frame(self)
         self.rankFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-        
         rankFig = plt.Figure(facecolor=figure_color)
         global rankAX
         rankAX = rankFig.subplots()
@@ -347,7 +335,6 @@ class App(tk.Tk):
         global rankGraph
         rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
         rankGraph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-
         
         self.fShow()
         self.fMenu1()
@@ -366,7 +353,9 @@ class App(tk.Tk):
         try:
             trl=self.trialSelection.get()
             i = self.userSelection.get()
-            self.fFileWriter(trl,i)
+            self.fFileWriter()
+            var.set("Data Captured")
+            self.topSettingsFrame.update_idletasks()
             data=pd.read_csv("data.csv")
             D=data.to_numpy()
             z=D[:,0]
@@ -374,26 +363,17 @@ class App(tk.Tk):
             self.topSettingsFrame.update_idletasks()
             self.fSave(trl,i,z)
             var.set("Saved")
-            self.fUpdater(trl,i,z)
-
-
-            self.fShow()
-            self.fShowAll()
-            nameSorted,forceSorted,colorSorted= self.fSort()
-            self.fRankShow(nameSorted,forceSorted,colorSorted)
+            self.topSettingsFrame.update_idletasks()
+            self.fLoadUpdater()
             var.set("Waiting for Run")
             self.topSettingsFrame.update_idletasks()
+        
         except:
-            var.set("Waiting for Run")
+            var.set("ERROR IN DROPPER TRY RERUN")
             self.topSettingsFrame.update_idletasks()
-    
-    def fUpdater(self,trial,groupID,data):
-        runForce[trial][groupID]=data/modifyer
-        runTime[trial][groupID]=np.linspace(0,5,len(data))
-        maxForce[trial][groupID] = round(max(runForce[trial][groupID]).item(), 3)
 
 
-    def fFileWriter(self,trial,groupID):
+    def fFileWriter(self):
         f = open('data.csv','w',newline='')
         f.truncate()
         try:
@@ -403,11 +383,11 @@ class App(tk.Tk):
             serialCom.flushInput()
             serialCom.setDTR(True)
             values = []
+            start_time = time.time()
             for k in range(dropTime):
                 try:
                     s_bytes=serialCom.readline()
                     decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
-                    #var.set(f'{round(k/dropTime*100)}'+'%')
                     if k==0:
                         var.set("Started - Data Capture")
                         values= decode_bytes.split(",")
@@ -438,22 +418,13 @@ class App(tk.Tk):
                 except:
                     print("Error: Line was not recorded")
         except:
-                print("Arduino Not Found")
+                print("Error in Arduino")
+        stop_time = time.time()
+        delta_time=stop_time-start_time
+        print(delta_time)
         f.close()
-        var.set("Stopped - Data Capture")
-
-    def fSuperDropper(self):
         
-        for trl in range(2):
-            for i in range(len(colorHex)):
-                runTime[trl][i]=(np.arange(0, 20, 5))
-                runForce[trl][i]=(np.random.normal(mu, sigma, len(runTime[trl][i])))
-                maxForce[trl][i] = round(max(runForce[trl][i]).item(), 2)
-                self.fShow()
-                self.fShowAll()
-                nameSorted,forceSorted,colorSorted= self.fSort()
-                self.fRankShow(nameSorted,forceSorted,colorSorted)
-    
+
     def fSort(self):
         maxForceLegend=maxForce[0]+maxForce[1]
         colorLegend= colorHex+colorHex
@@ -512,6 +483,7 @@ class App(tk.Tk):
         for index, value in enumerate(scores):
             rankAX.text(value,index,str(value))
         
+        rankAX.set_xlabel("Maximum " + yAxis) 
         rankAX.set(xlim=(low,high))
         rankAX.invert_yaxis()
         rankGraph.draw()
@@ -525,7 +497,7 @@ class App(tk.Tk):
                 loc=i+(len(colorHex)*trl)
                 if sum(master[:,loc])!=0.0:
                     runForce[trl][i]=master[:,loc]/modifyer
-                    runTime[trl][i]=np.linspace(0,5,len(runForce[trl][i]))
+                    runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
                     self.fShow()
                 
@@ -542,8 +514,6 @@ class App(tk.Tk):
         master[:,masterColumn]=data
         DF=pd.DataFrame(master,columns=groupNameLegend)
         DF.to_csv(fileNameMaster,mode='w',index=False)
-
-        
         
     def fComUpdate(self):
         try:
@@ -561,11 +531,30 @@ class App(tk.Tk):
         except:     
             print("ComUpdate Error")
 
-
-
     def fQuit(self):
         exit()
+    
 
+    def fTestRun(self):
+        try:
+            self.fFileWriter()
+            var.set("Data Captured")
+            self.topSettingsFrame.update_idletasks()
+            data=pd.read_csv("data.csv")
+            D=data.to_numpy()
+            z=D[:,0]
+            TestForce=z/modifyer
+            TestTime=np.linspace(0,trialTime,len(TestForce))
+
+            plt.plot(TestTime,TestForce)
+            plt.ylabel(yAxis)
+            plt.xlabel(xAxis)
+            plt.show()
+            var.set('Waiting on Run')
+            self.topSettingsFrame.update_idletasks()
+        except:
+            var.set('TEST FAIL')
+            self.topSettingsFrame.update_idletasks()
 
 
 if __name__ == "__main__":
