@@ -355,23 +355,23 @@ class App(tk.Tk):
             i = self.userSelection.get()
             self.fFileWriter()
             var.set("Data Captured")
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
             data=pd.read_csv("data.csv")
             D=data.to_numpy()
             z=D[:,0]
             var.set("Processing")
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
             self.fSave(trl,i,z)
             var.set("Saved")
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
             self.fLoadUpdater()
             var.set("Waiting for Run")
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
         
         except:
-            var.set("ERROR IN DROPPER TRY RERUN")
-            self.topSettingsFrame.update_idletasks()
-
+            #var.set("ERROR IN DROPPER TRY RERUN")
+            #self.topSettingsFrame.update_idletasks()
+            print("Error in Dropper")
 
     def fFileWriter(self):
         f = open('data.csv','w',newline='')
@@ -391,26 +391,26 @@ class App(tk.Tk):
                     if k==0:
                         var.set("Started - Data Capture")
                         values= decode_bytes.split(",")
-                        self.topSettingsFrame.update_idletasks()
+                        self.topRunFrame.update_idletasks()
                     elif 0 < k/dropTime*100 <= 25:
                         values = [float(x) for x in decode_bytes.split(",")]
                         var.set('0%')
-                        self.topSettingsFrame.update_idletasks()
+                        self.topRunFrame.update_idletasks()
                     
                     elif 25 < k/dropTime*100 <= 50:
                         values = [float(x) for x in decode_bytes.split(",")]
                         var.set('25%')
-                        self.topSettingsFrame.update_idletasks()
+                        self.topRunFrame.update_idletasks()
                     
                     elif 50 < k/dropTime*100 <= 75:
                         values = [float(x) for x in decode_bytes.split(",")]
                         var.set('50%')
-                        self.topSettingsFrame.update_idletasks()
+                        self.topRunFrame.update_idletasks()
                     
                     elif 75 < k/dropTime*100 <= 100:
                         values = [float(x) for x in decode_bytes.split(",")]
                         var.set('75%')
-                        self.topSettingsFrame.update_idletasks()
+                        self.topRunFrame.update_idletasks()
                     else:
                         values = [float(x) for x in decode_bytes.split(",")]
                     writer = csv.writer(f,delimiter =',')
@@ -419,6 +419,8 @@ class App(tk.Tk):
                     print("Error: Line was not recorded")
         except:
                 print("Error in Arduino")
+
+
         stop_time = time.time()
         delta_time=stop_time-start_time
         print(delta_time)
@@ -491,7 +493,7 @@ class App(tk.Tk):
 
     def fLoadUpdater(self):
         var.set('LOAD SEQUENCE STARTED')
-        self.topSettingsFrame.update_idletasks()
+        self.topRunFrame.update_idletasks()
         for trl in range(2):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
@@ -505,11 +507,11 @@ class App(tk.Tk):
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
         var.set('Waiting on Run')
-        self.topSettingsFrame.update_idletasks()
+        self.topRunFrame.update_idletasks()
 
     def fSave(self,trial,groupIndex,data):
         var.set('SAVE SEQUENCE STARTED')
-        self.topSettingsFrame.update_idletasks()
+        self.topRunFrame.update_idletasks()
         masterColumn=groupIndex+(len(colorHex)*trial)
         master[:,masterColumn]=data
         DF=pd.DataFrame(master,columns=groupNameLegend)
@@ -520,14 +522,6 @@ class App(tk.Tk):
             ports = list_ports.comports()
             for port in ports: print(port)
             print(port[0])
-            #SERIAL_PORT = port[0]
-            #com.set(SERIAL_PORT)
-            #self.topSettingsFrame.update_idletasks()
-            #serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
-            #serialCom.setDTR(False)
-            #time.sleep(.05)
-            #serialCom.flushInput()
-            #serialCom.setDTR(True)
         except:     
             print("ComUpdate Error")
 
@@ -539,7 +533,7 @@ class App(tk.Tk):
         try:
             self.fFileWriter()
             var.set("Data Captured")
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
             data=pd.read_csv("data.csv")
             D=data.to_numpy()
             z=D[:,0]
@@ -551,10 +545,10 @@ class App(tk.Tk):
             plt.xlabel(xAxis)
             plt.show()
             var.set('Waiting on Run')
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
         except:
             var.set('TEST FAIL')
-            self.topSettingsFrame.update_idletasks()
+            self.topRunFrame.update_idletasks()
 
 
 if __name__ == "__main__":
