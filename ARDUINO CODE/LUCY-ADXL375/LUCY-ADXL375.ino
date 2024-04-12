@@ -42,8 +42,8 @@ void setup(void)
                        -(z-20+2)/4);  // Z should be '20' at 1g (49mg per bit)
   // Range is fixed at +-200g
 
-  Serial.print("Time (s)");
-  Serial.print(',');
+  //Serial.print("Time (s)");
+  //Serial.print(',');
   Serial.println("Z (m/s^2)");
   
 }
@@ -54,11 +54,11 @@ void loop(void)
   sensors_event_t event;
   accel.getEvent(&event);
 
-  float z = event.acceleration.z;
-  float t = ((float) millis())/1000.0;
+  int z = event.acceleration.z;
+  //float t = ((float) millis())/1000.0;
 
-  Serial.print(t,3);
-  Serial.print(',');
-  Serial.println(z,1);
+  //Serial.print(t,3);
+  //Serial.print(',');
+  Serial.println(z);
    
 }
