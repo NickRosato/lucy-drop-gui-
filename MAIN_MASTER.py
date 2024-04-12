@@ -39,7 +39,7 @@ fontHeader=('Inter',18, "bold")
 fontGroups=("Inter", 14, "bold")
 fontButtons=("Inter", 10, "bold")
 xAxis="Time (s)"
-yAxis="Gravitational Magnitude (g)"
+yAxis="Force (LB)"
 p_x = 0.09
 p_y = 0.175 
 
@@ -81,8 +81,10 @@ for x in range(len(colorHex)):
     maxForce[1].append(0)
 
 runLength=len(colorHex)*trialNumber
-modifyer=1650.0
-trialTime=6.6
+gainMod=1475
+gainAmp=0
+unitMod=.036*32.2
+trialTime=6.8
 dropTime=5000
 BAUD_RATE = 115200
 SERIAL_PORT="COM4"
@@ -140,13 +142,14 @@ class menuAPP(tk.Tk):
         menuSelection="LOAD"
         global fileNameMaster
         fileNameMaster = askopenfilename(title = "Select file",filetypes = (("CSV Files","*.csv"),))
-        print(str(fileNameMaster))
-        DF=pd.read_csv(fileNameMaster)
-        global master
-        master=DF.to_numpy()
-        print(fileNameMaster)
-        self.destroy()
-        self.fRunApp()
+        if fileNameMaster !="":
+            print(str(fileNameMaster))
+            DF=pd.read_csv(fileNameMaster)
+            global master
+            master=DF.to_numpy()
+            print(fileNameMaster)
+            self.destroy()
+            self.fRunApp()
 
 
     def fNewFile(self):
@@ -500,7 +503,7 @@ class App(tk.Tk):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
                 if sum(master[:,loc])!=0.0:
-                    runForce[trl][i]=master[:,loc]/modifyer
+                    runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
                     runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
                     self.fShow()
@@ -538,8 +541,8 @@ class App(tk.Tk):
             self.topRunFrame.update_idletasks()
             data=pd.read_csv("data.csv")
             D=data.to_numpy()
-            z=D[:,0]
-            TestForce=z/modifyer
+            z=((D[:,0]/gainMod)-gainAmp)*unitMod
+            TestForce=z
             TestTime=np.linspace(0,trialTime,len(TestForce))
 
             plt.plot(TestTime,TestForce)
