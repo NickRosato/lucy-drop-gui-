@@ -84,6 +84,8 @@ runLength=len(colorHex)*trialNumber
 #was gainMod=1475
 #was gainAmp=0
 #was unitMod=.036*32.2
+
+#y=.0014x-1.79 based on weight sample
 mSlope=.0014
 bZero=-1.79
 
