@@ -22,8 +22,6 @@ import serial
 import time
 import csv
 from datetime import datetime
-#from playsound import playsound
-
 
 #style setup
 main_color = '#FFFFFF'
@@ -206,7 +204,7 @@ class App(tk.Tk):
 
 
         #Macros
-        self.bind("<Escape>", lambda command: exit())
+        self.bind("<Escape>", lambda command: quit())
         self.bind("<F11>", lambda event: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
         
 
