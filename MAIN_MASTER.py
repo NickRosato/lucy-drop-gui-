@@ -230,7 +230,7 @@ class App(tk.Tk):
         self.topSettingsFrame.config(background=topBG,pady=5,padx=5,highlightbackground=outline_color,highlightthickness=2)
         self.topSettingsFrame.grid(row = 0, column =0,sticky='news')
         self.topSettingsFrame.rowconfigure((0,1),weight = 1,uniform='a')
-        self.topSettingsFrame.columnconfigure((0),weight = 1,uniform='a')
+        self.topSettingsFrame.columnconfigure((0,1),weight = 1,uniform='a')
 
 
         global com
@@ -241,10 +241,12 @@ class App(tk.Tk):
         comOut.grid(row = 0, column=0,sticky='ew')
 
         comShowbtnColor=tk.Button(self.topSettingsFrame,text='COM CHECK FUNCTION',font=fontButtons,command=self.fComUpdate)
-        comShowbtnColor.grid(row = 1, column =0)
+        comShowbtnColor.grid(row = 0, column =1)
 
 
         testbtnColor=tk.Button(self.topSettingsFrame,text='TEST RUN',font=fontButtons,command=self.fTestRun)
+        testbtnColor.grid(row = 2, column =1)
+        testbtnColor=tk.Button(self.topSettingsFrame,text='ZERO SENSOR',font=fontButtons,command=self.fZero)
         testbtnColor.grid(row = 2, column =0)
 
         # Top Run Frame
@@ -372,10 +374,7 @@ class App(tk.Tk):
             self.fLoadUpdater()
             var.set("Waiting for Run")
             self.topRunFrame.update_idletasks()
-        
         except:
-            #var.set("ERROR IN DROPPER TRY RERUN")
-            #self.topSettingsFrame.update_idletasks()
             print("Error in Dropper")
 
     def fFileWriter(self):
@@ -533,7 +532,36 @@ class App(tk.Tk):
     def fQuit(self):
         exit()
     
-
+    def fZero(self):
+        try:
+            f = open('zero.csv','w',newline='')
+            f.truncate()
+            serialCom=serial.Serial(SERIAL_PORT,BAUD_RATE)
+            serialCom.setDTR(False)
+            time.sleep(.05)
+            serialCom.flushInput()
+            serialCom.setDTR(True)
+            values = []
+            for k in range(100):
+                try:
+                    s_bytes=serialCom.readline()
+                    decode_bytes = s_bytes.decode("utf-8").strip('\r\n')
+                    values = [float(x) for x in decode_bytes.split(",")]
+                    writer = csv.writer(f,delimiter =',')
+                    writer.writerow(values)
+                except:
+                    print("Error: Line was not recorded")
+            f.close()
+        except:
+            print('ZERO - Arduino FAILED')
+        try:
+            zeroData=pd.read_csv("zero.csv")
+            D=zeroData.to_numpy()
+            zeroAverage=np.average(D[:,0])
+            print(zeroAverage)
+        except:
+            print('ZERO - AVERAGE FAILED')
+    
     def fTestRun(self):
         try:
             self.fFileWriter()
@@ -552,8 +580,8 @@ class App(tk.Tk):
             var.set('Waiting on Run')
             self.topRunFrame.update_idletasks()
         except:
-            var.set('TEST FAIL')
-            self.topRunFrame.update_idletasks()
+            print("TESTER FAIL")
+
 
 
 if __name__ == "__main__":
