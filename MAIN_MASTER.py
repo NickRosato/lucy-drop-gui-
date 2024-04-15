@@ -81,9 +81,12 @@ for x in range(len(colorHex)):
     maxForce[1].append(0)
 
 runLength=len(colorHex)*trialNumber
-gainMod=1475
-gainAmp=0
-unitMod=.036*32.2
+#was gainMod=1475
+#was gainAmp=0
+#was unitMod=.036*32.2
+mSlope=.0014
+bZero=-1.79
+
 trialTime=6.8
 dropTime=5000
 BAUD_RATE = 115200
@@ -502,7 +505,8 @@ class App(tk.Tk):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
                 if sum(master[:,loc])!=0.0:
-                    runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
+                    runForce[trl][i]=((master[:,loc]*mSlope)+bZero)
+                    #runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
                     runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
                     self.fShow()
@@ -569,7 +573,8 @@ class App(tk.Tk):
             self.topRunFrame.update_idletasks()
             data=pd.read_csv("data.csv")
             D=data.to_numpy()
-            z=((D[:,0]/gainMod)-gainAmp)*unitMod
+            z=((D[:,0]*mSlope)+bZero)
+            #z=((D[:,0]/gainMod)-gainAmp)*unitMod
             TestForce=z
             TestTime=np.linspace(0,trialTime,len(TestForce))
 
