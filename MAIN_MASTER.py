@@ -499,8 +499,6 @@ class App(tk.Tk):
 
 
     def fLoadUpdater(self):
-        var.set('LOAD SEQUENCE STARTED')
-        self.topRunFrame.update_idletasks()
         for trl in range(2):
             for i in range(len(colorHex)):
                 loc=i+(len(colorHex)*trl)
@@ -514,12 +512,9 @@ class App(tk.Tk):
         self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
-        var.set('Waiting on Run')
-        self.topRunFrame.update_idletasks()
+
 
     def fSave(self,trial,groupIndex,data):
-        var.set('SAVE SEQUENCE STARTED')
-        self.topRunFrame.update_idletasks()
         masterColumn=groupIndex+(len(colorHex)*trial)
         master[:,masterColumn]=data
         DF=pd.DataFrame(master,columns=groupNameLegend)
