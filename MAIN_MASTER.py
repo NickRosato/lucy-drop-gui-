@@ -85,7 +85,7 @@ runLength=len(colorHex)*trialNumber
 
 #y=.0014x-1.79 based on weight sample
 mSlope=.0014
-bZero=-1.79
+bZero=-1.80
 
 trialTime=6.8
 dropTime=5000
@@ -249,7 +249,7 @@ class App(tk.Tk):
 
         testbtnColor=tk.Button(self.topSettingsFrame,text='TEST RUN',font=fontButtons,command=self.fTestRun)
         testbtnColor.grid(row = 2, column =1)
-        testbtnColor=tk.Button(self.topSettingsFrame,text='ZERO SENSOR',font=fontButtons,command=self.fZero)
+        testbtnColor=tk.Button(self.topSettingsFrame,text='Clear Test',font=fontButtons,command=self.fCLEAR)
         testbtnColor.grid(row = 2, column =0)
 
         # Top Run Frame
@@ -531,7 +531,24 @@ class App(tk.Tk):
     def fQuit(self):
         exit()
     
-    def fZero(self):
+    def fCLEAR(self):
+        trl=self.trialSelection.get()
+        i = self.userSelection.get()
+        f = open('data.csv','w',newline='')
+        f.truncate()
+        for k in range(dropTime):
+            writer = csv.writer(f,delimiter =',')
+            writer.writerow([0])
+        f.close()
+        data=pd.read_csv("data.csv")
+        D=data.to_numpy()
+        z=D[:,0]
+        self.fSave(trl,i,z)
+        self.fLoadUpdater()
+        var.set("Waiting for Run")
+        self.topRunFrame.update_idletasks()
+
+    def fZero0(self):
         try:
             f = open('zero.csv','w',newline='')
             f.truncate()
