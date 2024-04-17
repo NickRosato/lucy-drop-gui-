@@ -9,6 +9,7 @@ __email__ = "nicholas.rosato@collins.com"
 import tkinter as tk
 #import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilename
+from tkinter.messagebox import askyesno
 import sys
 from sys import platform
 import matplotlib.pyplot as plt
@@ -249,8 +250,9 @@ class App(tk.Tk):
 
         testbtnColor=tk.Button(self.topSettingsFrame,text='TEST RUN',font=fontButtons,command=self.fTestRun)
         testbtnColor.grid(row = 2, column =1)
-        testbtnColor=tk.Button(self.topSettingsFrame,text='Clear Test',font=fontButtons,command=self.fCLEAR)
-        testbtnColor.grid(row = 2, column =0)
+        #testbtnColor=tk.Button(self.topSettingsFrame,text='Clear Test',font=fontButtons,command=self.fCLEAR)
+        #testbtnColor.grid(row = 2, column =0)
+
 
         # Top Run Frame
         self.topRunFrame = tk.Frame(self.topFrame)
@@ -270,7 +272,7 @@ class App(tk.Tk):
         global mainLab
         mainLab = tk.Label(self.topRunFrame,background=topBG,font=fontHeader)
         mainLab.grid(row = 0, column =0,sticky='ew',columnspan=5)
-        rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fDropper)
+        rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fRUN)
         rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=5)
         
         self.trialSelection = tk.IntVar()
@@ -278,7 +280,8 @@ class App(tk.Tk):
                         text=' Trial 1 ', font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=0)
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
                         text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=4)
-
+        
+    
         
         # Top Finally Frame
         self.topMenuFrame = tk.Frame(self.topFrame)
@@ -358,7 +361,12 @@ class App(tk.Tk):
         self.allFrame.tkraise()
     def fMenu3(self):
         self.rankFrame.tkraise()
-        
+
+    def fRUN(self):
+        answer = askyesno(title='Confirmation', message='Are you sure that you want to run Dropper')
+        if answer:
+            self.fDropper()
+
     def fDropper(self):
         try:
             trl=self.trialSelection.get()
