@@ -556,17 +556,18 @@ class App(tk.Tk):
         axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
-        L=round(peakForce[0][i][1],2)
-        R=round(peakForce[1][i][1],2)
-        D=round(((L-R)/R)*100,1)
+        L=round(peakForce[0][i][1],1)
         LForceLab["text"]=L
         self.bottomFrameL.update_idletasks()
-        #print(type(peakForce[1][i][1]))
-        #print(peakForce[1][i][1])
-        
-        RForceLab["text"]=f'{R}   Improvment ('f'{D}%)'
-
-        
+        R=round(peakForce[1][i][1],1)
+        RForceLab["text"]=R
+        try:
+            D=abs(round(((L-R)/R)*100))    
+            RForceLab["text"]=f'{R}   Change ('f'{D}%)'
+            #Desire Red = Number went up
+            #Desire Green = Number went down
+        except:
+            print("error")
         self.bottomFrameR.update_idletasks()
 
     #def fShowAll(self):
