@@ -79,8 +79,8 @@ for x in range(len(colorHex)):
     runForce[1].append([])
     maxForce[0].append(0)
     maxForce[1].append(0)
-    peakForce[0].append([[],[]])
-    peakForce[1].append([[],[]])
+    peakForce[0].append([])
+    peakForce[1].append([])
 
 
 
@@ -322,19 +322,36 @@ class App(tk.Tk):
         self.plotFrameL = tk.Frame(self.plotFrame)
         self.plotFrameL.place(relx=0, rely=0, relwidth=.5, relheight=.8)
         self.plotFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.plotFrameL.rowconfigure(0,weight = 1)
+        self.plotFrameL.rowconfigure((0,1,2,3),weight = 1)
+        self.plotFrameL.columnconfigure((0,1,2,3,4),weight = 1,uniform="foo")
         self.plotFrameR = tk.Frame(self.plotFrame)
         self.plotFrameR.place(relx=.5, rely=0, relwidth=.5, relheight=.8)
         self.plotFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameL = tk.Frame(self.plotFrame)
         self.bottomFrameL.place(relx=0, rely=.8, relwidth=.45, relheight=.2)
-        self.bottomFrameL.config(background="blue",pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.bottomFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameC = tk.Frame(self.plotFrame)
         self.bottomFrameC.place(relx=.45, rely=.8, relwidth=.1, relheight=.2)
-        self.bottomFrameC.config(background="pink",pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.bottomFrameC.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameR = tk.Frame(self.plotFrame)
         self.bottomFrameR.place(relx=.55, rely=.8, relwidth=.45, relheight=.2)
-        self.bottomFrameR.config(background="yellow",pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.bottomFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.bottomFrameR.rowconfigure(0,weight = 1)
+        self.bottomFrameR.rowconfigure((0,1,2,3),weight = 1)
+        self.bottomFrameR.columnconfigure((0,1,2,3,4),weight = 1,uniform="foo")
 
+        LHeadLab = tk.Label(self.bottomFrameL,background=topBG,font=fontHeader,text="Trial #1 Max Force (lbf)")
+        LHeadLab.pack(expand = False, fill ='both')
+        global LForceLab
+        LForceLab = tk.Label(self.bottomFrameL,background=topBG,font=fontHeader,text="#####")
+        LForceLab.pack(expand = True, fill ='both')
+
+        RHeadLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="Trial #2 Max Force (lbf)")
+        RHeadLab.pack(expand = False, fill ='both')
+        global RForceLab
+        RForceLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="#####")
+        RForceLab.pack(expand = True, fill ='both')
 
         fig = plt.Figure(facecolor=figure_color) 
         global axL
@@ -536,6 +553,12 @@ class App(tk.Tk):
         axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
+        LForceLab["text"]=round(peakForce[0][i][1],2)
+        self.bottomFrameL.update_idletasks()
+        #print(type(peakForce[1][i][1]))
+        #print(peakForce[1][i][1])
+        RForceLab["text"]=round(peakForce[1][i][1],2)
+        self.bottomFrameR.update_idletasks()
     #def fShowAll(self):
     #    allAX.cla()
     #    allAX.set_xlabel(xAxis) 
@@ -574,9 +597,9 @@ class App(tk.Tk):
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
                     y=max(runForce[trl][i])
                     x=np.average(runTime[trl][i][np.where(runForce[trl][i]==y)]).item()
-                    peakForce[trl][i][0]=round(x,5)
-                    peakForce[trl][i][1]=round(y,5)
-                    self.fShow()
+                    peakForce[trl][i]=[x,y]
+                else:
+                    peakForce[trl][i]=[0,0]
                 
         #self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
