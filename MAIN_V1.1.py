@@ -67,6 +67,7 @@ runForce=[[],[]]
 maxForce=[[],[]]
 groupName = [[],[]]
 peakForce=[[],[]]
+deltaForce=[]
 
 for x in range(len(colorHex)):
     groupName[0].append('Group: '+f'{x+1} Trial 1')
@@ -81,6 +82,7 @@ for x in range(len(colorHex)):
     maxForce[1].append(0)
     peakForce[0].append([])
     peakForce[1].append([])
+    deltaForce=[0].append(0)
 
 
 
@@ -329,13 +331,13 @@ class App(tk.Tk):
         self.plotFrameR.place(relx=.5, rely=0, relwidth=.5, relheight=.8)
         self.plotFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameL = tk.Frame(self.plotFrame)
-        self.bottomFrameL.place(relx=0, rely=.8, relwidth=.45, relheight=.2)
+        self.bottomFrameL.place(relx=0, rely=.8, relwidth=.5, relheight=.2)
         self.bottomFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
-        self.bottomFrameC = tk.Frame(self.plotFrame)
-        self.bottomFrameC.place(relx=.45, rely=.8, relwidth=.1, relheight=.2)
-        self.bottomFrameC.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        #self.bottomFrameC = tk.Frame(self.plotFrame)
+        #self.bottomFrameC.place(relx=.45, rely=.8, relwidth=.1, relheight=.2)
+        #self.bottomFrameC.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameR = tk.Frame(self.plotFrame)
-        self.bottomFrameR.place(relx=.55, rely=.8, relwidth=.45, relheight=.2)
+        self.bottomFrameR.place(relx=.5, rely=.8, relwidth=.5, relheight=.2)
         self.bottomFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
         self.bottomFrameR.rowconfigure(0,weight = 1)
         self.bottomFrameR.rowconfigure((0,1,2,3),weight = 1)
@@ -412,7 +414,6 @@ class App(tk.Tk):
         self.plotFrameL.tkraise()
         self.plotFrameR.tkraise()
         self.bottomFrameL.tkraise()
-        self.bottomFrameC.tkraise()
         self.bottomFrameR.tkraise()
 
         #self.plotFrameR.tkraise()
@@ -500,7 +501,9 @@ class App(tk.Tk):
         delta_time=stop_time-start_time
         print(delta_time)
         f.close()
-        
+    
+
+            
 
     def fSort(self):
         maxForceLegend=maxForce[0]+maxForce[1]
@@ -553,12 +556,19 @@ class App(tk.Tk):
         axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
-        LForceLab["text"]=round(peakForce[0][i][1],2)
+        L=round(peakForce[0][i][1],2)
+        R=round(peakForce[1][i][1],2)
+        D=round(((L-R)/R)*100,1)
+        LForceLab["text"]=L
         self.bottomFrameL.update_idletasks()
         #print(type(peakForce[1][i][1]))
         #print(peakForce[1][i][1])
-        RForceLab["text"]=round(peakForce[1][i][1],2)
+        
+        RForceLab["text"]=f'{R}   Improvment ('f'{D}%)'
+
+        
         self.bottomFrameR.update_idletasks()
+
     #def fShowAll(self):
     #    allAX.cla()
     #    allAX.set_xlabel(xAxis) 
@@ -585,7 +595,6 @@ class App(tk.Tk):
         rankAX.invert_yaxis()
         rankGraph.draw()
 
-
     def fLoadUpdater(self):
         for trl in range(2):
             for i in range(len(colorHex)):
@@ -600,11 +609,10 @@ class App(tk.Tk):
                     peakForce[trl][i]=[x,y]
                 else:
                     peakForce[trl][i]=[0,0]
-                
+               
         #self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
-
 
     def fSave(self,trial,groupIndex,data):
         masterColumn=groupIndex+(len(colorHex)*trial)
