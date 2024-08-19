@@ -333,30 +333,28 @@ class App(tk.Tk):
         self.bottomFrameL = tk.Frame(self.plotFrame)
         self.bottomFrameL.place(relx=0, rely=.8, relwidth=.5, relheight=.2)
         self.bottomFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
-        #self.bottomFrameC = tk.Frame(self.plotFrame)
-        #self.bottomFrameC.place(relx=.45, rely=.8, relwidth=.1, relheight=.2)
-        #self.bottomFrameC.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        self.bottomFrameL.rowconfigure((0,1,2),weight = 1, uniform = 'a')
+        self.bottomFrameL.columnconfigure(0,weight = 1)
         self.bottomFrameR = tk.Frame(self.plotFrame)
         self.bottomFrameR.place(relx=.5, rely=.8, relwidth=.5, relheight=.2)
         self.bottomFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
-        self.bottomFrameR.rowconfigure(0,weight = 1)
-        self.bottomFrameR.rowconfigure((0,1,2,3),weight = 1)
-        self.bottomFrameR.columnconfigure((0,1,2,3,4),weight = 1,uniform="foo")
+        self.bottomFrameR.rowconfigure((0,1,2),weight = 1, uniform = 'a')
+        self.bottomFrameR.columnconfigure(0,weight = 1)
 
-        LHeadLab = tk.Label(self.bottomFrameL,background=topBG,font=fontHeader,text="Trial #1 Max Force (lbf)")
-        LHeadLab.pack(expand = False, fill ='both')
+        LHeadLab = tk.Label(self.bottomFrameL,font=fontHeader,text="Trial #1 Max Force (lbf)")
+        LHeadLab.grid(row = 0, column =0,sticky='news')
         global LForceLab
-        LForceLab = tk.Label(self.bottomFrameL,background=topBG,font=fontHeader,text="#####")
-        LForceLab.pack(expand = True, fill ='both')
+        LForceLab = tk.Label(self.bottomFrameL,font=fontHeader,text="#####")
+        LForceLab.grid(row = 1, column =0,sticky='news')
 
-        RHeadLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="Trial #2 Max Force (lbf)")
-        RHeadLab.pack(expand = False, fill ='both')
+        RHeadLab = tk.Label(self.bottomFrameR,font=fontHeader,text="Trial #2 Max Force (lbf)")
+        RHeadLab.grid(row = 0, column =0,sticky='news')
         global RForceLab
-        RForceLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="#####")
-        RForceLab.pack(expand = True, fill ='both')
+        RForceLab = tk.Label(self.bottomFrameR,font=fontHeader,text="#####")
+        RForceLab.grid(row = 1, column =0,sticky='news')
         global RChangeLab
-        RChangeLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="#####")
-        RChangeLab.pack(expand = True, fill ='both')
+        RChangeLab = tk.Label(self.bottomFrameR,font=fontHeader,text="#####")
+        RChangeLab.grid(row = 2, column =0,sticky='news')
 
         fig = plt.Figure(facecolor=figure_color) 
         global axL
@@ -571,10 +569,8 @@ class App(tk.Tk):
                 RChangeLab["fg"]="green"
             if D>0:
                 RChangeLab["fg"]="red"
-            #Desire Red = Number went up
-            #Desire Green = Number went down
         except:
-            print("error")
+            RChangeLab["text"]=f'{0}% Change'
         self.bottomFrameR.update_idletasks()
 
     #def fShowAll(self):
