@@ -66,6 +66,7 @@ runTime=[[],[]]
 runForce=[[],[]]
 maxForce=[[],[]]
 groupName = [[],[]]
+peakForce=[[],[]]
 
 for x in range(len(colorHex)):
     groupName[0].append('Group: '+f'{x+1} Trial 1')
@@ -78,6 +79,10 @@ for x in range(len(colorHex)):
     runForce[1].append([])
     maxForce[0].append(0)
     maxForce[1].append(0)
+    peakForce[0].append([[],[]])
+    peakForce[1].append([[],[]])
+
+
 
 runLength=len(colorHex)*trialNumber
 #was gainMod=1475
@@ -377,10 +382,12 @@ class App(tk.Tk):
         rankGraph = FigureCanvasTkAgg(rankFig, master=self.rankFrame) 
         rankGraph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         
-        self.fShow()
+        self.fHeaderUpdate(0)
         self.fMenu1()
         if menuSelection=="LOAD" and sum(master[0,:])!=0:
             self.fLoadUpdater()
+            self.fShow()
+
         
 
     def fMenu1(self):
@@ -504,17 +511,18 @@ class App(tk.Tk):
         self.headerFrame.configure(bg=colorHex[i])
 
     def fShow(self):
-        trl=self.trialSelection.get()
+        #trl=self.trialSelection.get()
         i = self.userSelection.get()
         self.fHeaderUpdate(i)
         graphMax=1.1*max(maxForce[0][i],maxForce[1][i])
-
+        
         axL.cla()
         axL.set_xlabel(xAxis) 
         axL.set_ylabel(yAxis)
         axL.set_title("Trial 1")
         axL.grid()
         axL.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
+        axL.scatter(peakForce[0][i][0],peakForce[0][i][1],color="black")
         axL.set(ylim=(0,graphMax))
         graphL.draw() 
 
@@ -524,6 +532,7 @@ class App(tk.Tk):
         axR.set_title("Trial 2")
         axR.grid()
         axR.plot(runTime[1][i],runForce[1][i],color=colorHex[i])
+        axR.scatter(peakForce[1][i][0],peakForce[1][i][1],color="black")
         axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
@@ -563,6 +572,10 @@ class App(tk.Tk):
                     #runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
                     runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
                     maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
+                    y=max(runForce[trl][i])
+                    x=np.average(runTime[trl][i][np.where(runForce[trl][i]==y)]).item()
+                    peakForce[trl][i][0]=round(x,5)
+                    peakForce[trl][i][1]=round(y,5)
                     self.fShow()
                 
         #self.fShowAll()
@@ -577,12 +590,14 @@ class App(tk.Tk):
         DF.to_csv(fileNameMaster,mode='w',index=False)
         
     def fComUpdate(self):
-        try:
-            ports = list_ports.comports()
-            for port in ports: print(port)
-            print(port[0])
-        except:     
-            print("ComUpdate Error")
+        print(peakForce[0][0])
+        print(peakForce[1][0])
+        #try:
+        #    ports = list_ports.comports()
+        #    for port in ports: print(port)
+        #    print(port[0])
+        #except:     
+        #    print("ComUpdate Error")
 
     def fQuit(self):
         exit()
