@@ -332,15 +332,15 @@ class App(tk.Tk):
 
 
         fig = plt.Figure(facecolor=figure_color) 
-        global ax
-        ax = fig.subplots() 
-        ax.cla()
-        ax.set_xlabel(xAxis) 
-        ax.set_ylabel(yAxis) 
-        ax.grid()
-        global graph
-        graph = FigureCanvasTkAgg(fig, master=self.plotFrameL) 
-        graph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
+        global axL
+        axL = fig.subplots() 
+        axL.cla()
+        axL.set_xlabel(xAxis) 
+        axL.set_ylabel(yAxis) 
+        axL.grid()
+        global graphL
+        graphL = FigureCanvasTkAgg(fig, master=self.plotFrameL) 
+        graphL.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
                 
         fig = plt.Figure(facecolor=figure_color) 
         global axR
@@ -507,13 +507,16 @@ class App(tk.Tk):
         trl=self.trialSelection.get()
         i = self.userSelection.get()
         self.fHeaderUpdate(i)
-        ax.cla()
-        ax.set_xlabel(xAxis) 
-        ax.set_ylabel(yAxis)
-        ax.set_title("Trial 1")
-        ax.grid()
-        ax.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
-        graph.draw() 
+        graphMax=1.1*max(maxForce[0][i],maxForce[1][i])
+
+        axL.cla()
+        axL.set_xlabel(xAxis) 
+        axL.set_ylabel(yAxis)
+        axL.set_title("Trial 1")
+        axL.grid()
+        axL.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
+        axL.set(ylim=(0,graphMax))
+        graphL.draw() 
 
         axR.cla()
         axR.set_xlabel(xAxis) 
@@ -521,6 +524,7 @@ class App(tk.Tk):
         axR.set_title("Trial 2")
         axR.grid()
         axR.plot(runTime[1][i],runForce[1][i],color=colorHex[i])
+        axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
     #def fShowAll(self):
