@@ -341,13 +341,13 @@ class App(tk.Tk):
         self.bottomFrameR.rowconfigure((0,1,2),weight = 1, uniform = 'a')
         self.bottomFrameR.columnconfigure(0,weight = 1)
 
-        LHeadLab = tk.Label(self.bottomFrameL,font=fontHeader,text="Trial #1 Max Force (lbf)")
+        LHeadLab = tk.Label(self.bottomFrameL,font=fontHeader,text="Trial #1 Max Force")
         LHeadLab.grid(row = 0, column =0,sticky='news')
         global LForceLab
         LForceLab = tk.Label(self.bottomFrameL,font=fontHeader,text="#####")
         LForceLab.grid(row = 1, column =0,sticky='news')
 
-        RHeadLab = tk.Label(self.bottomFrameR,font=fontHeader,text="Trial #2 Max Force (lbf)")
+        RHeadLab = tk.Label(self.bottomFrameR,font=fontHeader,text="Trial #2 Max Force")
         RHeadLab.grid(row = 0, column =0,sticky='news')
         global RForceLab
         RForceLab = tk.Label(self.bottomFrameR,font=fontHeader,text="#####")
@@ -558,10 +558,10 @@ class App(tk.Tk):
         graphR.draw() 
     
         L=round(peakForce[0][i][1],1)
-        LForceLab["text"]=L
+        LForceLab["text"]=f'{L} (LB)'
         self.bottomFrameL.update_idletasks()
         R=round(peakForce[1][i][1],1)
-        RForceLab["text"]=R
+        RForceLab["text"]=f'{R} (LB)'
         try:
             D=round(((R-L)/L)*100)
             RChangeLab["text"]=f'{abs(D)}% Change'
