@@ -354,6 +354,9 @@ class App(tk.Tk):
         global RForceLab
         RForceLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="#####")
         RForceLab.pack(expand = True, fill ='both')
+        global RChangeLab
+        RChangeLab = tk.Label(self.bottomFrameR,background=topBG,font=fontHeader,text="#####")
+        RChangeLab.pack(expand = True, fill ='both')
 
         fig = plt.Figure(facecolor=figure_color) 
         global axL
@@ -562,8 +565,12 @@ class App(tk.Tk):
         R=round(peakForce[1][i][1],1)
         RForceLab["text"]=R
         try:
-            D=abs(round(((L-R)/R)*100))    
-            RForceLab["text"]=f'{R}   Change ('f'{D}%)'
+            D=round(((R-L)/L)*100)
+            RChangeLab["text"]=f'{abs(D)}% Change'
+            if D<0:
+                RChangeLab["fg"]="green"
+            if D>0:
+                RChangeLab["fg"]="red"
             #Desire Red = Number went up
             #Desire Green = Number went down
         except:
