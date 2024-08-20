@@ -33,11 +33,19 @@ frame_color = '#c0c0c0'
 btnColor = '#cccccc'
 btnColor_pressed = 'pink'
 topBG='white'
+
 fontHeader=('Open Sans',18, "bold")
+fontHeaderButton=('Open Sans',18, "bold")
+fontSideButton=("Open Sans", 14, "bold")
+fontTopMenuButton=("Open Sans", 14, "bold")
+fontBottomText=("Open Sans", 18, "bold")
+
 fontGroups=("Open Sans", 14, "bold")
 fontButtons=("Open Sans", 10, "bold")
+
+
 xAxis="Time (s)"
-yAxis="Force (LB)"
+yAxis="Force (lbf)"
 p_x = 0.09
 p_y = 0.175 
 #Inter
@@ -274,14 +282,14 @@ class App(tk.Tk):
         global mainLab
         mainLab = tk.Label(self.topRunFrame,background=topBG,font=fontHeader)
         mainLab.grid(row = 0, column =0,sticky='ew',columnspan=5)
-        rnbtnColor=tk.Button(self.topRunFrame,font=fontHeader,text="Run Dropper Function",background=btnColor,command=self.fRUN)
+        rnbtnColor=tk.Button(self.topRunFrame,font=fontHeaderButton,text="Run Dropper Function",background=btnColor,command=self.fRUN)
         rnbtnColor.grid(row = 1, column =0,sticky='ew',columnspan=5)
         
         self.trialSelection = tk.IntVar()
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=0,command=self.fShow,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Trial 1 ', font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=0)
+                        text=' Trial 1 ', font=fontTopMenuButton, bg=btnColor,fg='black').grid(row = 2, column=0)
         tk.Radiobutton(self.topRunFrame,variable=self.trialSelection, value=1,command=self.fShow, indicatoron=0,selectcolor= btnColor_pressed,
-                        text=' Trial 2 ',font=fontGroups, bg=btnColor,fg='black').grid(row = 2, column=4)
+                        text=' Trial 2 ',font=fontTopMenuButton, bg=btnColor,fg='black').grid(row = 2, column=4)
         
     
         
@@ -294,11 +302,11 @@ class App(tk.Tk):
 
         self.menuSelection = tk.IntVar()
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=0,command=self.fMenu1,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show Single Group Graphs ', font=fontGroups, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
+                        text=' Show Single Group Graphs ', font=fontTopMenuButton, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show All Graphs ',font=fontGroups,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
+                        text=' Show All Graphs ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show Ranking ',font=fontGroups,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
+                        text=' Show Ranking ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
         # SideBar Setup
         self.userSelection = tk.IntVar()
@@ -310,7 +318,7 @@ class App(tk.Tk):
             self.groupFrame.columnconfigure((0),weight = 1)
             
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
-                            bg=btnColor,font=fontGroups,text = headerName[0][i],fg='black',padx=5,pady=5).grid(row = 0, column=0)
+                            bg=btnColor,font=fontSideButton,text = headerName[0][i],fg='black',padx=5,pady=5).grid(row = 0, column=0)
 
         # Plot Frames
         self.plotFrame = tk.Frame(self)
@@ -338,19 +346,19 @@ class App(tk.Tk):
         self.bottomFrameR.rowconfigure((0,1,2),weight = 1, uniform = 'a')
         self.bottomFrameR.columnconfigure(0,weight = 1)
 
-        LHeadLab = tk.Label(self.bottomFrameL,font=fontHeader,text="Trial #1 Max Force")
+        LHeadLab = tk.Label(self.bottomFrameL,font=fontBottomText,text="Trial #1")
         LHeadLab.grid(row = 0, column =0,sticky='news')
         global LForceLab
-        LForceLab = tk.Label(self.bottomFrameL,font=fontHeader,text="#####")
+        LForceLab = tk.Label(self.bottomFrameL,font=fontBottomText,text="#####")
         LForceLab.grid(row = 1, column =0,sticky='news')
 
-        RHeadLab = tk.Label(self.bottomFrameR,font=fontHeader,text="Trial #2 Max Force")
+        RHeadLab = tk.Label(self.bottomFrameR,font=fontBottomText,text="Trial #2")
         RHeadLab.grid(row = 0, column =0,sticky='news')
         global RForceLab
-        RForceLab = tk.Label(self.bottomFrameR,font=fontHeader,text="#####")
+        RForceLab = tk.Label(self.bottomFrameR,font=fontBottomText,text="#####")
         RForceLab.grid(row = 1, column =0,sticky='news')
         global RChangeLab
-        RChangeLab = tk.Label(self.bottomFrameR,font=fontHeader,text="#####")
+        RChangeLab = tk.Label(self.bottomFrameR,font=fontBottomText,text="#####")
         RChangeLab.grid(row = 2, column =0,sticky='news')
 
         fig = plt.Figure(facecolor=figure_color) 
@@ -535,12 +543,13 @@ class App(tk.Tk):
         axR.scatter(peakForce[1][i][0],peakForce[1][i][1],color="black")
         axR.set(ylim=(-1,graphMax))
         graphR.draw() 
-    
+        
+        
         L=round(peakForce[0][i][1],1)
-        LForceLab["text"]=f'{L} (LB)'
+        LForceLab["text"]='Max Force:   '+f'{L} (LB)'
         self.bottomFrameL.update_idletasks()
         R=round(peakForce[1][i][1],1)
-        RForceLab["text"]=f'{R} (LB)'
+        RForceLab["text"]='Max Force:   '+f'{R} (LB)'
 
         if L !=0 and R !=0:
             try:
