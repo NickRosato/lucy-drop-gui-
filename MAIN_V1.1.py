@@ -533,7 +533,7 @@ class App(tk.Tk):
         axR.set(ylim=(0,graphMax))
         graphR.draw() 
     
-        L=round(peakForce[0][i][1],)
+        L=round(peakForce[0][i][1],1)
         LForceLab["text"]=f'{L} (LB)'
         self.bottomFrameL.update_idletasks()
         R=round(peakForce[1][i][1],1)
@@ -551,10 +551,10 @@ class App(tk.Tk):
                     RChangeLab["text"]=f'{abs(D)} (LB) Increase'
                     RChangeLab["fg"]="red"
             except:
-                RChangeLab["text"]=f'{0}'
+                RChangeLab["text"]=""
                 RChangeLab["fg"]="black"
         else:
-            RChangeLab["text"]=f'{0}'
+            RChangeLab["text"]=""
             RChangeLab["fg"]="black"
         
         self.bottomFrameR.update_idletasks()
