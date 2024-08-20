@@ -33,14 +33,17 @@ frame_color = '#c0c0c0'
 btnColor = '#cccccc'
 btnColor_pressed = 'pink'
 topBG='white'
-fontHeader=('Inter',18, "bold")
-fontGroups=("Inter", 14, "bold")
-fontButtons=("Inter", 10, "bold")
+fontHeader=('Open Sans',18, "bold")
+fontGroups=("Open Sans", 14, "bold")
+fontButtons=("Open Sans", 10, "bold")
 xAxis="Time (s)"
 yAxis="Force (LB)"
 p_x = 0.09
 p_y = 0.175 
-
+#Inter
+#Open Sans
+#Comic Sans MS
+#Courier New
 
 trialNumber=2
 cG1=['#FF0000','Red']
@@ -520,7 +523,7 @@ class App(tk.Tk):
         axL.grid()
         axL.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
         axL.scatter(peakForce[0][i][0],peakForce[0][i][1],color="black")
-        axL.set(ylim=(0,graphMax))
+        axL.set(ylim=(-1,graphMax))
         graphL.draw() 
 
         axR.cla()
@@ -530,7 +533,7 @@ class App(tk.Tk):
         axR.grid()
         axR.plot(runTime[1][i],runForce[1][i],color=colorHex[i])
         axR.scatter(peakForce[1][i][0],peakForce[1][i][1],color="black")
-        axR.set(ylim=(0,graphMax))
+        axR.set(ylim=(-1,graphMax))
         graphR.draw() 
     
         L=round(peakForce[0][i][1],1)
