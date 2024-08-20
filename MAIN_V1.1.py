@@ -7,7 +7,6 @@ __email__ = "nicholas.rosato@collins.com"
 
 
 import tkinter as tk
-#import tkinter.ttk as ttk
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import askyesno
 import sys
@@ -84,14 +83,7 @@ for x in range(len(colorHex)):
     peakForce[1].append([])
     deltaForce=[0].append(0)
 
-
-
 runLength=len(colorHex)*trialNumber
-#was gainMod=1475
-#was gainAmp=0
-#was unitMod=.036*32.2
-
-#y=.0014x-1.79 based on weight sample
 mSlope=.0014
 bZero=-1.80
 
@@ -317,10 +309,10 @@ class App(tk.Tk):
             tk.Radiobutton(self.groupFrame,variable=self.userSelection, value=i,command=self.fShow, indicatoron=0, selectcolor= btnColor_pressed,
                             bg=btnColor,font=fontGroups,text = headerName[0][i],fg='black',padx=5,pady=5).grid(row = 0, column=0)
 
-        # Main Menu Frames
+        # Plot Frames
         self.plotFrame = tk.Frame(self)
-        self.plotFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         
+        self.plotFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         self.plotFrameL = tk.Frame(self.plotFrame)
         self.plotFrameL.place(relx=0, rely=0, relwidth=.5, relheight=.8)
         self.plotFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
@@ -330,6 +322,8 @@ class App(tk.Tk):
         self.plotFrameR = tk.Frame(self.plotFrame)
         self.plotFrameR.place(relx=.5, rely=0, relwidth=.5, relheight=.8)
         self.plotFrameR.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
+        
+        # Bottom Frames
         self.bottomFrameL = tk.Frame(self.plotFrame)
         self.bottomFrameL.place(relx=0, rely=.8, relwidth=.5, relheight=.2)
         self.bottomFrameL.config(pady=2,padx=2,highlightbackground=outline_color,highlightthickness=1)
@@ -378,20 +372,6 @@ class App(tk.Tk):
         graphR = FigureCanvasTkAgg(fig, master=self.plotFrameR) 
         graphR.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
 
-
-        #self.allFrame = tk.Frame(self)
-        #self.allFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
-        #allFig = plt.Figure(facecolor=figure_color) 
-        #global allAX
-        #allAX = allFig.subplots() 
-        #allAX.cla()
-        #allAX.set_xlabel(xAxis) 
-        #allAX.set_ylabel(yAxis) 
-        #allAX.grid()
-        #global allGraph
-        #allGraph = FigureCanvasTkAgg(allFig, master=self.allFrame) 
-        #allGraph.get_tk_widget().place(relx=0, rely=0, relwidth=1, relheight=1)
-
         self.rankFrame = tk.Frame(self)
         self.rankFrame.place(relx=p_x, rely=p_y, relwidth=1-p_x, relheight=1-p_y)
         rankFig = plt.Figure(facecolor=figure_color)
@@ -417,10 +397,8 @@ class App(tk.Tk):
         self.bottomFrameL.tkraise()
         self.bottomFrameR.tkraise()
 
-        #self.plotFrameR.tkraise()
     def fMenu2(self):
         print("fMenu2 Function Run")
-        self.plotFrameR.tkraise()
     def fMenu3(self):
         self.rankFrame.tkraise()
 
@@ -521,7 +499,6 @@ class App(tk.Tk):
                 rankNameSorted.append([])
         maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
         
-        #print("---- RANKING ----")
         for m in range(len(groupNameSorted)):
                 rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
 
@@ -532,7 +509,6 @@ class App(tk.Tk):
         self.headerFrame.configure(bg=colorHex[i])
 
     def fShow(self):
-        #trl=self.trialSelection.get()
         i = self.userSelection.get()
         self.fHeaderUpdate(i)
         graphMax=1.1*max(maxForce[0][i],maxForce[1][i])
@@ -580,17 +556,8 @@ class App(tk.Tk):
         else:
             RChangeLab["text"]=f'{0}'
             RChangeLab["fg"]="black"
+        
         self.bottomFrameR.update_idletasks()
-
-    #def fShowAll(self):
-    #    allAX.cla()
-    #    allAX.set_xlabel(xAxis) 
-    #    allAX.set_ylabel(yAxis) 
-    #    allAX.grid()
-    #    for i in range(len(colorHex)):
-    #        allAX.plot(runTime[0][i],runForce[0][i],color=colorHex[i])
-    #        allAX.plot(runTime[1][i],runForce[1][i],color=colorHex[i],linestyle='dashed')
-    #    allGraph.draw()  
 
     def fRankShow(self,names,scores,color):
         rankAX.cla()
@@ -623,7 +590,6 @@ class App(tk.Tk):
                 else:
                     peakForce[trl][i]=[0,0]
                
-        #self.fShowAll()
         nameSorted,forceSorted,colorSorted= self.fSort()
         self.fRankShow(nameSorted,forceSorted,colorSorted)
 
