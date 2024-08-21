@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 __author__ = "Nicholas Rosato"
-__copyright__ = "Copyright 2024, Collins Aerospace"
-__credits__ = ["Nicholas Rosato","Stephen Kridel"]
-__maintainer__ = "Nicholas Rosato"
 __email__ = "nicholas.rosato@collins.com"
 
 
