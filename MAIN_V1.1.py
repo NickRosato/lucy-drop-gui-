@@ -42,7 +42,7 @@ fontButtons=("Open Sans", 10, "bold")
 
 
 xAxis="Time (s)"
-yAxis="Force (lbf)"
+yAxis="Force (LB)"
 p_x = 0.09
 p_y = 0.175 
 #Inter
@@ -407,6 +407,7 @@ class App(tk.Tk):
 
     def fMenu2(self):
         print("fMenu2 Function Run")
+        
     def fMenu3(self):
         self.rankFrame.tkraise()
 
@@ -435,6 +436,12 @@ class App(tk.Tk):
             self.topRunFrame.update_idletasks()
         except:
             print("Error in Dropper")
+
+    def fSave(self,trial,groupIndex,data):
+        masterColumn=groupIndex+(len(colorHex)*trial)
+        master[:,masterColumn]=data
+        DF=pd.DataFrame(master,columns=groupNameLegend)
+        DF.to_csv(fileNameMaster,mode='w',index=False)
 
     def fFileWriter(self):
         f = open('data.csv','w',newline='')
@@ -489,28 +496,25 @@ class App(tk.Tk):
         print(delta_time)
         f.close()
     
+    def fLoadUpdater(self):
+        for trl in range(2):
+            for i in range(len(colorHex)):
+                loc=i+(len(colorHex)*trl)
+                if sum(master[:,loc])!=0.0:
+                    runForce[trl][i]=((master[:,loc]*mSlope)+bZero)
+                    #runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
+                    runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
+                    y=max(runForce[trl][i])
+                    x=np.average(runTime[trl][i][np.where(runForce[trl][i]==y)]).item()
+                    peakForce[trl][i]=[x,y]
+                    maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
 
-            
-
-    def fSort(self):
-        maxForceLegend=maxForce[0]+maxForce[1]
-        colorLegend= colorHex+colorHex
-        groupNameSorted=[]
-        maxForceSorted=[]
-        colorSorted=[]
-        rankNameSorted=[]
-        for n in range(len(groupNameLegend)):
-            if not maxForceLegend[n] ==0:
-                groupNameSorted.append(groupNameLegend[n])
-                maxForceSorted.append(maxForceLegend[n])
-                colorSorted.append(colorLegend[n])
-                rankNameSorted.append([])
-        maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
-        
-        for m in range(len(groupNameSorted)):
-                rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
-
-        return rankNameSorted, maxForceSorted,colorSorted            
+                else:
+                    peakForce[trl][i]=[0,0]
+               
+        nameSorted,forceSorted,colorSorted= self.fSort()
+        self.fRankShow(nameSorted,forceSorted,colorSorted)        
+      
         
     def fHeaderUpdate(self,i):
         mainLab["text"]=headerName[1][i]
@@ -568,6 +572,27 @@ class App(tk.Tk):
         
         self.bottomFrameR.update_idletasks()
 
+    def fSort(self):
+        maxForceLegend=maxForce[0]+maxForce[1]
+        colorLegend= colorHex+colorHex
+        groupNameSorted=[]
+        maxForceSorted=[]
+        colorSorted=[]
+        rankNameSorted=[]
+        for n in range(len(groupNameLegend)):
+            if not maxForceLegend[n] ==0:
+                groupNameSorted.append(groupNameLegend[n])
+                maxForceSorted.append(maxForceLegend[n])
+                colorSorted.append(colorLegend[n])
+                rankNameSorted.append([])
+        maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
+        
+        for m in range(len(groupNameSorted)):
+                #rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
+                rankNameSorted[m]=f'{groupNameSorted[m]}'
+
+        return rankNameSorted, maxForceSorted,colorSorted      
+
     def fRankShow(self,names,scores,color):
         rankAX.cla()
 
@@ -584,33 +609,33 @@ class App(tk.Tk):
         rankAX.invert_yaxis()
         rankGraph.draw()
 
-    def fLoadUpdater(self):
-        for trl in range(2):
-            for i in range(len(colorHex)):
-                loc=i+(len(colorHex)*trl)
-                if sum(master[:,loc])!=0.0:
-                    runForce[trl][i]=((master[:,loc]*mSlope)+bZero)
-                    #runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
-                    runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
-                    maxForce[trl][i] = round(max(runForce[trl][i]).item(), 3)
-                    y=max(runForce[trl][i])
-                    x=np.average(runTime[trl][i][np.where(runForce[trl][i]==y)]).item()
-                    peakForce[trl][i]=[x,y]
-                else:
-                    peakForce[trl][i]=[0,0]
-               
-        nameSorted,forceSorted,colorSorted= self.fSort()
-        self.fRankShow(nameSorted,forceSorted,colorSorted)
 
-    def fSave(self,trial,groupIndex,data):
-        masterColumn=groupIndex+(len(colorHex)*trial)
-        master[:,masterColumn]=data
-        DF=pd.DataFrame(master,columns=groupNameLegend)
-        DF.to_csv(fileNameMaster,mode='w',index=False)
+    def fNewSort(self):
+        maxForceLegend=maxForce[0]+maxForce[1]
+        colorLegend= colorHex+colorHex
+        groupNameSorted=[]
+        maxForceSorted=[]
+        colorSorted=[]
+        rankNameSorted=[]
+        
+        
+        for n in range(len(groupNameLegend)):
+            if not maxForceLegend[n] ==0:
+                groupNameSorted.append(groupNameLegend[n])
+                maxForceSorted.append(maxForceLegend[n])
+                colorSorted.append(colorLegend[n])
+                rankNameSorted.append([])
+        maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
+        
+        for m in range(len(groupNameSorted)):
+                rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
+
+        return rankNameSorted, maxForceSorted,colorSorted      
+    
+    
         
     def fComUpdate(self):
-        print(peakForce[0][0])
-        print(peakForce[1][0])
+        self.fNewSort()
         #try:
         #    ports = list_ports.comports()
         #    for port in ports: print(port)
