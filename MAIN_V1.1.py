@@ -300,8 +300,8 @@ class App(tk.Tk):
         self.menuSelection = tk.IntVar()
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=0,command=self.fMenu1,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Single Group Graphs ', font=fontTopMenuButton, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
-        tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show All Graphs ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
+        ##tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
+        ##                text=' Show All Graphs ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Ranking ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
