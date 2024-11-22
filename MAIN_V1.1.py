@@ -51,22 +51,23 @@ p_y = 0.175
 #Courier New
 
 trialNumber=2
-cG1=['#FF0000','Red']
-cG2=['#EE7600','Orange']
-cG3=['#EEC900','Yellow']
-cG4=['#006400','Green']
-cG5=['#000080','Blue']
-cG6=['#68228B', 'Purple']
-cG7=['#FF1493','Pink']
-cG8=['#630031','Maroon']
-cG9=['#AB82FF','Lavender']
-cG10=['#00CDCD','Turquoise']
-cG11=['#7CFC00','Lime']
-cG12=['#8B4513', 'Brown']
-cG13=['#000000', 'Black']
-cG14=['#616161', 'Grey']
-colorHex=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
-colorName=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
+cG1=[1,'#FF0000','Red',"Group 1"]
+cG2=[2,'#EE7600','Orange',"Group 2"]
+cG3=[3,'#EEC900','Yellow',"Group 3"]
+cG4=[4,'#006400','Green',"Group 4"]
+cG5=[5,'#000080','Blue',"Group 5"]
+cG6=[6,'#68228B', 'Purple',"Group 6"]
+cG7=[7,'#FF1493','Pink',"Group 7"]
+cG8=[8,'#630031','Maroon',"Group 8"]
+cG9=[9,'#AB82FF','Lavender',"Group 9"]
+cG10=[10,'#00CDCD','Turquoise',"Group 10"]
+cG11=[11,'#7CFC00','Lime',"Group 11"]
+cG12=[12,'#8B4513', 'Brown',"Group 12"]
+cG13=[13,'#000000', 'Black',"Group 13"]
+cG14=[14,'#616161', 'Grey',"Group 14"]
+groupNumber=[cG1[0],cG2[0],cG3[0],cG4[0],cG5[0],cG6[0],cG7[0],cG8[0],cG9[0],cG10[0],cG11[0],cG12[0],cG13[0],cG14[0]]
+colorHex=[cG1[1],cG2[1],cG3[1],cG4[1],cG5[1],cG6[1],cG7[1],cG8[1],cG9[1],cG10[1],cG11[1],cG12[1],cG13[1],cG14[1]]
+colorName=[cG1[2],cG2[2],cG3[2],cG4[2],cG5[2],cG6[2],cG7[2],cG8[2],cG9[2],cG10[2],cG11[2],cG12[2],cG13[2],cG14[2]]
 
 headerName=[[],[]]
 runTime=[[],[]]
@@ -75,6 +76,17 @@ maxForce=[[],[]]
 groupName = [[],[]]
 peakForce=[[],[]]
 deltaForce=[]
+
+# codex[0] = Group Number
+# codex[1] = Color of Group Number
+# codex[2] = Color Name of Group Number
+# codex[3] = Trial 1 Max Force Time (X)
+# codex[4] = Trial 1 Max Force (Y)
+# codex[5] = Trial 2 Max Force Time (X)
+# codex[6] = Trial 2 Max Force (Y)
+# codex[7] = Best Max Force (Trial 1 vs Trial 2)
+# codex[8] = Improvment (Trial 1 - Trial 2) 
+codex=[[],[],[],[],[],[],[],[],[]]
 
 for x in range(len(colorHex)):
     groupName[0].append('Group: '+f'{x+1} Trial 1')
@@ -90,6 +102,17 @@ for x in range(len(colorHex)):
     peakForce[0].append([])
     peakForce[1].append([])
     deltaForce=[0].append(0)
+    codex[0].append(groupNumber[x])# codex[0] = Group Number
+    codex[1].append(colorHex[x])# codex[1] = Color of Group Number
+    codex[2].append(colorName[x])# codex[2] = Color Name of Group Number
+    codex[3].append([]) # codex[3] = Trial 1 Max Force Time (X)
+    codex[4].append([]) # codex[4] = Trial 1 Max Force (Y)
+    codex[5].append([]) # codex[5] = Trial 2 Max Force Time (X)
+    codex[6].append([]) # codex[6] = Trial 2 Max Force (Y)
+    codex[7].append([]) # codex[7] = Best Max Force (Trial 1 vs Trial 2)
+    codex[8].append([]) # codex[8] = Improvment (Trial 1 - Trial 2) 
+
+
 
 runLength=len(colorHex)*trialNumber
 mSlope=.0014
@@ -300,10 +323,10 @@ class App(tk.Tk):
         self.menuSelection = tk.IntVar()
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=0,command=self.fMenu1,indicatoron=0, selectcolor= btnColor_pressed,
                         text=' Show Single Group Graphs ', font=fontTopMenuButton, bg=btnColor,fg='black').grid(row = 0, column=0,stick='ew')
-        ##tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
-        ##                text=' Show All Graphs ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
+        tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=1,command=self.fMenu2,indicatoron=0, selectcolor= btnColor_pressed,
+                        text=' Show Rank ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 1, column=0,stick='ew')
         tk.Radiobutton(self.topMenuFrame,variable=self.menuSelection, value=2,command=self.fMenu3,indicatoron=0, selectcolor= btnColor_pressed,
-                        text=' Show Ranking ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
+                        text=' Show Improvment Ranking ',font=fontTopMenuButton,bg=btnColor,fg='black').grid(row = 2, column=0,stick='ew')
 
         # SideBar Setup
         self.userSelection = tk.IntVar()
@@ -406,10 +429,9 @@ class App(tk.Tk):
         self.bottomFrameR.tkraise()
 
     def fMenu2(self):
-        print("fMenu2 Function Run")
-        
-    def fMenu3(self):
         self.rankFrame.tkraise()
+    def fMenu3(self):
+        print("fMenu2 Function Run")
 
     def fRUN(self):
         answer = askyesno(title='Confirmation', message='Are you sure that you want to run Dropper')
@@ -502,7 +524,6 @@ class App(tk.Tk):
                 loc=i+(len(colorHex)*trl)
                 if sum(master[:,loc])!=0.0:
                     runForce[trl][i]=((master[:,loc]*mSlope)+bZero)
-                    #runForce[trl][i]=((master[:,loc]/gainMod)-gainAmp)*unitMod
                     runTime[trl][i]=np.linspace(0,trialTime,len(runForce[trl][i]))
                     y=max(runForce[trl][i])
                     x=np.average(runTime[trl][i][np.where(runForce[trl][i]==y)]).item()
@@ -608,6 +629,51 @@ class App(tk.Tk):
         rankAX.set(xlim=(low,high))
         rankAX.invert_yaxis()
         rankGraph.draw()
+
+    def fSort_V2(self):
+        maxForceLegend=maxForce[0]+maxForce[1]
+        colorLegend= colorHex+colorHex
+        groupNameSorted=[]
+        maxForceSorted=[]
+        colorSorted=[]
+        rankNameSorted=[]
+        for n in range(len(groupNameLegend)):
+            if not maxForceLegend[n] ==0:
+                groupNameSorted.append(groupNameLegend[n])
+                maxForceSorted.append(maxForceLegend[n])
+                colorSorted.append(colorLegend[n])
+                rankNameSorted.append([])
+        maxForceSorted,groupNameSorted,colorSorted =zip(*sorted(zip(maxForceSorted,groupNameSorted,colorSorted)))
+        
+        for m in range(len(groupNameSorted)):
+                #rankNameSorted[m]="#"+f'{m+1}'+" = " +f'{groupNameSorted[m]}'
+                rankNameSorted[m]=f'{groupNameSorted[m]}'
+
+        return rankNameSorted, maxForceSorted,colorSorted      
+
+    def fRankShow_V2(self,names,scores,color):
+        rankAX.cla()
+
+        low = min(scores)*.90
+        high = max(scores)*1.1
+        for p in range(len(names)):
+            rankAX.barh(names[p],scores[p],color=color[p])
+        
+        for index, value in enumerate(scores):
+            rankAX.text(value,index,str(value))
+        
+        rankAX.set_xlabel("Maximum " + yAxis) 
+        rankAX.set(xlim=(low,high))
+        rankAX.invert_yaxis()
+        rankGraph.draw()
+
+
+
+
+
+
+
+
 
 
     def fNewSort(self):
